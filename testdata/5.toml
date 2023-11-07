@@ -1,0 +1,14 @@
+
+version = 2
+name = "go-toml"
+tags = ["go", "toml"]
+
+# Host IP to connect to.
+host = '127.0.0.1'
+# Port of the remote server.
+port = 4242
+
+# Encryption parameters (optional)
+[TLS]
+cipher = 'AEAD-AES128-GCM-SHA256'
+version = 'TLS 1.3'

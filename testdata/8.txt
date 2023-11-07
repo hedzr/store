@@ -1,0 +1,29 @@
+default repository: home
+report style: tree
+compact format: {repo}: {size:{fmt}}.  Last back up: {last_create:ddd, MMM DD}.
+normal format: {host:<8} {user:<5} {config:<9} {size:<8.2b} {last_create:ddd, MMM DD}
+date format: D MMMM YYYY
+size format: .2b
+
+repositories:
+    # only the composite repositories need be included
+    home:
+        children: rsync borgbase
+    caches:
+        children: cache cache@media cache@files
+    servers:
+        children:
+            - root@dev~root
+            - root@mail~root
+            - root@media~root
+            - root@web~root
+    all:
+        children: home caches servers
+
+getters:
+    mf: 12345
+    bf: true
+    ff: -12.7831
+    tf: 1s52ms
+    time: 2023-1-2
+    

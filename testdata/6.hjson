@@ -1,0 +1,51 @@
+{
+  # specify rate in requests/second (because comments are helpful!)
+  rate: 1000
+
+  // prefer c-style comments?
+  /* feeling old fashioned? */
+
+  # did you notice that rate doesn't need quotes?
+  hey: look ma, no quotes for strings either!
+
+  # best of all
+  notice: []
+  anything: ?
+
+  # yes, commas are optional!
+  
+  "language": "zh",
+  
+  "messages": [
+    {
+      "id": "Hello {From}!",
+      "message": "Hello {From}!",
+      "translation": "",
+      "placeholders": [
+        {
+          "id": "From",
+          "string": "%[1]s",
+          "type": "string",
+          "underlyingType": "string",
+          "argNum": 1,
+          "expr": "r.Header.Get(\"From\")"
+        }
+      ]
+    },
+    {
+      "id": "Do you like your browser ({User_Agent})?",
+      "message": "Do you like your browser ({User_Agent})?",
+      "translation": "",
+      "placeholders": [
+        {
+          "id": "User_Agent",
+          "string": "%[1]s",
+          "type": "string",
+          "underlyingType": "string",
+          "argNum": 1,
+          "expr": "r.Header.Get(\"User-Agent\")"
+        }
+      ]
+    }
+  ]
+}
