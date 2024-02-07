@@ -1,6 +1,7 @@
 package file
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -106,40 +107,17 @@ func (s *pvdr) Close() {
 	atomic.CompareAndSwapInt32(&s.watching, 1, 0)
 }
 
-type changeS struct {
-	realPath string
-	idx      int
-
-	lastOp        store.Op
-	lastEvent     string
-	lastEventTime time.Time
-
-	provider store.Provider
-}
-
-func (s *changeS) Path() string             { return s.realPath }
-func (s *changeS) Op() store.Op             { return s.lastOp }
-func (s *changeS) Has(op store.Op) bool     { return uint64(s.lastOp)&uint64(op) != 0 }
-func (s *changeS) Timestamp() time.Time     { return s.lastEventTime }
-func (s *changeS) Provider() store.Provider { return s.provider }
-func (s *changeS) Next() (key string, val any, ok bool) {
-	if s.idx == 0 {
-		key, val, ok = s.realPath, s.realPath, true
-		s.idx++
-	}
-	return
-}
-
-func (s *pvdr) Watch(cb func(event any, err error)) error {
+func (s *pvdr) Watch(ctx context.Context, cb func(event any, err error)) (err error) {
 	if s.watchEnabled == false {
 		return nil
 	}
 
 	// Resolve symlinks and save the original path so that changes to symlinks
 	// can be detected.
-	realPath, err := filepath.EvalSymlinks(s.file)
+	var realPath string
+	realPath, err = filepath.EvalSymlinks(s.file)
 	if err != nil {
-		return err
+		return
 	}
 	realPath = filepath.Clean(realPath)
 
@@ -147,86 +125,96 @@ func (s *pvdr) Watch(cb func(event any, err error)) error {
 	// the whole parent directory to pick up all events such as symlink changes.
 	fDir, _ := filepath.Split(s.file)
 
-	w, err := fsnotify.NewWatcher()
+	var w *fsnotify.Watcher
+	w, err = fsnotify.NewWatcher()
 	if err != nil {
 		return err
 	}
 
+	go s.watchRunner(ctx, cb, w, realPath)
+
+	// Watch the directory for changes.
+	return w.Add(fDir)
+}
+
+func (s *pvdr) watchRunner(ctx context.Context, cb func(event any, err error), w *fsnotify.Watcher, realPath string) {
 	var (
 		// lastEvent     string
 		// lastEventTime time.Time
 		lastChange = changeS{provider: s}
 	)
 
-	go func() {
-		if !atomic.CompareAndSwapInt32(&s.watching, 0, 1) {
+	if !atomic.CompareAndSwapInt32(&s.watching, 0, 1) {
+		return
+	}
+
+	var ok bool
+	var err error
+	var event fsnotify.Event
+loop:
+	for atomic.LoadInt32(&s.watching) == 1 {
+		select {
+		case <-ctx.Done():
 			return
-		}
 
-	loop:
-		for atomic.LoadInt32(&s.watching) == 1 {
-			select {
-			case event, ok := <-w.Events:
-				if !ok {
-					cb(nil, errors.New("fsnotify watch channel closed"))
-					break loop
-				}
+		case event, ok = <-w.Events:
+			if !ok {
+				cb(nil, errors.New("fsnotify watch channel closed"))
+				break loop
+			}
 
-				// Use a simple timer to buffer events as certain events fire
-				// multiple times on some platforms.
-				if event.String() == lastChange.lastEvent && time.Since(lastChange.lastEventTime) < time.Millisecond*5 {
-					continue
-				}
-				lastChange.lastEvent = event.String()
-				lastChange.lastEventTime = time.Now()
+			// Use a simple timer to buffer events as certain events fire
+			// multiple times on some platforms.
+			if event.String() == lastChange.lastEvent && time.Since(lastChange.lastEventTime) < time.Millisecond*5 {
+				continue
+			}
+			lastChange.lastEvent = event.String()
+			lastChange.lastEventTime = time.Now()
 
-				evFile := filepath.Clean(event.Name)
+			evFile := filepath.Clean(event.Name)
 
-				// Since the event is triggered on a directory, is this
-				// one on the file being watched?
-				if evFile != realPath && evFile != s.file {
-					continue
-				}
+			// Since the event is triggered on a directory, is this
+			// one on the file being watched?
+			if evFile != realPath && evFile != s.file {
+				continue
+			}
 
-				// The file was removed.
-				if event.Op&fsnotify.Remove != 0 {
-					cb(nil, fmt.Errorf("file %s was removed", event.Name))
-					break loop
-				}
+			// The file was removed.
+			if event.Op&fsnotify.Remove != 0 {
+				cb(nil, fmt.Errorf("file %s was removed", event.Name))
+				break loop
+			}
 
-				// Resolve symlink to get the real path, in case the symlink's
-				// target has changed.
-				curPath, err := filepath.EvalSymlinks(s.file)
-				if err != nil {
-					cb(nil, err)
-					break loop
-				}
-				lastChange.realPath = filepath.Clean(curPath)
-
-				// Finally, we only care about create and write.
-				if event.Op&(fsnotify.Write|fsnotify.Create) == 0 {
-					continue
-				}
-
-				// Trigger event.
-				cb(lastChange, nil)
-
-			// There's an error.
-			case err, ok := <-w.Errors:
-				if !ok {
-					cb(nil, errors.New("fsnotify err channel closed"))
-					break loop
-				}
-
-				// Pass the error to the callback.
+			// Resolve symlink to get the real path, in case the symlink's
+			// target has changed.
+			var curPath string
+			curPath, err = filepath.EvalSymlinks(s.file)
+			if err != nil {
 				cb(nil, err)
 				break loop
 			}
+			lastChange.realPath = filepath.Clean(curPath)
+
+			// Finally, we only care about create and write.
+			if event.Op&(fsnotify.Write|fsnotify.Create) == 0 {
+				continue
+			}
+
+			// Trigger event.
+			cb(lastChange, nil)
+
+		// There's an error.
+		case err, ok = <-w.Errors:
+			if !ok {
+				cb(nil, errors.New("fsnotify err channel closed"))
+				break loop
+			}
+
+			// Pass the error to the callback.
+			cb(nil, err)
+			break loop
 		}
+	}
 
-		w.Close()
-	}()
-
-	// Watch the directory for changes.
-	return w.Add(fDir)
+	w.Close()
 }
