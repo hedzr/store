@@ -2,21 +2,26 @@ go 1.21
 
 use (
 	.
+
 	./codecs/hcl
 	./codecs/hjson
 	./codecs/json
 	./codecs/nestext
 	./codecs/toml
 	./codecs/yaml
-	./providers/consul
+	
 	./providers/env
-	./providers/etcd
 	./providers/file
 	./providers/fs
 	./providers/maps
+	
 	./tests
-	./examples/consul
-	./examples/etcd
+	./codecs/hcl/test
+	./codecs/hjson/test
+	./codecs/json/test
+	./codecs/nestext/test
+	./codecs/toml/test
+	./codecs/yaml/test
 
 //../../cmdr-series/libs/evendeep
 )
