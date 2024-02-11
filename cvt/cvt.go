@@ -4,15 +4,17 @@ import (
 	"fmt"
 	"strings"
 
-	evendeep "github.com/hedzr/go-diff/v2"
+	"github.com/hedzr/evendeep"
 )
 
+// Copy copies a map deeply
 func Copy(m map[string]any) (data map[string]any) {
 	data = make(map[string]any)
 	evendeep.Copy(&m, &data)
 	return
 }
 
+// Normalize make a map formal with nested map[string]any objects.
 func Normalize(m map[string]any, worker func(k string, v any)) map[string]any {
 	for k, v := range m {
 		normalize(m, k, v, worker)
@@ -24,8 +26,12 @@ func normalize(m map[string]any, key string, val any, worker func(k string, v an
 	switch z := val.(type) {
 	case map[any]any:
 		x := make(map[string]any)
-		for k, v := range z {
-			x[fmt.Sprintf("%v", k)] = v
+		for k, vv := range z {
+			kk := fmt.Sprintf("%v", k)
+			x[kk] = vv
+			if worker != nil {
+				worker(kk, vv)
+			}
 		}
 		m[key] = x
 		Normalize(x, worker)
@@ -34,8 +40,12 @@ func normalize(m map[string]any, key string, val any, worker func(k string, v an
 			switch sub := v.(type) {
 			case map[any]any:
 				x := make(map[string]any)
-				for k, v := range sub {
-					x[fmt.Sprintf("%v", k)] = v
+				for k, vv := range sub {
+					kk := fmt.Sprintf("%v", k)
+					x[kk] = vv
+					if worker != nil {
+						worker(kk, vv)
+					}
 				}
 				z[i] = x
 				Normalize(x, worker)
@@ -48,26 +58,27 @@ func normalize(m map[string]any, key string, val any, worker func(k string, v an
 	}
 }
 
-func Deflate(m map[string]any, delim string) (data map[string]any) {
+// Deflate split dotted key as a sub-map, which dot char can be another delimiter.
+func Deflate(m map[string]any, delimiter string) (data map[string]any) {
 	data = make(map[string]any)
 
 	// Iterate through the flat conf map.
 	for k, v := range m {
 		var (
-			keys = strings.Split(k, delim)
+			keys = strings.Split(k, delimiter)
 			next = data
 		)
 
 		// Iterate through key parts, for eg:, parent.child.key
 		// will be ["parent", "child", "key"]
-		for _, k := range keys[:len(keys)-1] {
-			sub, ok := next[k]
+		for _, kk := range keys[:len(keys)-1] {
+			sub, ok := next[kk]
 			if !ok {
 				// If the key does not exist in the map, create it.
-				sub = make(map[string]interface{})
-				next[k] = sub
+				sub = make(map[string]any)
+				next[kk] = sub
 			}
-			if n, ok := sub.(map[string]any); ok {
+			if n, ok1 := sub.(map[string]any); ok1 {
 				next = n
 			}
 		}
