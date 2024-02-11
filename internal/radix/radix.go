@@ -15,12 +15,13 @@ type Trie[T any] interface {
 	Query(path string) (data T, branch, found bool, err error)               // full ability word searching (=enhanced Has)
 	Locate(path string) (node *nodeS[T], branch, partialMatched, found bool) // Locate is an enhanced Has and returns more internal information (=enhanced Has)
 	SetComment(path, description, comment string) (ok bool)                  // set extra meta-info bound to a key
-	SetTags(path string, tags any) (ok bool)                                 // set extra notable data bound to a key
+	SetTag(path string, tags any) (ok bool)                                  // set extra notable data bound to a key
 	Dump() string                                                            // dumping the node tree for debugging, including some internal states
 
 	// Remove and Merge, Special Operations for storeS
 
-	Remove(path string) (removed bool) // Remove a key and its children
+	Remove(path string) (removed bool)                        // Remove a key and its children
+	RemoveEx(path string) (nodeRemoved Node[T], removed bool) // RemoveEx a key and its children
 
 	Merge(pathAt string, data map[string]any) (err error) // advanced operation to Merge hierarchical data
 
@@ -46,14 +47,20 @@ type Node[T any] interface {
 	hasData() bool
 	endsWith(ch rune) bool
 	endsWithLite(ch rune) bool
-	insert(word []rune, fullPath string, data T)
+	insert(word []rune, fullPath string, data T) (oldData any)
 	remove(item *nodeS[T]) (removed bool)
 	matchR(word []rune, delimiter rune, parentNode *nodeS[T]) (matched, partialMatched bool, child, parent *nodeS[T])
-	dump() string
+	dump(noColor bool) string
 
 	Walk(cb func(prefix, key string, node *nodeS[T]))
 
 	Dup() (newNode *nodeS[T])
+
+	Data() T
+
+	Description() string
+	Comment() string
+	Tag() any
 }
 
 const NoDelimiter rune = 0

@@ -6,10 +6,9 @@ import (
 	"strings"
 	"time"
 
-	evendeep "github.com/hedzr/go-diff/v2"
-	"gopkg.in/yaml.v3"
-
+	evendeep "github.com/hedzr/evendeep"
 	logz "github.com/hedzr/logg/slog"
+	"gopkg.in/yaml.v3"
 )
 
 // TypedGetters makes a formal specification for Trie[any]
@@ -413,6 +412,7 @@ func (s *prefixPutter) put(m map[string]any, prefix, delimiter string, v any) {
 		s.putKeys(m, keys, v)
 		return
 	}
+
 	if len(keys) >= len(s.prefix) {
 		kk := keys[len(s.prefix):]
 		if len(kk) > 0 {

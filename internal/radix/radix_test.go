@@ -116,12 +116,12 @@ func TestTrieS_Set(t *testing.T) {
 func TestTrieS_Merge(t *testing.T) {
 	// trie := NewStoreT[any]()
 	trie := newBasicStore()
-	if err := trie.Merge("app.debug.map", map[string]any{"tags": []string{"delve", "verbose"}, "verbose": true}); err != nil {
+	if err := trie.Merge("app.debug.map", map[string]any{"tag": []string{"delve", "verbose"}, "verbose": true}); err != nil {
 		t.Fatalf(`Merge failed: %v`, err)
 	}
 	t.Logf("\nPath\n%v\n", trie.Dump())
 
-	assertTrue(t, slices.Equal(trie.MustGet("app.debug.map.tags").([]string), []string{"delve", "verbose"}), `expecting trie.Get("app.debug.map.tags") return '[delve verbose]'`)
+	assertTrue(t, slices.Equal(trie.MustGet("app.debug.map.tag").([]string), []string{"delve", "verbose"}), `expecting trie.Get("app.debug.map.tag") return '[delve verbose]'`)
 }
 
 func TestTrieS_WithPrefix(t *testing.T) {

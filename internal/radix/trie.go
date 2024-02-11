@@ -5,7 +5,6 @@ import (
 	"sync"
 
 	logz "github.com/hedzr/logg/slog"
-
 	"gopkg.in/hedzr/errors.v3"
 )
 
@@ -88,13 +87,13 @@ func (s *trieS[T]) SetComment(path, description, comment string) (ok bool) {
 	return
 }
 
-func (s *trieS[T]) SetTags(path string, tags any) (ok bool) { // set extra notable data bound to a key
+func (s *trieS[T]) SetTag(path string, tag any) (ok bool) { // set extra notable data bound to a key
 	if s.prefix != "" {
 		path = s.join(s.prefix, path)
 	}
 	node, _, partialMatched := s.search(path)
 	if ok = node != nil || partialMatched; ok {
-		node.tags = tags
+		node.tag = tag
 	}
 	return
 }
@@ -155,6 +154,25 @@ func (s *trieS[T]) Remove(path string) (removed bool) {
 	if found {
 		if parent != nil {
 			removed = parent.remove(node)
+		} else {
+			logz.Warn("if given path found and return node, its parent MUST NOT be nil", "node", node, "parent", parent)
+		}
+	}
+	return
+}
+
+func (s *trieS[T]) RemoveEx(path string) (nodeRemoved Node[T], removed bool) {
+	if s.prefix != "" {
+		path = s.join(s.prefix, path)
+	}
+	node, parent, partialMatched := s.search(path)
+	found := node != nil && !partialMatched // && !node.isBranch()
+	if found {
+		if parent != nil {
+			removed = parent.remove(node)
+			if removed {
+				nodeRemoved = parent
+			}
 		} else {
 			logz.Warn("if given path found and return node, its parent MUST NOT be nil", "node", node, "parent", parent)
 		}

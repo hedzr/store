@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	evendeep "github.com/hedzr/go-diff/v2"
+	evendeep "github.com/hedzr/evendeep"
 
 	"github.com/hedzr/is/term/color"
 )
@@ -25,14 +25,24 @@ type nodeS[T any] struct {
 	data        T
 	description string
 	comment     string
-	tags        any
+	tag         any
 	nType       nodeType
 }
 
 type Extractor func(outputPtr any, defaultValue ...any) (err error)
 
-func (s *nodeS[T]) isBranch() bool { return s.nType&NTMask == NTBranch }
-func (s *nodeS[T]) hasData() bool  { return s.nType&NTData != 0 }
+func (s *nodeS[T]) isBranch() bool      { return s.nType&NTMask == NTBranch }
+func (s *nodeS[T]) hasData() bool       { return s.nType&NTData != 0 }
+func (s *nodeS[T]) Description() string { return s.description }
+func (s *nodeS[T]) Comment() string     { return s.comment }
+func (s *nodeS[T]) Tag() any            { return s.tag }
+
+func (s *nodeS[T]) Data() (data T) {
+	if !s.isBranch() {
+		data = s.data
+	}
+	return
+}
 
 func (s *nodeS[T]) endsWith(ch rune) bool {
 	if len(s.path) == 0 {
