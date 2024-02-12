@@ -138,6 +138,36 @@ func TestStore_Get2(t *testing.T) {
 	}
 }
 
+func TestStore_Monitoring(t *testing.T) {
+	conf := newBasicStore(
+		WithOnNewHandlers(func(path string, value any, mergingMapOrLoading bool) {
+			t.Logf("[new] %q: %v | %v", path, value, mergingMapOrLoading)
+		}),
+		WithOnDeleteHandlers(func(path string, value any, mergingMapOrLoading bool) {
+			t.Logf("[del] %q: %v | %v", path, value, mergingMapOrLoading)
+		}),
+		WithOnChangeHandlers(func(path string, value, oldValue any, mergingMapOrLoading bool) {
+			t.Logf("[mod] %q: %v => %v | %v", path, oldValue, value, mergingMapOrLoading)
+		}),
+	)
+
+	t.Logf("tests begins.")
+	conf.Set("app.server.port", 7300)
+	conf.Set("app.server.port", 7301)
+	conf.Set("app.server.tls.cert", "/tmp/cert.pem")
+	conf.Set("app.server.tls.priv", "/tmp/private-key.pem")
+	node, np, removed := conf.RemoveEx("app.server.tls.cert")
+	t.Logf("node %q (parent: %v) removed %v: %v", node.Key(), np.Key(), removed, node)
+	conf.Set("app.server.tls.priv", "/tmp/private-key.pem")
+	t.Logf("tests ends.")
+}
+
+//
+
+//
+
+//
+
 func assertTrue(t testing.TB, cond bool, msg ...any) { //nolint:govet //it's a printf/println dual interface
 	if cond {
 		return
@@ -172,8 +202,8 @@ func assertFalse(t testing.TB, cond bool, msg ...any) {
 	t.Fatalf("assertFalse failed: %s", mesg)
 }
 
-func newBasicStore() *storeS {
-	conf := New()
+func newBasicStore(opts ...Opt) *storeS {
+	conf := New(opts...)
 	conf.Set("app.debug", false)
 	// t.Logf("\nPath\n%v\n", conf.dump())
 	conf.Set("app.verbose", true)

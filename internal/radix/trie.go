@@ -150,22 +150,11 @@ func (s *trieS[T]) Has(path string) (found bool) {
 }
 
 func (s *trieS[T]) Remove(path string) (removed bool) { //nolint:revive
-	if s.prefix != "" {
-		path = s.join(s.prefix, path) //nolint:revive
-	}
-	node, parent, partialMatched := s.search(path)
-	found := node != nil && !partialMatched // && !node.isBranch()
-	if found {
-		if parent != nil {
-			removed = parent.remove(node)
-		} else {
-			logz.Warn("if given path found and return node, its parent MUST NOT be nil", "node", node, "parent", parent)
-		}
-	}
+	_, _, removed = s.RemoveEx(path)
 	return
 }
 
-func (s *trieS[T]) RemoveEx(path string) (nodeRemoved Node[T], removed bool) {
+func (s *trieS[T]) RemoveEx(path string) (nodeRemoved, nodeParent Node[T], removed bool) {
 	if s.prefix != "" {
 		path = s.join(s.prefix, path) //nolint:revive
 	}
@@ -175,7 +164,7 @@ func (s *trieS[T]) RemoveEx(path string) (nodeRemoved Node[T], removed bool) {
 		if parent != nil {
 			removed = parent.remove(node)
 			if removed {
-				nodeRemoved = parent
+				nodeRemoved, nodeParent = node, parent
 			}
 		} else {
 			logz.Warn("if given path found and return node, its parent MUST NOT be nil", "node", node, "parent", parent)

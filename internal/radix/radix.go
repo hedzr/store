@@ -19,8 +19,8 @@ type Trie[T any] interface {
 
 	// Remove and Merge, Special Operations for storeS
 
-	Remove(path string) (removed bool)                        // Remove a key and its children
-	RemoveEx(path string) (nodeRemoved Node[T], removed bool) // RemoveEx a key and its children
+	Remove(path string) (removed bool)                                // Remove a key and its children
+	RemoveEx(path string) (nodeRemoved, parent Node[T], removed bool) // RemoveEx a key and its children
 
 	Merge(pathAt string, data map[string]any) (err error) // advanced operation to Merge hierarchical data
 
@@ -57,6 +57,7 @@ type Node[T any] interface {
 
 	Data() T
 
+	Key() string
 	Description() string
 	Comment() string
 	Tag() any

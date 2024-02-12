@@ -72,6 +72,12 @@ type storeS struct {
 	parent           *storeS
 }
 
+var _ radix.TypedGetters = (*storeS)(nil) // assertion helper
+
+var _ Store = (*dummyS)(nil) // assertion helper
+
+var _ StoreT[any] = (*dummyS)(nil) // assertion helper
+
 // OnChangeHandler is called back when user setting key & value.
 //
 // mergingMapOrLoading is true means that user is setting key
@@ -187,7 +193,11 @@ func (s *storeS) Merge(pathAt string, data map[string]any) (err error) {
 func (s *storeS) setKV(path string, data any, createOrModify bool) (oldData any) {
 	oldData = s.Trie.Insert(path, data)
 	loading := s.inLoading()
-	s.tryOnSet(path, !loading, oldData, data, createOrModify)
+	user := !loading
+	if user && oldData != nil {
+		createOrModify = false
+	}
+	s.tryOnSet(path, user, oldData, data, createOrModify)
 	return
 }
 
@@ -220,7 +230,7 @@ retryPM:
 	}
 }
 
-func (s *storeS) tryOnDelete(path string, user bool, oldData any) {
+func (s *storeS) tryOnDelete(path string, user bool, oldData any, node, np radix.Node[any]) {
 	ptr := s
 retryPD:
 	for _, cb := range ptr.OnDeleteHandlers {
@@ -235,12 +245,22 @@ retryPD:
 }
 
 func (s *storeS) Remove(path string) (removed bool) {
-	var rmn radix.Node[any]
-	rmn, removed = s.Trie.RemoveEx(path)
+	var rmn, np radix.Node[any]
+	rmn, np, removed = s.Trie.RemoveEx(path)
 	if removed {
 		loading := s.inLoading()
 		data := rmn.Data()
-		s.tryOnDelete(path, !loading, data)
+		s.tryOnDelete(path, !loading, data, rmn, np)
+	}
+	return
+}
+
+func (s *storeS) RemoveEx(path string) (nodeRemoved, nodeParent radix.Node[any], removed bool) {
+	nodeRemoved, nodeParent, removed = s.Trie.RemoveEx(path)
+	if removed {
+		loading := s.inLoading()
+		data := nodeRemoved.Data()
+		s.tryOnDelete(path, !loading, data, nodeRemoved, nodeParent)
 	}
 	return
 }
