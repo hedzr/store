@@ -14,15 +14,20 @@ type dummyS struct{}
 
 var _ radix.TypedGetters = (*dummyS)(nil) // assertion helper
 
-func (s *dummyS) Close()                                                 {}
-func (s *dummyS) MustGet(path string) (data any)                         { return }
-func (s *dummyS) Get(path string) (data any, found bool)                 { return }
-func (s *dummyS) Set(path string, data any) (old any)                    { return }
-func (s *dummyS) SetComment(path, description, comment string) (ok bool) { return }
-func (s *dummyS) SetTag(path string, tags any) (ok bool)                 { return } // set extra notable data bound to a key
-func (s *dummyS) Remove(path string) (removed bool)                      { return }
-func (s *dummyS) Merge(pathAt string, data map[string]any) (err error)   { return }
-func (s *dummyS) Has(path string) (found bool)                           { return }
+var _ Store = (*dummyS)(nil) // assertion helper
+
+var _ StoreT[any] = (*dummyS)(nil) // assertion helper
+
+func (s *dummyS) Close()                                                                   {}
+func (s *dummyS) MustGet(path string) (data any)                                           { return }
+func (s *dummyS) Get(path string) (data any, found bool)                                   { return }
+func (s *dummyS) Set(path string, data any) (old any)                                      { return }
+func (s *dummyS) SetComment(path, description, comment string) (ok bool)                   { return }
+func (s *dummyS) SetTag(path string, tags any) (ok bool)                                   { return } // set extra notable data bound to a key
+func (s *dummyS) Remove(path string) (removed bool)                                        { return }
+func (s *dummyS) RemoveEx(path string) (nodeRemoved, parent radix.Node[any], removed bool) { return }
+func (s *dummyS) Merge(pathAt string, data map[string]any) (err error)                     { return }
+func (s *dummyS) Has(path string) (found bool)                                             { return }
 
 // Locate provides an advanced interface for locating a path.
 func (s *dummyS) Locate(path string) (node radix.Node[any], branch, partialMatched, found bool) {

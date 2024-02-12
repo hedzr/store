@@ -29,6 +29,8 @@ type nodeS[T any] struct {
 	nType       nodeType
 }
 
+var _ Node[any] = (*nodeS[any])(nil) // assertion helper
+
 type Extractor func(outputPtr any, defaultValue ...any) (err error)
 
 func (s *nodeS[T]) isBranch() bool      { return s.nType&NTMask == NTBranch }
@@ -36,6 +38,7 @@ func (s *nodeS[T]) hasData() bool       { return s.nType&NTData != 0 }
 func (s *nodeS[T]) Description() string { return s.description }
 func (s *nodeS[T]) Comment() string     { return s.comment }
 func (s *nodeS[T]) Tag() any            { return s.tag }
+func (s *nodeS[T]) Key() string         { return s.pathS }
 
 func (s *nodeS[T]) Data() (data T) {
 	if !s.isBranch() {

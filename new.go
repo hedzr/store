@@ -1,6 +1,7 @@
 package store
 
 import (
+	"context"
 	stderr "errors"
 	"io"
 
@@ -26,17 +27,17 @@ func NewStoreT[T any]() StoreT[T] {
 // 	Has(path string) (found bool)
 // }
 
-type entryS struct {
-	name  string
-	value Value
-}
-
-type storeSs struct {
-	root  *entryS
-	rootM map[string]any
-
-	items *itemS
-}
+// type entryS struct {
+// 	name  string
+// 	value Value
+// }
+//
+// type storeSs struct {
+// 	root  *entryS
+// 	rootM map[string]any
+//
+// 	items *itemS
+// }
 
 type itemS struct {
 	leaves   map[string]any
@@ -77,10 +78,13 @@ type Store interface {
 	// Has tests if the given path exists
 	Has(path string) (found bool)
 
+	// Locate provides an advanced interface for locating a path.
+	Locate(path string) (node radix.Node[any], branch, partialMatched, found bool)
+
 	radix.TypedGetters // getters
 
 	SetComment(path, description, comment string) (ok bool) // set extra meta-info bound to a key
-	SetTags(path string, tags any) (ok bool)                // set extra notable data bound to a key
+	SetTag(path string, tags any) (ok bool)                 // set extra notable data bound to a key
 
 	// Dump prints internal data tree for debugging
 	Dump() (text string)
@@ -139,7 +143,14 @@ type Store interface {
 	SetDelimiter(delimiter rune) // setter. Change it in runtime doesn't update old delimiter inside tree nodes.
 
 	// Load loads k-v pairs from external provider(s) with specified codec decoder(s).
-	Load(opts ...LoadOpt) (err error)
+	//
+	// For those provider which run some service at background, such
+	// as watching service, ctx gives a change to shut them down
+	// gracefully. So you need pass a cancellable context into it.
+	//
+	// Or you know nothing or you don't care the terminating security,
+	// simply passing context.TODO() is okay.
+	Load(ctx context.Context, opts ...LoadOpt) (err error)
 }
 
 type Dumpable interface {
