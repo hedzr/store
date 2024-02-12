@@ -1,6 +1,7 @@
 package store
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -8,11 +9,10 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/hedzr/is/basics"
 	logz "github.com/hedzr/logg/slog"
-	"github.com/hedzr/store/internal/radix"
-
 	"gopkg.in/hedzr/errors.v3"
+
+	"github.com/hedzr/store/internal/radix"
 )
 
 type loadS struct {
@@ -48,36 +48,59 @@ func WithPosition(position string) LoadOpt {
 	}
 }
 
+// WithStoreFlattenSlice can destruct slice/map as tree hierarchy
+// instead of treating it as a node value.
 func WithStoreFlattenSlice(b bool) LoadOpt {
 	return func(s *loadS) {
 		s.flattenSlice = b
 	}
 }
 
+// WithKeepPrefix can construct tree nodes hierarchy with the key prefix.
+//
+// By default, the prefix will be stripped from a given key path.
+//
+// For example, with a store set a prefix 'app.server',
+// `store.Put("app.server.tls", map[string]any{ "certs": "some/where.pem" }` will
+// produce the tree structure like:
+//
+//	app.
+//	  Server.
+//	    tls.
+//	      certs   => "some/where.pem"
+//
+// But if you enable keep-prefix setting, the code can only be written as:
+//
+//	store.Put("tls", map[string]any{ "certs": "some/where.pem" }
+//
+// We recommend using our default setting except that you knew what you want.
+// By using the default setting, i.e. keepPrefix == false, we will strip
+// the may-be-there prefix if necessary. So both "app.server.tls" and "tls"
+// will work properly as you really want.
 func WithKeepPrefix(b bool) radix.MOpt {
 	return radix.WithKeepPrefix(b)
 }
 
 func (s *storeS) inLoading() bool { return atomic.LoadInt32(&s.loading) == 1 }
 
-func (s *storeS) Load(opts ...LoadOpt) (err error) {
+func (s *storeS) Load(ctx context.Context, opts ...LoadOpt) (err error) {
 	if atomic.CompareAndSwapInt32(&s.loading, 0, 1) {
 		defer func() { atomic.CompareAndSwapInt32(&s.loading, 1, 0) }()
 
 		var loader = newLoader(s, opts...)
 
 		var data map[string]any
-		data, err = loader.tryLoad() // load dataset from source via loader
+		data, err = loader.tryLoad(ctx) // load dataset from source via loader
 		if err != nil {
 			return
 		}
 
 		// merge dataset into store
-		if err = loader.loadMap(data, loader.Prefix()); err != nil {
+		if err = loader.loadMap(data, loader.Prefix(), true); err != nil {
 			return
 		}
 
-		loader.startWatch(loader)
+		loader.startWatch(ctx, loader)
 	}
 	return
 }
@@ -109,7 +132,7 @@ func newLoader(st *storeS, opts ...LoadOpt) *loadS {
 	return loader
 }
 
-func (s *loadS) tryLoad() (data map[string]any, err error) {
+func (s *loadS) tryLoad(ctx context.Context) (data map[string]any, err error) {
 	var b []byte
 
 	data, err = s.provider.Read()
@@ -125,7 +148,7 @@ func (s *loadS) tryLoad() (data map[string]any, err error) {
 				if eol {
 					break
 				}
-				s.setKV(k, fp.MustValue(k))
+				s.setKV(k, fp.MustValue(k), true)
 			}
 		}
 	}
@@ -141,19 +164,19 @@ func (s *loadS) tryLoad() (data map[string]any, err error) {
 	return
 }
 
-func (s *storeS) loadMap(m map[string]any, position string) (err error) {
+func (s *storeS) loadMap(m map[string]any, position string, creating bool) (err error) {
 	ec := errors.New()
 	defer ec.Defer(&err)
 	for k, v := range m {
-		s.loadMapByValueType(ec, m, position, k, v)
+		s.loadMapByValueType(ec, m, position, k, v, creating)
 	}
 	return
 }
 
-func (s *storeS) loadMapByValueType(ec errors.Error, m map[string]any, position, k string, v any) {
+func (s *storeS) loadMapByValueType(ec errors.Error, m map[string]any, position, k string, v any, creating bool) {
 	switch vv := v.(type) {
 	case map[string]any:
-		ec.Attach(s.loadMap(vv, s.join(position, k)))
+		ec.Attach(s.loadMap(vv, s.join(position, k), creating))
 	case []map[string]any:
 		if s.flattenSlice {
 			buf := make([]byte, 0, len(k)+16)
@@ -161,12 +184,12 @@ func (s *storeS) loadMapByValueType(ec errors.Error, m map[string]any, position,
 				buf = append(buf, k...)
 				buf = append(buf, byte(s.Delimiter()))
 				buf = strconv.AppendInt(buf, int64(i), 10)
-				ec.Attach(s.loadMap(mm, s.join(position, string(buf))))
+				ec.Attach(s.loadMap(mm, s.join(position, string(buf)), creating))
 				buf = buf[:0]
 			}
 			break
 		}
-		s.WithPrefixReplaced(position).setKV(k, v)
+		s.WithPrefixReplaced(position).setKV(k, v, creating)
 	case []any:
 		if s.flattenSlice {
 			buf := make([]byte, 0, len(k)+16)
@@ -178,21 +201,24 @@ func (s *storeS) loadMapByValueType(ec errors.Error, m map[string]any, position,
 				buf = append(buf, k...)
 				buf = append(buf, byte(s.Delimiter()))
 				buf = strconv.AppendInt(buf, int64(i), 10)
-				s.loadMapByValueType(ec, m, position, string(buf), mm)
+				s.loadMapByValueType(ec, m, position, string(buf), mm, creating)
 				buf = buf[:0]
 			}
 			break
 		}
-		s.WithPrefixReplaced(position).setKV(k, v)
+		s.WithPrefixReplaced(position).setKV(k, v, creating)
 	default:
-		s.WithPrefixReplaced(position).setKV(k, v)
+		s.WithPrefixReplaced(position).setKV(k, v, creating)
 	}
 	return
 }
 
 type Watchable interface {
-	Watch(cb func(event any, err error)) error
-	basics.Peripheral
+	Watch(ctx context.Context, cb func(event any, err error)) error
+
+	// Close provides a closer to cleanup the peripheral gracefully
+	Close()
+	// basics.Peripheral
 }
 
 type Change interface {
@@ -285,12 +311,12 @@ func (s Op) Marshal() []byte {
 	return nil
 }
 
-func (s *storeS) startWatch(loader *loadS) {
+func (s *storeS) startWatch(ctx context.Context, loader *loadS) {
 	if loader.provider == nil {
 		return
 	}
 	if w, ok := loader.provider.(Watchable); ok {
-		if err := w.Watch(s.applyExternalChanges); err != nil {
+		if err := w.Watch(ctx, s.applyExternalChanges); err != nil {
 			logz.Error("[Watcher.StartWatch.ERROR]", "err", err)
 		} else {
 			s.closers = append(s.closers, w)
@@ -313,15 +339,25 @@ func (s *storeS) applyChanges(ev Change) {
 	// if err := s.Load(WithProvider(ev.Provider())); err != nil {
 	// 	logz.Error("[Watcher.applyChanges]", "err", err)
 	// }
-	if ev.Has(OpCreate) || ev.Has(OpWrite) {
-		logz.Debug("debug create/write")
+	if ev.Has(OpCreate) {
+		logz.Debug("debug create")
 		for {
 			key, val, ok := ev.Next()
 			if !ok {
 				break
 			}
-			s.Set(key, val)
-			logz.Print("create/modify: ", key, s.MustGet(key), "event", ev.Op())
+			s.setKV(key, val, true)
+			logz.Debug("created: ", key, s.MustGet(key), "event", ev.Op())
+		}
+	} else if ev.Has(OpWrite) {
+		logz.Debug("debug write")
+		for {
+			key, val, ok := ev.Next()
+			if !ok {
+				break
+			}
+			s.setKV(key, val, false)
+			logz.Debug("modified: ", key, s.MustGet(key), "event", ev.Op())
 		}
 	} else if ev.Has(OpRename) {
 		logz.Debug("debug rename")
@@ -331,7 +367,7 @@ func (s *storeS) applyChanges(ev Change) {
 				break
 			}
 			// s.Set(key, val)
-			logz.Print("rename: ", key, s.MustGet(key), "event", ev.Op())
+			logz.Debug("renamed: ", key, s.MustGet(key), "event", ev.Op())
 		}
 	} else if ev.Has(OpRemove) {
 		logz.Debug("debug remove")
@@ -341,7 +377,7 @@ func (s *storeS) applyChanges(ev Change) {
 				break
 			}
 			s.Remove(key)
-			logz.Print("removed: ", key, val, "event", ev.Op())
+			logz.Debug("removed: ", key, val, "event", ev.Op())
 		}
 	} else if ev.Has(OpChmod) {
 		logz.Debug("debug chmod")
@@ -351,7 +387,7 @@ func (s *storeS) applyChanges(ev Change) {
 				break
 			}
 			// s.Set(key, nil)
-			logz.Print("chmod: ", key, val, "event", ev.Op())
+			logz.Debug("chmod: ", key, val, "event", ev.Op())
 		}
 	}
 }
