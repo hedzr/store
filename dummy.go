@@ -1,6 +1,7 @@
 package store
 
 import (
+	"context"
 	"time"
 
 	"github.com/hedzr/store/internal/radix"
@@ -18,10 +19,15 @@ func (s *dummyS) MustGet(path string) (data any)                         { retur
 func (s *dummyS) Get(path string) (data any, found bool)                 { return }
 func (s *dummyS) Set(path string, data any) (old any)                    { return }
 func (s *dummyS) SetComment(path, description, comment string) (ok bool) { return }
-func (s *dummyS) SetTags(path string, tags any) (ok bool)                { return } // set extra notable data bound to a key
+func (s *dummyS) SetTag(path string, tags any) (ok bool)                 { return } // set extra notable data bound to a key
 func (s *dummyS) Remove(path string) (removed bool)                      { return }
 func (s *dummyS) Merge(pathAt string, data map[string]any) (err error)   { return }
 func (s *dummyS) Has(path string) (found bool)                           { return }
+
+// Locate provides an advanced interface for locating a path.
+func (s *dummyS) Locate(path string) (node radix.Node[any], branch, partialMatched, found bool) {
+	return
+}
 
 func (s *dummyS) GetString(path string, defaultVal ...string) (ret string, err error)        { return }
 func (s *dummyS) MustString(path string, defaultVal ...string) (ret string)                  { return }
@@ -246,13 +252,13 @@ func (s *dummyS) GetM(path string, opt ...radix.MOpt) (ret map[string]any, err e
 func (s *dummyS) MustM(path string, opt ...radix.MOpt) (ret map[string]any)              { return }
 func (s *dummyS) GetSectionFrom(path string, holder any, opts ...radix.MOpt) (err error) { return }
 
-func (s *dummyS) Dump() (text string)                                 { return }
-func (s *dummyS) Clone() (newStore *storeS)                           { return }
-func (s *dummyS) Dup() (newStore *storeS)                             { return }
-func (s *dummyS) WithPrefix(prefix string) (newStore *storeS)         { return }
-func (s *dummyS) WithPrefixReplaced(prefix string) (newStore *storeS) { return }
-func (s *dummyS) SetPrefix(prefix string)                             { return }
-func (s *dummyS) Prefix() string                                      { return "" }
-func (s *dummyS) Delimiter() rune                                     { return 0 }
-func (s *dummyS) SetDelimiter(delimiter rune)                         { return }
-func (s *dummyS) Load(opts ...LoadOpt) (err error)                    { return }
+func (s *dummyS) Dump() (text string)                                   { return }
+func (s *dummyS) Clone() (newStore *storeS)                             { return }
+func (s *dummyS) Dup() (newStore *storeS)                               { return }
+func (s *dummyS) WithPrefix(prefix string) (newStore *storeS)           { return }
+func (s *dummyS) WithPrefixReplaced(prefix string) (newStore *storeS)   { return }
+func (s *dummyS) SetPrefix(prefix string)                               { return }
+func (s *dummyS) Prefix() string                                        { return "" }
+func (s *dummyS) Delimiter() rune                                       { return 0 }
+func (s *dummyS) SetDelimiter(delimiter rune)                           { return }
+func (s *dummyS) Load(ctx context.Context, opts ...LoadOpt) (err error) { return }

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"sync"
 
-	"github.com/hedzr/is/basics"
 	"github.com/hedzr/store/internal/radix"
 )
 
@@ -56,16 +55,21 @@ func WithFlattenSlice(b bool) Opt {
 
 type Opt func(s *storeS) // Opt(ions) for New Store
 
+type Peripheral interface {
+	Close()
+}
+
 // storeS is a in-memory key-value container with tree structure.
 // The keys are typically dotted to represent the tree position.
 type storeS struct {
 	radix.Trie[any]
 	loading          int32
-	closers          []basics.Peripheral
+	closers          []Peripheral
 	onChangeHandlers []OnChangeHandler
 	onNewHandlers    []OnNewHandler
 	OnDeleteHandlers []OnDeleteHandler
 	flattenSlice     bool
+	parent           *storeS
 }
 
 // OnChangeHandler is called back when user setting key & value.
@@ -158,7 +162,7 @@ func (s *storeS) Set(path string, data any) (oldData any) {
 		oldData = old
 	}
 
-	oldData = s.setKV(path, data)
+	oldData = s.setKV(path, data, !found)
 	// s.tryOnSet(path, false, old, data)
 	return
 }
@@ -175,32 +179,80 @@ func (s *storeS) Merge(pathAt string, data map[string]any) (err error) {
 		return
 	}
 
-	err = s.loadMap(data, pathAt)
+	err = s.loadMap(data, pathAt, false)
 	// s.tryOnSet(pathAt, true, old, data)
 	return
 }
 
-func (s *storeS) setKV(path string, data any) (oldData any) {
+func (s *storeS) setKV(path string, data any, createOrModify bool) (oldData any) {
 	oldData = s.Trie.Insert(path, data)
 	loading := s.inLoading()
-	s.tryOnSet(path, !loading, oldData, data)
+	s.tryOnSet(path, !loading, oldData, data, createOrModify)
 	return
 }
 
-func (s *storeS) tryOnSet(path string, user bool, oldData, data any) {
-	for _, cb := range s.onChangeHandlers {
+func (s *storeS) tryOnSet(path string, user bool, oldData, data any, createOrModify bool) {
+	ptr := s
+
+	if createOrModify {
+	retryPN:
+		for _, cb := range ptr.onNewHandlers {
+			if cb != nil {
+				cb(path, data, user)
+			}
+		}
+		if ptr.parent != nil {
+			ptr = ptr.parent
+			goto retryPN
+		}
+		return
+	}
+
+retryPM:
+	for _, cb := range ptr.onChangeHandlers {
 		if cb != nil {
 			cb(path, data, oldData, user)
 		}
 	}
+	if ptr.parent != nil {
+		ptr = ptr.parent
+		goto retryPM
+	}
 }
 
-func (s *storeS) tryOnDelete(path string, user bool, data any) {
+func (s *storeS) tryOnDelete(path string, user bool, oldData any) {
+	ptr := s
+retryPD:
+	for _, cb := range ptr.OnDeleteHandlers {
+		if cb != nil {
+			cb(path, oldData, user)
+		}
+	}
+	if ptr.parent != nil {
+		ptr = ptr.parent
+		goto retryPD
+	}
+}
+
+func (s *storeS) Remove(path string) (removed bool) {
+	var rmn radix.Node[any]
+	rmn, removed = s.Trie.RemoveEx(path)
+	if removed {
+		loading := s.inLoading()
+		data := rmn.Data()
+		s.tryOnDelete(path, !loading, data)
+	}
+	return
 }
 
 // Has tests if the given path exists
 func (s *storeS) Has(path string) (found bool) {
 	return s.Trie.Search(path)
+}
+
+// Locate provides an advanced interface for locating a path.
+func (s *storeS) Locate(path string) (node radix.Node[any], branch, partialMatched, found bool) {
+	return s.Trie.Locate(path)
 }
 
 // Dump prints internal data tree for debugging
@@ -244,7 +296,7 @@ func (s *storeS) Dup() (newStore *storeS) {
 // A [Delimiter] will be inserted at jointing prefix and key. Also at
 // jointing old and new prefix.
 func (s *storeS) WithPrefix(prefix string) (newStore *storeS) {
-	return &storeS{Trie: s.Trie.WithPrefix(prefix), flattenSlice: s.flattenSlice}
+	return &storeS{parent: s, Trie: s.Trie.WithPrefix(prefix), flattenSlice: s.flattenSlice}
 	// return s.withPrefixR(prefix)
 }
 
@@ -258,7 +310,7 @@ func (s *storeS) WithPrefix(prefix string) (newStore *storeS) {
 //
 // A [Delimiter] will be inserted at jointing prefix and key.
 func (s *storeS) WithPrefixReplaced(prefix string) (newStore *storeS) {
-	return &storeS{Trie: s.Trie.WithPrefixReplaced(prefix), flattenSlice: s.flattenSlice}
+	return &storeS{parent: s, Trie: s.Trie.WithPrefixReplaced(prefix), flattenSlice: s.flattenSlice}
 }
 
 // SetPrefix updates the prefix in current storeS.
