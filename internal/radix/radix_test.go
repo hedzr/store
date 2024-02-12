@@ -121,7 +121,8 @@ func TestTrieS_Merge(t *testing.T) {
 	}
 	t.Logf("\nPath\n%v\n", trie.Dump())
 
-	assertTrue(t, slices.Equal(trie.MustGet("app.debug.map.tag").([]string), []string{"delve", "verbose"}), `expecting trie.Get("app.debug.map.tag") return '[delve verbose]'`)
+	assertTrue(t, slices.Equal(trie.MustGet("app.debug.map.tag").([]string), []string{"delve", "verbose"}),
+		`expecting trie.Get("app.debug.map.tag") return '[delve verbose]'`)
 }
 
 func TestTrieS_WithPrefix(t *testing.T) {
@@ -188,11 +189,11 @@ func TestTrieS_Query(t *testing.T) {
 		{"app.", true, nil},
 		{"a", false, nil},
 	} {
-		if data, _, found, _ := trie.Query(c.query); found == c.found && data == c.data {
+		data, _, found, _ := trie.Query(c.query)
+		if found == c.found && data == c.data {
 			continue
-		} else {
-			t.Fatalf("%5d. querying %q and got (%v, %v), but expecting (%v, %v)", i, c.query, found, data, c.found, c.data)
 		}
+		t.Fatalf("%5d. querying %q and got (%v, %v), but expecting (%v, %v)", i, c.query, found, data, c.found, c.data)
 	}
 }
 
@@ -248,7 +249,6 @@ func TestTrieS_GetM(t *testing.T) {
 	trie.Insert("app.server.sites", 1)
 	ret := trie.dump(true)
 	t.Logf("\nPath\n%v\n", ret)
-
 }
 
 //
@@ -257,7 +257,7 @@ func TestTrieS_GetM(t *testing.T) {
 
 //
 
-func assertTrue(t testing.TB, cond bool, msg ...any) {
+func assertTrue(t testing.TB, cond bool, msg ...any) { //nolint:revive
 	if cond {
 		return
 	}
@@ -274,7 +274,7 @@ func assertTrue(t testing.TB, cond bool, msg ...any) {
 	t.Fatalf("assertTrue failed: %s", mesg)
 }
 
-func assertFalse(t testing.TB, cond bool, msg ...any) {
+func assertFalse(t testing.TB, cond bool, msg ...any) { //nolint:revive
 	if !cond {
 		return
 	}

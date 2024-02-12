@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	evendeep "github.com/hedzr/evendeep"
+	"github.com/hedzr/evendeep"
 
 	"github.com/hedzr/is/term/color"
 )
@@ -44,18 +44,18 @@ func (s *nodeS[T]) Data() (data T) {
 	return
 }
 
-func (s *nodeS[T]) endsWith(ch rune) bool {
+func (s *nodeS[T]) endsWith(ch rune) bool { //nolint:revive
 	if len(s.path) == 0 {
 		return false
 	}
 	return s.path[len(s.path)-1] == ch
 }
 
-func (s *nodeS[T]) endsWithLite(ch rune) bool {
+func (s *nodeS[T]) endsWithLite(ch rune) bool { //nolint:revive,unused
 	return s.path[len(s.path)-1] == ch
 }
 
-func (s *nodeS[T]) remove(item *nodeS[T]) (removed bool) {
+func (s *nodeS[T]) remove(item *nodeS[T]) (removed bool) { //nolint:revive
 	if item == nil {
 		return
 	}
@@ -76,10 +76,10 @@ func (s *nodeS[T]) findCommonPrefixLength(word []rune) (length int) {
 	return
 }
 
-func (s *nodeS[T]) insertInternal(word []rune, fullPath string, data T) (oldData any) {
+func (s *nodeS[T]) insertInternal(word []rune, fullPath string, data T) (oldData any) { //nolint:revive
 	if strings.Contains(string(word), " ") {
-		word = []rune(strings.ReplaceAll(string(word), " ", "-"))
-		fullPath = strings.ReplaceAll(fullPath, " ", "-")
+		word = []rune(strings.ReplaceAll(string(word), " ", "-")) //nolint:revive
+		fullPath = strings.ReplaceAll(fullPath, " ", "-")         //nolint:revive
 	}
 
 	base, ourLen, wordLen := s, len(s.path), len(word)
@@ -104,7 +104,7 @@ func (s *nodeS[T]) insertInternal(word []rune, fullPath string, data T) (oldData
 	if cpl < wordLen {
 		// eg: insert 'apple' into 'app'
 		if cpl > 0 {
-			word = word[cpl:]
+			word = word[cpl:] //nolint:revive
 		}
 		matched, child := base.matchChildren(word)
 		if matched {
@@ -120,7 +120,7 @@ func (s *nodeS[T]) insertInternal(word []rune, fullPath string, data T) (oldData
 	return
 }
 
-func (s *nodeS[T]) split(pos int, word []rune) (newNode *nodeS[T]) {
+func (s *nodeS[T]) split(pos int, word []rune) (newNode *nodeS[T]) { //nolint:unparam,revive
 	// origPath, origPathS := s.path, s.pathS
 	// if assertEnabled {
 	// 	defer func() {
@@ -171,7 +171,7 @@ func (s *nodeS[T]) matchChildren(word []rune) (matched bool, child *nodeS[T]) {
 	return
 }
 
-func (s *nodeS[T]) matchR(word []rune, delimiter rune, parentNode *nodeS[T]) (matched, partialMatched bool, child, parent *nodeS[T]) {
+func (s *nodeS[T]) matchR(word []rune, delimiter rune, parentNode *nodeS[T]) (matched, partialMatched bool, child, parent *nodeS[T]) { //nolint:revive
 	wl, l := len(word), len(s.path)
 	if wl == 0 {
 		return true, false, s, parentNode
@@ -211,54 +211,56 @@ func (s *nodeS[T]) matchR(word []rune, delimiter rune, parentNode *nodeS[T]) (ma
 	return
 }
 
-func (s *nodeS[T]) dump(noColor bool) string {
+func (s *nodeS[T]) dump(noColor bool) string { //nolint:revive
 	var sb strings.Builder
 	return s.dumpR(&sb, 0, noColor)
 }
 
-const col1Width = 32
-const branchTitle = "<B>"
-const leafTitle = "<L>"
+const (
+	col1Width   = 32
+	branchTitle = "<B>"
+	leafTitle   = "<L>"
+)
 
-func (s *nodeS[T]) dumpR(sb *strings.Builder, lvl int, noColor bool) string {
-	sb.WriteString(strings.Repeat("  ", lvl))
+func (s *nodeS[T]) dumpR(sb *strings.Builder, lvl int, noColor bool) string { //nolint:revive
+	_, _ = sb.WriteString(strings.Repeat("  ", lvl))
 	if len(s.path) == 0 {
 		if lvl > 0 {
-			sb.WriteString("(nil)\n")
+			_, _ = sb.WriteString("(nil)\n")
 		}
 	} else {
-		sb.WriteString(string(s.path))
+		_, _ = sb.WriteString(string(s.path))
 		if col1Width-lvl*2-len(s.path) > 0 {
-			sb.WriteString(strings.Repeat(" ", col1Width-lvl*2-len(s.path)))
+			_, _ = sb.WriteString(strings.Repeat(" ", col1Width-lvl*2-len(s.path)))
 		} else {
-			sb.WriteByte(' ')
+			_ = sb.WriteByte(' ')
 		}
 
 		if noColor {
 			if s.isBranch() {
-				sb.WriteString(branchTitle)
+				_, _ = sb.WriteString(branchTitle)
 			} else {
-				sb.WriteString(leafTitle)
+				_, _ = sb.WriteString(leafTitle)
 			}
 		} else {
 			if s.isBranch() {
-				sb.WriteString(color.ToDim(branchTitle))
+				_, _ = sb.WriteString(color.ToDim(branchTitle))
 			} else {
-				sb.WriteString(color.ToDim(leafTitle))
+				_, _ = sb.WriteString(color.ToDim(leafTitle))
 			}
 		}
 
 		if s.hasData() {
-			sb.WriteString(" ")
-			sb.WriteString(s.pathS)
-			sb.WriteString(" => ")
-			sb.WriteString(color.ToDim(fmt.Sprint(s.data)))
+			_, _ = sb.WriteString(" ")
+			_, _ = sb.WriteString(s.pathS)
+			_, _ = sb.WriteString(" => ")
+			_, _ = sb.WriteString(color.ToDim(fmt.Sprint(s.data)))
 		}
 
 		if !strings.HasSuffix(s.pathS, string(s.path)) {
-			sb.WriteString(fmt.Sprintf(" [WRONG path & pathS: %q / %q]", string(s.path), s.pathS))
+			_, _ = fmt.Fprintf(sb, " [WRONG path & pathS: %q / %q]", string(s.path), s.pathS)
 		}
-		sb.WriteByte('\n')
+		_ = sb.WriteByte('\n')
 	}
 
 	for _, child := range s.children {
@@ -267,7 +269,7 @@ func (s *nodeS[T]) dumpR(sb *strings.Builder, lvl int, noColor bool) string {
 	return sb.String()
 }
 
-func (s *nodeS[T]) Dup() (newNode *nodeS[T]) {
+func (s *nodeS[T]) Dup() (newNode *nodeS[T]) { //nolint:revive
 	newNode = &nodeS[T]{
 		path:  s.path,
 		pathS: s.pathS,
@@ -281,10 +283,10 @@ func (s *nodeS[T]) Dup() (newNode *nodeS[T]) {
 
 	data := evendeep.MakeClone(s.data)
 	switch z := data.(type) {
-	case T:
-		newNode.data = z
 	case *T:
 		newNode.data = *z
+	case T:
+		newNode.data = z
 	}
 	return
 }
@@ -293,7 +295,7 @@ func (s *nodeS[T]) Walk(cb func(prefix, key string, node *nodeS[T])) {
 	s.walk(0, cb)
 }
 
-func (s *nodeS[T]) walk(level int, cb func(prefix, key string, node *nodeS[T])) {
+func (s *nodeS[T]) walk(level int, cb func(prefix, key string, node *nodeS[T])) { //nolint:revive
 	cb(s.pathS, string(s.path), s)
 	for _, ch := range s.children {
 		ch.walk(level+1, cb)

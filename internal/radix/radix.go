@@ -6,7 +6,6 @@ import (
 
 // Trie tree, radix-tree
 type Trie[T any] interface {
-
 	// Insert and Search, more Basic Trie Operations
 
 	Insert(path string, data T) (oldData any)                                // Insert data (T) to path
@@ -66,4 +65,5 @@ type Node[T any] interface {
 const NoDelimiter rune = 0
 
 type HandlersChain func(c ctx.Ctx, next Handler)
+
 type Handler func(c ctx.Ctx)

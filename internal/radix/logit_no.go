@@ -2,6 +2,6 @@
 
 package radix
 
-func tip(msg ...any) {}
+func tip(msg ...any) {} //nolint:revive
 
-const tipEnabled = false
+const tipEnabled = false //nolint:unused

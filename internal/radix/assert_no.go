@@ -3,8 +3,8 @@
 
 package radix
 
-const assertEnabled = false
+const assertEnabled = false //nolint:unused
 
-var assertAlwaysStop = false
+var assertAlwaysStop = false //nolint:revive,unused
 
-func assert(cond bool, msg ...any) {}
+func assert(cond bool, msg ...any) {} //nolint:revive

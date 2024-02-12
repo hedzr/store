@@ -31,11 +31,11 @@ type Source struct {
 // 	return
 // }
 
-func getpc(skip int, extra ...int) (pc uintptr) {
+func getpc(skip int, extra ...int) (pc uintptr) { //nolint:unused
 	var pcs [1]uintptr
 	for _, ee := range extra {
 		if ee > 0 {
-			skip += ee
+			skip += ee //nolint:revive
 		}
 	}
 	runtime.Callers(skip+1, pcs[:])
@@ -43,7 +43,7 @@ func getpc(skip int, extra ...int) (pc uintptr) {
 	return
 }
 
-func getpcsource(pc uintptr) Source {
+func getpcsource(pc uintptr) Source { //nolint:unused
 	frames := runtime.CallersFrames([]uintptr{pc})
 	frame, _ := frames.Next()
 	return Source{
@@ -53,9 +53,9 @@ func getpcsource(pc uintptr) Source {
 	}
 }
 
-func checkpath(file string) string { return file }
+func checkpath(file string) string { return file } //nolint:unused
 
-func stack(skip, nFrames int) string {
+func stack(skip, nFrames int) string { //nolint:unused
 	pcs := make([]uintptr, nFrames+1)
 	n := runtime.Callers(skip+1, pcs)
 	if n == 0 {
@@ -66,13 +66,13 @@ func stack(skip, nFrames int) string {
 	i := 0
 	for {
 		frame, more := frames.Next()
-		fmt.Fprintf(&b, "called from %s (%s:%d)\n", frame.Function, frame.File, frame.Line)
+		_, _ = fmt.Fprintf(&b, "called from %s (%s:%d)\n", frame.Function, frame.File, frame.Line)
 		if !more {
 			break
 		}
 		i++
 		if i >= nFrames {
-			fmt.Fprintf(&b, "(rest of stack elided)\n")
+			_, _ = fmt.Fprintf(&b, "(rest of stack elided)\n")
 			break
 		}
 	}

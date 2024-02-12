@@ -66,5 +66,4 @@ func (s *trieS[T]) loadMapByValueType(ec errors.Error, m map[string]any, k strin
 	default:
 		s.Set(k, v.(T))
 	}
-	return
 }

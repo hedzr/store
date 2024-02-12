@@ -6,8 +6,9 @@ import (
 	"strings"
 	"time"
 
-	evendeep "github.com/hedzr/evendeep"
+	"github.com/hedzr/evendeep"
 	logz "github.com/hedzr/logg/slog"
+
 	"gopkg.in/yaml.v3"
 )
 
@@ -231,11 +232,12 @@ type TypedTimeGetters interface {
 }
 
 var _ TypedGetters = (*trieS[any])(nil) // assertion helper
-var _ Trie[any] = (*trieS[any])(nil)    // assertion helper
+
+var _ Trie[any] = (*trieS[any])(nil) // assertion helper
 
 var converter = evendeep.Cvt{}
 
-func (s *trieS[T]) GetR(path string, defaultVal ...map[string]any) (ret map[string]any, err error) {
+func (s *trieS[T]) GetR(path string, defaultVal ...map[string]any) (ret map[string]any, err error) { //nolint:revive
 	var (
 		found, partialMatched, branch bool
 		node                          *nodeS[T]
@@ -304,7 +306,7 @@ func (s *trieS[T]) MustR(path string, defaultVal ...map[string]any) (ret map[str
 
 //
 
-func (s *trieS[T]) GetM(path string, opts ...MOpt) (ret map[string]any, err error) {
+func (s *trieS[T]) GetM(path string, opts ...MOpt) (ret map[string]any, err error) { //nolint:revive
 	var (
 		found, partialMatched, branch bool
 		node                          *nodeS[T]
@@ -424,7 +426,6 @@ func (s *prefixPutter) put(m map[string]any, prefix, delimiter string, v any) {
 		return
 	}
 	s.putKeys(m, keys, v)
-	return
 }
 
 func (s *prefixPutter) putKeys(m map[string]any, keys []string, v any) {
@@ -440,7 +441,7 @@ func (s *prefixPutter) putKeys(m map[string]any, keys []string, v any) {
 	if c, ok := m[k]; ok {
 		if cm, ok := c.(map[string]any); ok {
 			s.putKeys(cm, rest, v)
-		} else {
+		} else { //nolint:staticcheck,revive
 			// ? panic
 		}
 	} else {
@@ -607,6 +608,7 @@ func (s *trieS[T]) MustInt32(path string, defaultVal ...int32) (ret int32) {
 	}
 	return
 }
+
 func (s *trieS[T]) GetInt16(path string, defaultVal ...int16) (ret int16, err error) {
 	var found bool
 	var data any
@@ -632,6 +634,7 @@ func (s *trieS[T]) MustInt16(path string, defaultVal ...int16) (ret int16) {
 	}
 	return
 }
+
 func (s *trieS[T]) GetInt8(path string, defaultVal ...int8) (ret int8, err error) {
 	var found bool
 	var data any
@@ -1317,9 +1320,9 @@ func (s *trieS[T]) MustKibibytes(key string, defaultVal ...uint64) (ir64 uint64)
 func (s *trieS[T]) FromKibiBytes(sz string) (ir64 uint64) {
 	// var suffixes = []string {"B","KB","MB","GB","TB","PB","EB","ZB","YB"}
 	const suffix = "kmgtpezyKMGTPEZY"
-	sz = strings.TrimSpace(sz)
-	sz = strings.TrimRight(sz, "iB")
-	sz = strings.TrimRight(sz, "ib")
+	sz = strings.TrimSpace(sz)       //nolint:revive
+	sz = strings.TrimRight(sz, "iB") //nolint:revive
+	sz = strings.TrimRight(sz, "ib") //nolint:revive
 	szr := strings.TrimSpace(strings.TrimRightFunc(sz, func(r rune) bool {
 		return strings.ContainsRune(suffix, r)
 	}))
@@ -1340,7 +1343,7 @@ func (s *trieS[T]) FromKibiBytes(sz string) (ir64 uint64) {
 	return
 }
 
-func (s *trieS[T]) fromKibiBytes(r rune) (times uint64) {
+func (s *trieS[T]) fromKibiBytes(r rune) (times uint64) { //nolint:revive
 	switch r {
 	case 'k', 'K':
 		return 1024
@@ -1403,9 +1406,9 @@ func (s *trieS[T]) MustKilobytes(key string, defaultVal ...uint64) (ir64 uint64)
 func (s *trieS[T]) FromKiloBytes(sz string) (ir64 uint64) {
 	// var suffixes = []string {"B","KB","MB","GB","TB","PB","EB","ZB","YB"}
 	const suffix = "kmgtpezyKMGTPEZY"
-	sz = strings.TrimSpace(sz)
-	sz = strings.TrimRight(sz, "B")
-	sz = strings.TrimRight(sz, "b")
+	sz = strings.TrimSpace(sz)      //nolint:revive
+	sz = strings.TrimRight(sz, "B") //nolint:revive
+	sz = strings.TrimRight(sz, "b") //nolint:revive
 	szr := strings.TrimSpace(strings.TrimRightFunc(sz, func(r rune) bool {
 		return strings.ContainsRune(suffix, r)
 	}))
@@ -1426,7 +1429,7 @@ func (s *trieS[T]) FromKiloBytes(sz string) (ir64 uint64) {
 	return
 }
 
-func (s *trieS[T]) fromKilobytes(r rune) (times uint64) {
+func (s *trieS[T]) fromKilobytes(r rune) (times uint64) { //nolint:revive
 	switch r {
 	case 'k', 'K':
 		return 1000
