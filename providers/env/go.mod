@@ -2,13 +2,13 @@ module github.com/hedzr/store/providers/env
 
 go 1.21
 
-//replace gopkg.in/hedzr/errors.v3 => ../../../../24/libs.errors
+// replace gopkg.in/hedzr/errors.v3 => ../../../../24/libs.errors
 
-//replace github.com/hedzr/go-errors/v2 => ../../../libs.errors
+// replace github.com/hedzr/go-errors/v2 => ../../../libs.errors
 
-//replace github.com/hedzr/evendeep => ../../../libs.diff
+// replace github.com/hedzr/evendeep => ../../../libs.diff
 
-//replace github.com/hedzr/env => ../../../libs.env
+// replace github.com/hedzr/env => ../../../libs.env
 
 // replace github.com/hedzr/is => ../../../libs.is
 

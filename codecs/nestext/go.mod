@@ -2,13 +2,13 @@ module github.com/hedzr/store/codecs/nestext
 
 go 1.21
 
-//replace gopkg.in/hedzr/errors.v3 => ../../../../24/libs.errors
+// replace gopkg.in/hedzr/errors.v3 => ../../../../24/libs.errors
 
-//replace github.com/hedzr/evendeep => ../../../libs.diff
+// replace github.com/hedzr/evendeep => ../../../libs.diff
 
-//replace github.com/hedzr/go-errors/v2 => ../../../libs.errors
+// replace github.com/hedzr/go-errors/v2 => ../../../libs.errors
 
-//replace github.com/hedzr/env => ../../../libs.env
+// replace github.com/hedzr/env => ../../../libs.env
 
 // replace github.com/hedzr/is => ../../../libs.is
 
@@ -16,7 +16,7 @@ go 1.21
 
 replace github.com/hedzr/store => ../..
 
-//replace github.com/hedzr/store/providers/file => ../../providers/file
+// replace github.com/hedzr/store/providers/file => ../../providers/file
 
 require (
 	github.com/hedzr/store v0.0.0-00010101000000-000000000000
