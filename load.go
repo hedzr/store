@@ -135,9 +135,11 @@ func newLoader(st *storeS, opts ...LoadOpt) *loadS {
 func (s *loadS) tryLoad(ctx context.Context) (data map[string]any, err error) {
 	var b []byte
 
+	// try Read() at first
 	data, err = s.provider.Read()
 
 	if errors.Is(err, NotImplemented) {
+		// the 2nd is OnceProvider and/or StreamProvider
 		switch fp := s.provider.(type) {
 		case OnceProvider:
 			b, err = fp.ReadBytes()
@@ -156,9 +158,11 @@ func (s *loadS) tryLoad(ctx context.Context) (data map[string]any, err error) {
 		return
 	}
 
+	// Decode it after loaded
 	if s.codec != nil {
 		data, err = s.codec.Unmarshal(b)
 	} else if data == nil {
+		// or fallback to json decoder
 		err = json.Unmarshal(b, &data)
 	}
 	return

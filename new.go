@@ -218,8 +218,8 @@ type FallbackProvider interface {
 }
 
 type ProviderSupports interface {
-	GetCodec() (codec Codec)
-	GetPosition() (pos string)
+	GetCodec() (codec Codec)   // return the bound codec decoder
+	GetPosition() (pos string) // return a position pointed to trie node path
 	WithCodec(codec Codec)
 	WithPosition(pos string)
 }
