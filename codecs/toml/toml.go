@@ -3,7 +3,7 @@ package toml
 import (
 	"github.com/hedzr/store"
 
-	"github.com/pelletier/go-toml"
+	"github.com/pelletier/go-toml/v2"
 )
 
 func New() store.Codec {
