@@ -23,7 +23,8 @@ replace github.com/hedzr/store => ../..
 // replace github.com/hedzr/store/codecs/yaml => ../../codecs/yaml
 
 require (
-	github.com/hashicorp/consul/api v1.26.1
+	github.com/hashicorp/consul/api v1.27.0
+	github.com/hedzr/logg v0.5.8
 	github.com/hedzr/store v0.0.0-00010101000000-000000000000
 )
 

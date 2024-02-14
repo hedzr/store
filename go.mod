@@ -18,8 +18,8 @@ go 1.21
 
 require (
 	github.com/hedzr/evendeep v1.0.0
-	github.com/hedzr/is v0.5.13
-	github.com/hedzr/logg v0.5.7
+	github.com/hedzr/is v0.5.15
+	github.com/hedzr/logg v0.5.8
 	gopkg.in/hedzr/errors.v3 v3.3.1
 	gopkg.in/yaml.v3 v3.0.1
 )

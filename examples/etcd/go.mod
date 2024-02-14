@@ -33,7 +33,7 @@ replace github.com/hedzr/store/providers/fs => ../../providers/fs
 replace github.com/hedzr/store/providers/maps => ../../providers/maps
 
 require (
-	github.com/hedzr/logg v0.0.0-00010101000000-000000000000
+	github.com/hedzr/logg v0.5.8
 	github.com/hedzr/store v0.0.0-00010101000000-000000000000
 	github.com/hedzr/store/providers/etcd v0.0.0-00010101000000-000000000000
 )
