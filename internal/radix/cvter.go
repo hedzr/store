@@ -63,10 +63,14 @@ type TypedGetters interface {
 	// GetM finds a given path recursively, and returns the matched
 	// subtree as a map, which keys keep the original hierarchical
 	// structure.
+	//
+	// GetM("") will return the whole tree.
 	GetM(path string, opt ...MOpt) (ret map[string]any, err error)
 	// MustM finds a given path recursively, and returns the matched
 	// subtree as a map, which keys keep the original hierarchical
 	// structure.
+	//
+	// MustM("") will return the whole tree.
 	MustM(path string, opt ...MOpt) (ret map[string]any)
 	// GetSectionFrom finds a given path and loads the subtree into
 	// 'holder', typically 'holder' could be a struct.

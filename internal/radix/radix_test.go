@@ -249,6 +249,8 @@ func TestTrieS_GetM(t *testing.T) {
 	trie.Insert("app.server.sites", 1)
 	ret := trie.dump(true)
 	t.Logf("\nPath\n%v\n", ret)
+	m, err := trie.GetM("")
+	t.Logf("map: %v | err: %v", m, err)
 }
 
 //
