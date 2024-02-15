@@ -14,7 +14,7 @@ import (
 func TestNew(t *testing.T) {
 	s := store.New()
 	parser := hcl.New(hcl.WithFlattenSlices(true))
-	if err := s.Load(context.TODO(),
+	if _, err := s.Load(context.TODO(),
 		store.WithStorePrefix("app.hcl"),
 		store.WithCodec(parser),
 		store.WithProvider(file.New("../../../testdata/9.hcl")),

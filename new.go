@@ -150,7 +150,7 @@ type Store interface {
 	//
 	// Or you know nothing or you don't care the terminating security,
 	// simply passing context.TODO() is okay.
-	Load(ctx context.Context, opts ...LoadOpt) (err error)
+	Load(ctx context.Context, opts ...LoadOpt) (wr Writeable, err error)
 }
 
 type Dumpable interface {
@@ -260,6 +260,11 @@ type Reader interface {
 type Codec interface {
 	Marshal(m map[string]any) (data []byte, err error)
 	Unmarshal(b []byte) (data map[string]any, err error)
+}
+
+// Writeable interface
+type Writeable interface {
+	Save(ctx context.Context) (err error)
 }
 
 // ErrIsNotFound checks if TypedGetters returning a NotFound error.

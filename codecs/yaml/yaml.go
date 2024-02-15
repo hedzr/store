@@ -39,3 +39,15 @@ func (l *ldr) Load(file string) (data map[string]any, err error) {
 	}
 	return
 }
+
+func (l *ldr) Save(file string, data map[string]any) (err error) {
+	var f *os.File
+	if f, err = os.Create(file); err != nil {
+		return
+	}
+	enc := yamlv3.NewEncoder(f)
+	if err = enc.Encode(data); err != nil {
+		return
+	}
+	return
+}

@@ -14,7 +14,7 @@ import (
 func TestNew(t *testing.T) {
 	s := store.New()
 	parser := nestext.New()
-	if err := s.Load(context.TODO(),
+	if _, err := s.Load(context.TODO(),
 		store.WithStorePrefix("app.nested-text"),
 		store.WithCodec(parser),
 		store.WithProvider(file.New("../../../testdata/7.txt")),
@@ -32,7 +32,7 @@ func TestNew(t *testing.T) {
 func TestNew2(t *testing.T) {
 	s := store.New()
 	parser := nestext.New()
-	if err := s.Load(context.TODO(),
+	if _, err := s.Load(context.TODO(),
 		store.WithStorePrefix("app.nested-text"),
 		store.WithCodec(parser),
 		store.WithProvider(file.New("../../../testdata/8.txt")),

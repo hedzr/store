@@ -40,11 +40,18 @@ func WithWatchEnabled(b bool) Opt {
 	}
 }
 
+func WithWriteBackEnabled(b bool) Opt {
+	return func(s *pvdr) {
+		s.writeEnabled = b
+	}
+}
+
 type Opt func(s *pvdr)
 
 type pvdr struct {
 	file         string
 	watchEnabled bool
+	writeEnabled bool
 	watching     int32
 	codec        store.Codec
 	prefix       string
@@ -94,7 +101,11 @@ func (s *pvdr) ReadBytes() (data []byte, err error) {
 }
 
 func (s *pvdr) Write(data []byte) (err error) {
-	err = os.WriteFile(s.file, data, 0644)
+	if s.writeEnabled {
+		err = os.WriteFile(s.file, data, 0644)
+	} else {
+		err = store.NotImplemented
+	}
 	return
 }
 

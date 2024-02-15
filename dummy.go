@@ -257,13 +257,13 @@ func (s *dummyS) GetM(path string, opt ...radix.MOpt) (ret map[string]any, err e
 func (s *dummyS) MustM(path string, opt ...radix.MOpt) (ret map[string]any)              { return }
 func (s *dummyS) GetSectionFrom(path string, holder any, opts ...radix.MOpt) (err error) { return }
 
-func (s *dummyS) Dump() (text string)                                   { return }
-func (s *dummyS) Clone() (newStore *storeS)                             { return }
-func (s *dummyS) Dup() (newStore *storeS)                               { return }
-func (s *dummyS) WithPrefix(prefix string) (newStore *storeS)           { return }
-func (s *dummyS) WithPrefixReplaced(prefix string) (newStore *storeS)   { return }
-func (s *dummyS) SetPrefix(prefix string)                               { return }
-func (s *dummyS) Prefix() string                                        { return "" }
-func (s *dummyS) Delimiter() rune                                       { return 0 }
-func (s *dummyS) SetDelimiter(delimiter rune)                           { return }
-func (s *dummyS) Load(ctx context.Context, opts ...LoadOpt) (err error) { return }
+func (s *dummyS) Dump() (text string)                                                 { return }
+func (s *dummyS) Clone() (newStore *storeS)                                           { return }
+func (s *dummyS) Dup() (newStore *storeS)                                             { return }
+func (s *dummyS) WithPrefix(prefix string) (newStore *storeS)                         { return }
+func (s *dummyS) WithPrefixReplaced(prefix string) (newStore *storeS)                 { return }
+func (s *dummyS) SetPrefix(prefix string)                                             { return }
+func (s *dummyS) Prefix() string                                                      { return "" }
+func (s *dummyS) Delimiter() rune                                                     { return 0 }
+func (s *dummyS) SetDelimiter(delimiter rune)                                         { return }
+func (s *dummyS) Load(ctx context.Context, opts ...LoadOpt) (wr Writeable, err error) { return }

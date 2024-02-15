@@ -14,7 +14,7 @@ import (
 func TestNew(t *testing.T) {
 	s := store.New()
 	parser := toml.New()
-	if err := s.Load(context.TODO(),
+	if _, err := s.Load(context.TODO(),
 		store.WithStorePrefix("app.toml"),
 		store.WithCodec(parser),
 		store.WithProvider(file.New("../../../testdata/5.toml")),

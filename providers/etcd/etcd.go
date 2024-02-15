@@ -205,7 +205,7 @@ func (s *pvdr) ReadBytes() (data []byte, err error) {
 }
 
 func (s *pvdr) Write(data []byte) (err error) {
-	err = store.NotImplemented
+	err = store.NotImplemented // todo implement etcd writer
 	return
 }
 
