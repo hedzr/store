@@ -53,6 +53,12 @@ func WithFlattenSlice(b bool) Opt {
 	}
 }
 
+func WithWatchEnable(b bool) Opt {
+	return func(s *storeS) {
+		s.allowWatch = b
+	}
+}
+
 type Opt func(s *storeS) // Opt(ions) for New Store
 
 type Peripheral interface {
@@ -64,11 +70,13 @@ type Peripheral interface {
 type storeS struct {
 	radix.Trie[any]
 	loading          int32
+	saving           int32
 	closers          []Peripheral
 	onChangeHandlers []OnChangeHandler
 	onNewHandlers    []OnNewHandler
 	OnDeleteHandlers []OnDeleteHandler
 	flattenSlice     bool
+	allowWatch       bool
 	parent           *storeS
 }
 
