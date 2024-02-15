@@ -36,6 +36,6 @@ func (p *ldr) Load(file string) (data map[string]any, err error) {
 	// 	return
 	// }
 
-	err = store.NotImplemented
+	err = store.ErrNotImplemented
 	return
 }

@@ -5,7 +5,7 @@ import (
 	"github.com/hedzr/store/cvt"
 )
 
-func New(m map[string]any, delimiter string, opts ...Opt) *pvdr {
+func New(m map[string]any, delimiter string, opts ...Opt) *pvdr { //nolint:revive
 	s := &pvdr{}
 	for _, opt := range opts {
 		opt(s)
@@ -21,6 +21,7 @@ func New(m map[string]any, delimiter string, opts ...Opt) *pvdr {
 }
 
 type Opt func(s *pvdr)
+
 type pvdr struct {
 	m         map[string]any
 	delimiter string
@@ -55,7 +56,7 @@ func (s *pvdr) Count() int {
 	return 0
 }
 
-func (s *pvdr) Has(key string) bool {
+func (s *pvdr) Has(key string) bool { //nolint:revive
 	return false
 }
 
@@ -65,21 +66,21 @@ func (s *pvdr) Next() (key string, eol bool) {
 }
 
 func (s *pvdr) Keys() (keys []string, err error) {
-	err = store.NotImplemented
+	err = store.ErrNotImplemented
 	return
 }
 
-func (s *pvdr) Value(key string) (value any, ok bool) {
+func (s *pvdr) Value(key string) (value any, ok bool) { //nolint:revive
 	ok = false
 	return
 }
 
-func (s *pvdr) MustValue(key string) (value any) {
+func (s *pvdr) MustValue(key string) (value any) { //nolint:revive
 	return
 }
 
-func (s *pvdr) Reader() (r *store.Reader, err error) {
-	err = store.NotImplemented
+func (s *pvdr) Reader() (r store.Reader, err error) { //nolint:revive
+	err = store.ErrNotImplemented
 	return
 }
 
@@ -90,11 +91,11 @@ func (s *pvdr) Read() (data map[string]any, err error) {
 
 // ReadBytes is not supported by the confmap provider.
 func (s *pvdr) ReadBytes() (data []byte, err error) {
-	err = store.NotImplemented
+	err = store.ErrNotImplemented
 	return
 }
 
-func (s *pvdr) Write(data []byte) (err error) {
-	err = store.NotImplemented
+func (s *pvdr) Write(data []byte) (err error) { //nolint:revive
+	err = store.ErrNotImplemented
 	return
 }

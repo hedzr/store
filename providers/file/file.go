@@ -71,7 +71,7 @@ func (s *pvdr) Next() (key string, eol bool) {
 }
 
 func (s *pvdr) Keys() (keys []string, err error) {
-	err = store.NotImplemented
+	err = store.ErrNotImplemented
 	return
 }
 
@@ -85,13 +85,13 @@ func (s *pvdr) MustValue(key string) (value any) {
 	return
 }
 
-func (s *pvdr) Reader() (r *store.Reader, err error) {
-	err = store.NotImplemented
+func (s *pvdr) Reader() (r store.Reader, err error) {
+	err = store.ErrNotImplemented
 	return
 }
 
 func (s *pvdr) Read() (data map[string]any, err error) {
-	err = store.NotImplemented
+	err = store.ErrNotImplemented
 	return
 }
 
@@ -104,7 +104,7 @@ func (s *pvdr) Write(data []byte) (err error) {
 	if s.writeEnabled {
 		err = os.WriteFile(s.file, data, 0644)
 	} else {
-		err = store.NotImplemented
+		err = store.ErrNotImplemented
 	}
 	return
 }

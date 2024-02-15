@@ -48,7 +48,7 @@ func (p *ldr) Unmarshal(b []byte) (data map[string]any, err error) {
 // Marshal marshals the given config map to YAML bytes.
 func (p *ldr) Marshal(m map[string]any) (data []byte, err error) {
 	// return hcl.Marshal(m)
-	err = store.NotImplemented
+	err = store.ErrNotImplemented
 	return
 }
 
@@ -65,7 +65,7 @@ func (l *ldr) Load(file string) (data map[string]any, err error) {
 	// 	return
 	// }
 
-	err = store.NotImplemented
+	err = store.ErrNotImplemented
 	return
 }
 

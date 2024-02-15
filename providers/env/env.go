@@ -159,8 +159,8 @@ func (s *pvdr) MustValue(key string) (value any) {
 	return
 }
 
-func (s *pvdr) Reader() (r *store.Reader, err error) {
-	err = store.NotImplemented
+func (s *pvdr) Reader() (r store.Reader, err error) {
+	err = store.ErrNotImplemented
 	return
 }
 
@@ -170,12 +170,12 @@ func (s *pvdr) Read() (data map[string]any, err error) {
 }
 
 func (s *pvdr) ReadBytes() (data []byte, err error) {
-	err = store.NotImplemented
+	err = store.ErrNotImplemented
 	return
 }
 
 func (s *pvdr) Write(data []byte) (err error) {
-	err = store.NotImplemented
+	err = store.ErrNotImplemented
 	return
 }
 
