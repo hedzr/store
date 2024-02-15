@@ -80,7 +80,7 @@ type storeS struct {
 	parent           *storeS
 }
 
-var _ radix.TypedGetters = (*storeS)(nil) // assertion helper
+var _ radix.TypedGetters[any] = (*storeS)(nil) // assertion helper
 
 var _ Store = (*dummyS)(nil) // assertion helper
 
@@ -165,7 +165,7 @@ func (s *storeS) Get(path string) (data any, found bool) {
 }
 
 // Set sets key('path') and value pair into storeS.
-func (s *storeS) Set(path string, data any) (oldData any) {
+func (s *storeS) Set(path string, data any) (node radix.Node[any], oldData any) {
 	old, branch, found, err := s.Trie.Query(path)
 	if !found {
 		if err != nil || !branch {
@@ -176,7 +176,7 @@ func (s *storeS) Set(path string, data any) (oldData any) {
 		oldData = old
 	}
 
-	oldData = s.setKV(path, data, !found)
+	node, oldData = s.setKV(path, data, !found)
 	// s.tryOnSet(path, false, old, data)
 	return
 }
@@ -198,12 +198,17 @@ func (s *storeS) Merge(pathAt string, data map[string]any) (err error) {
 	return
 }
 
-func (s *storeS) setKV(path string, data any, createOrModify bool) (oldData any) {
-	oldData = s.Trie.Insert(path, data)
+func (s *storeS) setKV(path string, data any, createOrModify bool) (node radix.Node[any], oldData any) {
+	node, oldData = s.Trie.Set(path, data)
 	loading := s.inLoading()
 	user := !loading
-	if user && oldData != nil {
-		createOrModify = false
+	if user {
+		if oldData != nil {
+			createOrModify = false // set it to is-modifying instead of is-creating
+		}
+		if node != nil {
+			node.SetModified(true)
+		}
 	}
 	s.tryOnSet(path, user, oldData, data, createOrModify)
 	return

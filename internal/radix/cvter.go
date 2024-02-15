@@ -13,7 +13,7 @@ import (
 )
 
 // TypedGetters makes a formal specification for Trie[any]
-type TypedGetters interface {
+type TypedGetters[T any] interface {
 	GetString(path string, defaultVal ...string) (ret string, err error)
 	MustString(path string, defaultVal ...string) (ret string)
 	GetStringSlice(path string, defaultVal ...string) (ret []string, err error)
@@ -65,13 +65,21 @@ type TypedGetters interface {
 	// structure.
 	//
 	// GetM("") will return the whole tree.
-	GetM(path string, opt ...MOpt) (ret map[string]any, err error)
+	//
+	// The optional MOpt operators could be:
+	//  - WithKeepPrefix
+	//  - WithFilter
+	GetM(path string, opt ...MOpt[T]) (ret map[string]any, err error)
 	// MustM finds a given path recursively, and returns the matched
 	// subtree as a map, which keys keep the original hierarchical
 	// structure.
 	//
 	// MustM("") will return the whole tree.
-	MustM(path string, opt ...MOpt) (ret map[string]any)
+	//
+	// The optional MOpt operators could be:
+	//  - WithKeepPrefix
+	//  - WithFilter
+	MustM(path string, opt ...MOpt[T]) (ret map[string]any)
 	// GetSectionFrom finds a given path and loads the subtree into
 	// 'holder', typically 'holder' could be a struct.
 	//
@@ -102,7 +110,11 @@ type TypedGetters interface {
 	// Since 'server.sites' is a yaml array, it was loaded
 	// as a store entry and holds a slice value, so GetSectionFrom
 	// extract it to sitesS.Sites field.
-	GetSectionFrom(path string, holder any, opts ...MOpt) (err error)
+	//
+	// The optional MOpt operators could be:
+	//  - WithKeepPrefix
+	//  - WithFilter
+	GetSectionFrom(path string, holder any, opts ...MOpt[T]) (err error)
 }
 
 type TypedBooleanGetters interface {
@@ -235,7 +247,7 @@ type TypedTimeGetters interface {
 	MustTimeMap(path string, defaultVal ...map[string]time.Time) (ret map[string]time.Time)
 }
 
-var _ TypedGetters = (*trieS[any])(nil) // assertion helper
+var _ TypedGetters[any] = (*trieS[any])(nil) // assertion helper
 
 var _ Trie[any] = (*trieS[any])(nil) // assertion helper
 
@@ -310,7 +322,7 @@ func (s *trieS[T]) MustR(path string, defaultVal ...map[string]any) (ret map[str
 
 //
 
-func (s *trieS[T]) GetM(path string, opts ...MOpt) (ret map[string]any, err error) { //nolint:revive
+func (s *trieS[T]) GetM(path string, opts ...MOpt[T]) (ret map[string]any, err error) { //nolint:revive
 	var (
 		found, partialMatched, branch bool
 		node                          *nodeS[T]
@@ -318,8 +330,17 @@ func (s *trieS[T]) GetM(path string, opts ...MOpt) (ret map[string]any, err erro
 
 	if path == "" || path == "." || path == "(root)" {
 		ret = make(map[string]any)
+		putter := prefixPutter[T]{}
+		for _, opt := range opts {
+			opt(&putter)
+		}
 		s.root.Walk(func(prefix, key string, node *nodeS[T]) {
 			if (path == "" || !s.endsWith(prefix, s.delimiter)) && !node.isBranch() {
+				if putter.filterFn != nil {
+					if !putter.filterFn(node) {
+						return
+					}
+				}
 				ret[prefix] = node.data
 			}
 		})
@@ -329,7 +350,7 @@ func (s *trieS[T]) GetM(path string, opts ...MOpt) (ret map[string]any, err erro
 	node, branch, partialMatched, found = s.Locate(path)
 	if found || partialMatched {
 		_, _, ret = branch, partialMatched, make(map[string]any)
-		putter := prefixPutter{prefix: strings.Split(s.join(s.prefix, path), string(s.delimiter))}
+		putter := prefixPutter[T]{prefix: strings.Split(s.join(s.prefix, path), string(s.delimiter))}
 		for _, opt := range opts {
 			opt(&putter)
 		}
@@ -345,12 +366,12 @@ func (s *trieS[T]) GetM(path string, opts ...MOpt) (ret map[string]any, err erro
 	return
 }
 
-func (s *trieS[T]) MustM(path string, opts ...MOpt) (ret map[string]any) {
+func (s *trieS[T]) MustM(path string, opts ...MOpt[T]) (ret map[string]any) {
 	ret, _ = s.GetM(path, opts...)
 	return
 }
 
-func (s *trieS[T]) GetSectionFrom(path string, holder any, opts ...MOpt) (err error) {
+func (s *trieS[T]) GetSectionFrom(path string, holder any, opts ...MOpt[T]) (err error) {
 	var ret map[string]any
 	ret, err = s.GetM(path, opts...)
 	if err == nil && ret != nil {
@@ -399,20 +420,30 @@ func handleSerializeError(err *error) { //nolint:gocritic //can't opt
 	}
 }
 
-func WithKeepPrefix(b bool) MOpt {
-	return func(s *prefixPutter) {
+func WithKeepPrefix[T any](b bool) MOpt[T] {
+	return func(s *prefixPutter[T]) {
 		s.keepPrefix = b
 	}
 }
 
-type MOpt func(s *prefixPutter)
-
-type prefixPutter struct {
-	prefix     []string
-	keepPrefix bool // constructing the result map by keeping prefix structure?
+// WithFilter can be used in calling nodeS[T].GetM(path, ...)
+func WithFilter[T any](filter FilterFn[T]) MOpt[T] {
+	return func(s *prefixPutter[T]) {
+		s.filterFn = filter
+	}
 }
 
-func (s *prefixPutter) put(m map[string]any, prefix, delimiter string, v any) {
+type FilterFn[T any] func(node Node[T]) bool
+
+type MOpt[T any] func(s *prefixPutter[T])
+
+type prefixPutter[T any] struct {
+	prefix     []string
+	keepPrefix bool // constructing the result map by keeping prefix structure?
+	filterFn   FilterFn[T]
+}
+
+func (s *prefixPutter[T]) put(m map[string]any, prefix, delimiter string, v any) {
 	keys := strings.Split(prefix, delimiter)
 	if s.keepPrefix {
 		s.putKeys(m, keys, v)
@@ -432,7 +463,7 @@ func (s *prefixPutter) put(m map[string]any, prefix, delimiter string, v any) {
 	s.putKeys(m, keys, v)
 }
 
-func (s *prefixPutter) putKeys(m map[string]any, keys []string, v any) {
+func (s *prefixPutter[T]) putKeys(m map[string]any, keys []string, v any) {
 	if len(keys) == 0 {
 		return
 	}

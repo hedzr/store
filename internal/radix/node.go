@@ -15,6 +15,7 @@ const (
 	NTBranch nodeType = iota // non-leaf nodes in a tree
 	NTLeaf
 	NTData = 1 << iota
+	NTModified
 	NTMask = NTLeaf
 )
 
@@ -35,10 +36,27 @@ type Extractor func(outputPtr any, defaultValue ...any) (err error)
 
 func (s *nodeS[T]) isBranch() bool      { return s.nType&NTMask == NTBranch }
 func (s *nodeS[T]) hasData() bool       { return s.nType&NTData != 0 }
+func (s *nodeS[T]) Modified() bool      { return s.nType&NTModified != 0 }
 func (s *nodeS[T]) Description() string { return s.description }
 func (s *nodeS[T]) Comment() string     { return s.comment }
 func (s *nodeS[T]) Tag() any            { return s.tag }
 func (s *nodeS[T]) Key() string         { return s.pathS }
+
+func (s *nodeS[T]) SetModified(b bool) {
+	if b {
+		s.nType |= NTModified
+	} else {
+		s.nType &= ^NTModified
+	}
+}
+
+func (s *nodeS[T]) ToggleModified() {
+	if s.Modified() {
+		s.nType &= ^NTModified
+	} else {
+		s.nType |= NTModified
+	}
+}
 
 func (s *nodeS[T]) Data() (data T) {
 	if !s.isBranch() {
@@ -79,7 +97,7 @@ func (s *nodeS[T]) findCommonPrefixLength(word []rune) (length int) {
 	return
 }
 
-func (s *nodeS[T]) insertInternal(word []rune, fullPath string, data T) (oldData any) { //nolint:revive
+func (s *nodeS[T]) insertInternal(word []rune, fullPath string, data T) (node *nodeS[T], oldData any) { //nolint:revive
 	if strings.Contains(string(word), " ") {
 		word = []rune(strings.ReplaceAll(string(word), " ", "-")) //nolint:revive
 		fullPath = strings.ReplaceAll(fullPath, " ", "-")         //nolint:revive
@@ -88,7 +106,7 @@ func (s *nodeS[T]) insertInternal(word []rune, fullPath string, data T) (oldData
 	base, ourLen, wordLen := s, len(s.path), len(word)
 	if ourLen == 0 {
 		if wordLen > 0 && len(s.children) == 0 {
-			_ = base.insertAsLeaf(word, fullPath, data)
+			node = base.insertAsLeaf(word, fullPath, data)
 			return
 		}
 	}
@@ -111,14 +129,18 @@ func (s *nodeS[T]) insertInternal(word []rune, fullPath string, data T) (oldData
 		}
 		matched, child := base.matchChildren(word)
 		if matched {
-			child.insert(word, fullPath, data)
+			var n Node[T]
+			n, oldData = child.insert(word, fullPath, data)
+			if nn, ok := n.(*nodeS[T]); ok {
+				node = nn
+			}
 		} else {
-			base.insertAsLeaf(word, fullPath, data)
+			node = base.insertAsLeaf(word, fullPath, data)
 		}
 	} else {
 		// hit this node,
 		base.nType |= NTData
-		oldData, base.data = base.data, data
+		node, oldData, base.data = base, base.data, data
 	}
 	return
 }

@@ -3,8 +3,8 @@
 
 package radix
 
-func (s *nodeS[T]) insert(word []rune, fullPath string, data T) (oldData any) {
-	oldData = s.insertInternal(word, fullPath, data)
+func (s *nodeS[T]) insert(word []rune, fullPath string, data T) (node Node[T], oldData any) {
+	node, oldData = s.insertInternal(word, fullPath, data)
 	str := s.dump() // check integrity
 	_ = str
 	return

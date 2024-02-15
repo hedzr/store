@@ -24,12 +24,12 @@ type Trie[T any] interface {
 
 	Merge(pathAt string, data map[string]any) (err error) // advanced operation to Merge hierarchical data
 
-	Set(path string, data T) (oldData any) // = Insert
-	Has(path string) (found bool)          // = Search
-	Get(path string) (data T, found bool)  // shortcut to Query
-	MustGet(path string) (data T)          // shortcut to Get
+	Set(path string, data T) (node Node[T], oldData any) // = Insert
+	Has(path string) (found bool)                        // = Search
+	Get(path string) (data T, found bool)                // shortcut to Query
+	MustGet(path string) (data T)                        // shortcut to Get
 
-	TypedGetters // getters
+	TypedGetters[T] // getters
 
 	WithPrefix(prefix string) (entry Trie[T])         // appends prefix string and make a new instance of Trie[T]
 	WithPrefixReplaced(prefix string) (entry Trie[T]) // make a new instance of Trie with prefix
@@ -46,7 +46,7 @@ type Node[T any] interface {
 	hasData() bool
 	endsWith(ch rune) bool
 	endsWithLite(ch rune) bool
-	insert(word []rune, fullPath string, data T) (oldData any)
+	insert(word []rune, fullPath string, data T) (node Node[T], oldData any)
 	remove(item *nodeS[T]) (removed bool)
 	matchR(word []rune, delimiter rune, parentNode *nodeS[T]) (matched, partialMatched bool, child, parent *nodeS[T])
 	dump(noColor bool) string
@@ -61,6 +61,10 @@ type Node[T any] interface {
 	Description() string
 	Comment() string
 	Tag() any
+
+	Modified() bool     // node data changed by user?
+	SetModified(b bool) // set modified state
+	ToggleModified()    // toggle modified state
 }
 
 const NoDelimiter rune = 0

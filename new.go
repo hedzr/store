@@ -39,19 +39,19 @@ func NewStoreT[T any]() StoreT[T] {
 // 	items *itemS
 // }
 
-type itemS struct {
+type itemS struct { //nolint:unused
 	leaves   map[string]any
 	children map[string]*direntS
 }
 
-type direntS struct {
+type direntS struct { //nolint:unused
 	items map[string]*itemS
 }
 
 type StoreT[T any] interface {
 	MustGet(path string) (data T)
 	Get(path string) (data T, found bool)
-	Set(path string, data T) (oldData any)
+	Set(path string, data T) (node radix.Node[T], oldData any)
 	Has(path string) (found bool)
 }
 
@@ -67,7 +67,7 @@ type Store interface {
 	Get(path string) (data any, found bool)
 
 	// Set sets key('path') and value pair into storeS.
-	Set(path string, data any) (oldData any)
+	Set(path string, data any) (node radix.Node[any], oldData any)
 
 	// Remove a key and its children
 	Remove(path string) (removed bool)
@@ -81,7 +81,7 @@ type Store interface {
 	// Locate provides an advanced interface for locating a path.
 	Locate(path string) (node radix.Node[any], branch, partialMatched, found bool)
 
-	radix.TypedGetters // getters
+	radix.TypedGetters[any] // getters
 
 	SetComment(path, description, comment string) (ok bool) // set extra meta-info bound to a key
 	SetTag(path string, tags any) (ok bool)                 // set extra notable data bound to a key
@@ -151,22 +151,29 @@ type Store interface {
 	// Or you know nothing or you don't care the terminating security,
 	// simply passing context.TODO() is okay.
 	Load(ctx context.Context, opts ...LoadOpt) (wr Writeable, err error)
+
+	// WithinLoading executes a functor with loading state.
+	//
+	// About the Store's loading state:
+	// If it's in loading, the k-v pairs will be put into store with a clean
+	// modified flag.
+	WithinLoading(fn func())
 }
 
 type Dumpable interface {
 	Dump() string
 }
 
-var NotImplemented = stderr.New("not implemented")
+var ErrNotImplemented = stderr.New("not implemented")
 
-// Provider gives a set of interface to identify a data source.
+// The Provider gives a minimal set of interface to identify a data source.
 //
 // The typical data sources are: consul, etcd, file, OS environ, ....
 //
 // The interfaces are split to several groups: Streamable, Reader, Read, ReadBytes and Write.
 //
-// A provider can implement just one of tho above groups. At this time,
-// the others interfaces should return NotImplemented.
+// A provider can implement just one of the above groups.
+// At this time, the other interfaces should return ErrNotImplemented.
 //
 // The Streamable API includes these: Keys, Count, Has, Next, Value and MustValue.
 // If you are implementing it, Keys, Value and Next are Must-Have. Because our kernel
@@ -182,25 +189,27 @@ var NotImplemented = stderr.New("not implemented")
 // All providers should always accept Codec and Position and store them.
 // When changes was been monitoring by a provider, storeS will request
 // a reload action and these two Properties shall be usable.
+//
+// Implementing OnceProvider.Write allows the provider to support Write-back mechanism.
 type Provider interface {
-	Read() (m map[string]any, err error) // return NotImplemented as an identifier
+	Read() (m map[string]any, err error) // return ErrNotImplemented as an identifier if it wants to be skipped
 
 	ProviderSupports
 }
 
-// OnceProvider is fit for small-scale provider.
+// OnceProvider is fit for a small-scale provider.
 //
 // The kv data will be all loaded into memory.
 type OnceProvider interface {
-	ReadBytes() (data []byte, err error) // return NotImplemented as an identifier
-	Write(data []byte) (err error)       // return NotImplemented as an identifier
+	ReadBytes() (data []byte, err error) // return ErrNotImplemented as an identifier if it wants to be skipped
+	Write(data []byte) (err error)       // return ErrNotImplemented as an identifier if it wants to be skipped
 
 	ProviderSupports
 }
 
-// StreamProvider is fit for large-scale provider and load data on-demand.
+// StreamProvider is fit for a large-scale provider and load data on-demand.
 type StreamProvider interface {
-	Keys() (keys []string, err error)      // return NotImplemented as an identifier
+	Keys() (keys []string, err error)      // return ErrNotImplemented as an identifier if it wants to be skipped
 	Count() int                            // count of keys and/or key-value pairs
 	Has(key string) bool                   // test if the key exists
 	Next() (key string, eol bool)          // return next usable key
@@ -212,7 +221,7 @@ type StreamProvider interface {
 
 // FallbackProvider reserved for future.
 type FallbackProvider interface {
-	Reader() (r *Reader, err error) // return NotImplemented as an identifier
+	Reader() (r Reader, err error) // return ErrNotImplemented as an identifier if it wants to be skipped
 
 	ProviderSupports
 }

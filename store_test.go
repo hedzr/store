@@ -4,13 +4,15 @@ import (
 	"fmt"
 	"reflect"
 	"slices"
+	"strings"
 	"testing"
 
 	"github.com/hedzr/store/ctx"
+	"github.com/hedzr/store/internal/radix"
 )
 
 func TestCtxS_NamesCount(t *testing.T) {
-	ctx := ctx.TODO()
+	ctx := ctx.TODO() //nolint:gocritic
 	for ctx.Next() {
 		t.Log(ctx.Key())
 	}
@@ -136,6 +138,26 @@ func TestStore_Get2(t *testing.T) {
 				i, c.query, found, data, c.found, c.data)
 		}
 	}
+}
+
+func TestStore_GetM(t *testing.T) {
+	conf := newBasicStore()
+
+	m, err := conf.GetM("")
+	if err != nil {
+		t.Fatalf("wrong in calling GetM(\"\"): %v", err)
+	}
+	t.Logf("whole tree: %v", m)
+
+	// filter by functor
+
+	m, err = conf.GetM("", WithFilter[any](func(node radix.Node[any]) bool {
+		return strings.HasPrefix(node.Key(), "app.logging.")
+	}))
+	if err != nil {
+		t.Fatalf("wrong in calling GetM(\"\"): %v", err)
+	}
+	t.Logf("app.logging sub-tree: %v", m)
 }
 
 func TestStore_Monitoring(t *testing.T) {

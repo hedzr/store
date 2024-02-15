@@ -16,6 +16,13 @@ import (
 
 func (s *storeS) inLoading() bool { return atomic.LoadInt32(&s.loading) == 1 }
 
+func (s *storeS) WithinLoading(fn func()) {
+	if atomic.CompareAndSwapInt32(&s.loading, 0, 1) {
+		defer func() { atomic.CompareAndSwapInt32(&s.loading, 1, 0) }()
+		fn()
+	}
+}
+
 func (s *storeS) Load(ctx context.Context, opts ...LoadOpt) (wr Writeable, err error) {
 	if atomic.CompareAndSwapInt32(&s.loading, 0, 1) {
 		defer func() { atomic.CompareAndSwapInt32(&s.loading, 1, 0) }()
@@ -33,23 +40,23 @@ func (s *storeS) Load(ctx context.Context, opts ...LoadOpt) (wr Writeable, err e
 			return
 		}
 
-		loader.startWatch(ctx, loader)
-
 		wr = loader
+
+		loader.startWatch(ctx, loader)
 	}
 	return
 }
 
-func (s *storeS) Save(ctx context.Context, wr Writeable, opts ...LoadOpt) (err error) {
-	if atomic.CompareAndSwapInt32(&s.saving, 0, 1) {
-		defer func() { atomic.CompareAndSwapInt32(&s.saving, 1, 0) }()
-
-		loader := wr // newLoader(s, opts...)
-
-		err = loader.Save(ctx)
-	}
-	return
-}
+// func (s *storeS) Save(ctx context.Context, wr Writeable, opts ...LoadOpt) (err error) {
+// 	if atomic.CompareAndSwapInt32(&s.saving, 0, 1) {
+// 		defer func() { atomic.CompareAndSwapInt32(&s.saving, 1, 0) }()
+//
+// 		loader := wr // newLoader(s, opts...)
+//
+// 		err = loader.Save(ctx)
+// 	}
+// 	return
+// }
 
 func (s *storeS) loadMap(m map[string]any, position string, creating bool) (err error) {
 	ec := errors.New()
@@ -302,8 +309,12 @@ func WithStoreFlattenSlice(b bool) LoadOpt {
 // By using the default setting, i.e. keepPrefix == false, we will strip
 // the may-be-there prefix if necessary. So both "app.server.tls" and "tls"
 // will work properly as you really want.
-func WithKeepPrefix(b bool) radix.MOpt {
-	return radix.WithKeepPrefix(b)
+func WithKeepPrefix[T any](b bool) radix.MOpt[T] {
+	return radix.WithKeepPrefix[T](b)
+}
+
+func WithFilter[T any](filter radix.FilterFn[T]) radix.MOpt[T] {
+	return radix.WithFilter[T](filter)
 }
 
 func (s *loadS) tryLoad(ctx context.Context) (data map[string]any, err error) {
@@ -312,7 +323,7 @@ func (s *loadS) tryLoad(ctx context.Context) (data map[string]any, err error) {
 	// try Read() at first
 	data, err = s.provider.Read()
 
-	if errors.Is(err, NotImplemented) {
+	if errors.Is(err, ErrNotImplemented) {
 		// the 2nd is OnceProvider and/or StreamProvider
 		switch fp := s.provider.(type) {
 		case OnceProvider:
@@ -346,17 +357,19 @@ func (s *loadS) Save(ctx context.Context) (err error) { return s.trySave(ctx) }
 func (s *loadS) trySave(ctx context.Context) (err error) {
 	if s.codec != nil {
 		var m map[string]any
-		if m, err = s.GetM(""); err == nil {
+		if m, err = s.GetM("", WithFilter[any](func(node radix.Node[any]) bool {
+			return node.Modified() // && !strings.HasPrefix(node.Key(), "app.cmd.")
+		})); err == nil {
 			var data []byte
 			if data, err = s.codec.Marshal(m); err == nil {
 				switch fp := s.provider.(type) {
 				case OnceProvider:
 					err = fp.Write(data)
 				default:
-					err = NotImplemented
+					err = ErrNotImplemented
 				}
 
-				if errors.Is(err, NotImplemented) {
+				if errors.Is(err, ErrNotImplemented) {
 					if wr, ok := s.provider.(io.Writer); ok {
 						_, err = wr.Write(data)
 					}

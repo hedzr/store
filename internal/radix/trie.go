@@ -71,9 +71,12 @@ func (s *trieS[T]) join(args ...string) (ret string) {
 	return bb.String()
 }
 
-func (s *trieS[T]) Insert(path string, data T) (oldData any) { return s.Set(path, data) } //nolint:revive
+func (s *trieS[T]) Insert(path string, data T) (oldData any) { //nolint:revive
+	_, oldData = s.Set(path, data)
+	return
+}
 
-func (s *trieS[T]) Set(path string, data T) (oldData any) {
+func (s *trieS[T]) Set(path string, data T) (node Node[T], oldData any) {
 	if s.prefix != "" {
 		path = s.join(s.prefix, path) //nolint:revive
 	}
