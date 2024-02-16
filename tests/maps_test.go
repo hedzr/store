@@ -1,10 +1,12 @@
 package tests
 
 import (
+	"context"
 	"testing"
 	"time"
 
-	"github.com/hedzr/env/assert"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/hedzr/store"
 	"github.com/hedzr/store/providers/maps"
 )
@@ -12,7 +14,7 @@ import (
 func TestStore_maps_Load(t *testing.T) {
 	s := newBasicStore()
 	m := newMap()
-	if err := s.Load(
+	if _, err := s.Load(context.TODO(),
 		store.WithStorePrefix("app.maps"),
 		// store.WithCodec(json.New()),
 		store.WithProvider(maps.New(m, "_")),
@@ -23,8 +25,8 @@ func TestStore_maps_Load(t *testing.T) {
 	ret := s.Dump()
 	t.Logf("\nPath\n%v\n", ret)
 
-	assert.EqualTrue(t, s.MustGet("app.maps.cool.station.8s") == true, `expecting store.Get("app.maps.cool.station.8s") return 'true'`)
-	assert.EqualTrue(t, s.MustGet("app.maps.cool.station.flush.interval") == 5*time.Hour, `expecting store.Get("app.maps.cool.station.flush.interval") return '5h0m0s'`)
+	assert.Equal(t, true, s.MustGet("app.maps.cool.station.8s"))
+	assert.Equal(t, 5*time.Hour, s.MustGet("app.maps.cool.station.flush.interval"))
 }
 
 func newMap() map[string]any {

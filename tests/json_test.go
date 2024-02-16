@@ -1,9 +1,11 @@
 package tests
 
 import (
+	"context"
 	"testing"
 
-	"github.com/hedzr/env/assert"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/hedzr/store"
 	"github.com/hedzr/store/codecs/json"
 	"github.com/hedzr/store/providers/file"
@@ -11,10 +13,13 @@ import (
 
 func TestStore_JSON_Load(t *testing.T) {
 	s := newBasicStore()
-	if err := s.Load(
+	if _, err := s.Load(
+		context.TODO(),
 		store.WithStorePrefix("app.json"),
 		store.WithCodec(json.New()),
 		store.WithProvider(file.New("../testdata/4.json")),
+
+		store.WithStoreFlattenSlice(true),
 	); err != nil {
 		t.Fatalf("failed: %v", err)
 	}
@@ -22,6 +27,6 @@ func TestStore_JSON_Load(t *testing.T) {
 	ret := s.Dump()
 	t.Logf("\nPath\n%v\n", ret)
 
-	assert.EqualTrue(t, s.MustGet("app.json.messages.0.placeholders.0.expr") == `r.Header.Get("From")`, `expecting store.Get("app.json.messages.0.placeholders.0.expr") return 'r.Header.Get("From")'`)
-	assert.EqualTrue(t, s.MustGet("app.json.messages.1.placeholders.0.expr") == `r.Header.Get("User-Agent")`, `expecting store.Get("app.json.messages.1.placeholders.0.expr") return 'r.Header.Get("User-Agent")'`)
+	assert.Equal(t, `r.Header.Get("From")`, s.MustGet("app.json.messages.0.placeholders.0.expr"))
+	assert.Equal(t, `r.Header.Get("User-Agent")`, s.MustGet("app.json.messages.1.placeholders.0.expr"))
 }

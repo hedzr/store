@@ -2,17 +2,17 @@ module github.com/hedzr/store/tests
 
 go 1.21
 
-replace gopkg.in/hedzr/errors.v3 => ../../../24/libs.errors
+// replace gopkg.in/hedzr/errors.v3 => ../../../24/libs.errors
 
-replace github.com/hedzr/go-diff/v2 => ../../libs.diff
+// replace github.com/hedzr/evendeep => ../../libs.diff
 
-//replace github.com/hedzr/go-errors/v2 => ../../libs.errors
+// replace github.com/hedzr/go-errors/v2 => ../../libs.errors
 
-replace github.com/hedzr/env => ../../libs.env
+// replace github.com/hedzr/env => ../../libs.env
 
-replace github.com/hedzr/is => ../../libs.is
+// replace github.com/hedzr/is => ../../libs.is
 
-replace github.com/hedzr/logg => ../../libs.logg
+// replace github.com/hedzr/logg => ../../libs.logg
 
 replace github.com/hedzr/store => ../
 
@@ -41,7 +41,7 @@ replace github.com/hedzr/store/providers/fs => ../providers/fs
 replace github.com/hedzr/store/providers/maps => ../providers/maps
 
 require (
-	github.com/hedzr/env v0.0.0-00010101000000-000000000000
+	github.com/davecgh/go-spew v1.1.1
 	github.com/hedzr/store v0.0.0-00010101000000-000000000000
 	github.com/hedzr/store/codecs/hcl v0.0.0-00010101000000-000000000000
 	github.com/hedzr/store/codecs/hjson v0.0.0-00010101000000-000000000000
@@ -53,6 +53,7 @@ require (
 	github.com/hedzr/store/providers/file v0.0.0-00010101000000-000000000000
 	github.com/hedzr/store/providers/fs v0.0.0-00010101000000-000000000000
 	github.com/hedzr/store/providers/maps v0.0.0-00010101000000-000000000000
+	github.com/stretchr/testify v1.8.4
 )
 
 require (

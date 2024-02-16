@@ -330,7 +330,7 @@ linters-settings:
       # - ptrToRefParam
       # - rangeValCopy
       # - singleCaseSwitch
-      # - sloppyReassign
+    # - sloppyReassign
     # - unlabelStmt
     # - unnamedResult
     # - wrapperFunc

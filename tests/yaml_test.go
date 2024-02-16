@@ -1,9 +1,11 @@
 package tests
 
 import (
+	"context"
 	"testing"
 
-	"github.com/hedzr/env/assert"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/hedzr/store"
 	"github.com/hedzr/store/codecs/yaml"
 	"github.com/hedzr/store/providers/file"
@@ -11,10 +13,11 @@ import (
 
 func TestStore_YAML_Load(t *testing.T) {
 	s := newBasicStore()
-	if err := s.Load(
+	if _, err := s.Load(context.TODO(),
 		store.WithStorePrefix("app.yaml"),
 		store.WithCodec(yaml.New()),
 		store.WithProvider(file.New("../testdata/2.yaml")),
+
 		store.WithStoreFlattenSlice(true),
 	); err != nil {
 		t.Fatalf("failed: %v", err)
@@ -28,10 +31,11 @@ func TestStore_YAML_Load(t *testing.T) {
 
 func TestStore_YAML_Load_Normal(t *testing.T) {
 	s := newBasicStore()
-	if err := s.Load(
+	if _, err := s.Load(context.TODO(),
 		store.WithStorePrefix("app.yaml"),
 		store.WithCodec(yaml.New()),
 		store.WithProvider(file.New("../testdata/2.yaml")),
+
 		// store.WithStoreFlattenSlice(false),
 	); err != nil {
 		t.Fatalf("failed: %v", err)
@@ -39,5 +43,5 @@ func TestStore_YAML_Load_Normal(t *testing.T) {
 
 	ret := s.Dump()
 	t.Logf("\nPath\n%v\n", ret)
-	assert.Equal(t, []string{`-s`, "-w"}, s.MustGet("app.yaml.app.bgo.build.projects.000-default-group.items.001-bgo.ldflags"))
+	assert.Equal(t, []interface{}{`-s`, "-w"}, s.MustGet("app.yaml.app.bgo.build.projects.000-default-group.items.001-bgo.ldflags"))
 }

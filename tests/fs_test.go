@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"context"
 	fs2 "io/fs"
 	"os"
 	"testing"
@@ -13,7 +14,7 @@ import (
 
 func TestStore_fs_Load(t *testing.T) {
 	s := newBasicStore()
-	if err := s.Load(
+	if _, err := s.Load(context.TODO(),
 		store.WithStorePrefix("app.maps"),
 		store.WithCodec(json.New()),
 		store.WithProvider(fs.New(newFs(), "4.json")),
@@ -24,8 +25,10 @@ func TestStore_fs_Load(t *testing.T) {
 	ret := s.Dump()
 	t.Logf("\nPath\n%v\n", ret)
 
-	// assert.EqualTrue(t, s.MustGet("app.maps.cool.station.8s") == true, `expecting store.Get("app.maps.cool.station.8s") return 'true'`)
-	// assert.EqualTrue(t, s.MustGet("app.maps.cool.station.flush.interval") == 5*time.Hour, `expecting store.Get("app.maps.cool.station.flush.interval") return '5h0m0s'`)
+	// assert.EqualTrue(t, s.MustGet("app.maps.cool.station.8s") == true,
+	//    `expecting store.Get("app.maps.cool.station.8s") return 'true'`)
+	// assert.EqualTrue(t, s.MustGet("app.maps.cool.station.flush.interval") == 5*time.Hour,
+	//    `expecting store.Get("app.maps.cool.station.flush.interval") return '5h0m0s'`)
 }
 
 func newFs() fs2.FS {
