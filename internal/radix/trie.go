@@ -218,6 +218,7 @@ func (s *trieS[T]) search(word string) (found, parent *nodeS[T], partialMatched 
 	if matched, pm, child, p := found.matchR([]rune(word), s.delimiter, nil); matched || pm {
 		return child, p, pm
 	}
+	found = nil
 	return
 }
 
