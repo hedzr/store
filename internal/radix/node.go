@@ -222,10 +222,14 @@ func (s *nodeS[T]) matchR(word []rune, delimiter rune, parentNode *nodeS[T]) (ma
 		matched, child, parent = true, s, parentNode
 	} else if minL < l && matchedL == minL {
 		partialMatched, child, parent = true, s, parentNode
-	} else if minL >= l && matchedL == minL {
+	} else if minL >= l && matchedL == minL && minL > 0 && matchedL > 0 {
 		matched, child, parent = true, s, parentNode
 	}
 	if minL < wl {
+		if len(s.children) == 0 {
+			matched, partialMatched = false, true
+			return
+		}
 		for _, child = range s.children {
 			matched, partialMatched, child, parent = child.matchR(word[minL:], delimiter, s)
 			if matched || partialMatched {
