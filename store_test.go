@@ -160,6 +160,27 @@ func TestStore_GetM(t *testing.T) {
 	t.Logf("app.logging sub-tree: %v", m)
 }
 
+func TestStore_Walk(t *testing.T) {
+	var conf Store = newBasicStore()
+	conf.Walk("", func(prefix, key string, node radix.Node[any]) {
+		t.Logf("%v / %v => %v", prefix, key, node)
+	})
+}
+
+func TestStore_Walk1(t *testing.T) {
+	var conf Store = newBasicStore()
+	conf.Walk("app", func(prefix, key string, node radix.Node[any]) {
+		t.Logf("%v / %v => %v", prefix, key, node)
+	})
+}
+
+func TestStore_Walk2(t *testing.T) {
+	var conf Store = newBasicStore()
+	conf.Walk("app.", func(prefix, key string, node radix.Node[any]) {
+		t.Logf("%v / %v => %v", prefix, key, node)
+	})
+}
+
 func TestStore_Monitoring(t *testing.T) {
 	conf := newBasicStore(
 		WithOnNewHandlers(func(path string, value any, mergingMapOrLoading bool) {

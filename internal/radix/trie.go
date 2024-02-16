@@ -241,3 +241,18 @@ func (s *trieS[T]) Dup() (newTrie *trieS[T]) { //nolint:revive
 	newTrie = &trieS[T]{root: s.root.Dup(), prefix: s.prefix, delimiter: s.delimiter}
 	return
 }
+
+func (s *trieS[T]) Walk(path string, cb func(prefix, key string, node Node[T])) {
+	root := s.root
+	if path != "" {
+		node, parent, partialMatched := s.search(path)
+		if !partialMatched {
+			root = parent
+			if runes := []rune(path); runes[len(runes)-1] == s.delimiter {
+				root = node
+			}
+		}
+	}
+
+	root.walk(0, cb)
+}

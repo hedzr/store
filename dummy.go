@@ -260,6 +260,7 @@ func (s *dummyS) GetSectionFrom(path string, holder any, opts ...radix.MOpt[any]
 func (s *dummyS) Dump() (text string)                                                 { return }    //nolint:revive
 func (s *dummyS) Clone() (newStore *storeS)                                           { return }    //nolint:revive
 func (s *dummyS) Dup() (newStore *storeS)                                             { return }    //nolint:revive
+func (s *dummyS) Walk(path string, cb func(prefix, key string, node radix.Node[any])) {}            //nolint:revive
 func (s *dummyS) WithPrefix(prefix string) (newStore *storeS)                         { return }    //nolint:revive
 func (s *dummyS) WithPrefixReplaced(prefix string) (newStore *storeS)                 { return }    //nolint:revive
 func (s *dummyS) SetPrefix(prefix string)                                             {}            //nolint:revive

@@ -316,11 +316,11 @@ func (s *nodeS[T]) Dup() (newNode *nodeS[T]) { //nolint:revive
 	return
 }
 
-func (s *nodeS[T]) Walk(cb func(prefix, key string, node *nodeS[T])) {
+func (s *nodeS[T]) Walk(cb func(prefix, key string, node Node[T])) {
 	s.walk(0, cb)
 }
 
-func (s *nodeS[T]) walk(level int, cb func(prefix, key string, node *nodeS[T])) { //nolint:revive
+func (s *nodeS[T]) walk(level int, cb func(prefix, key string, node Node[T])) { //nolint:revive
 	cb(s.pathS, string(s.path), s)
 	for _, ch := range s.children {
 		ch.walk(level+1, cb)

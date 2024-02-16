@@ -39,6 +39,8 @@ type Trie[T any] interface {
 	SetDelimiter(delimiter rune)                      // setter. Change it in runtime doesn't update old delimiter inside tree nodes.
 
 	Dup() (newTrie *trieS[T]) // a native Clone function
+
+	Walk(path string, cb func(prefix, key string, node Node[T]))
 }
 
 type Node[T any] interface {
@@ -51,7 +53,7 @@ type Node[T any] interface {
 	matchR(word []rune, delimiter rune, parentNode *nodeS[T]) (matched, partialMatched bool, child, parent *nodeS[T])
 	dump(noColor bool) string
 
-	Walk(cb func(prefix, key string, node *nodeS[T]))
+	Walk(cb func(prefix, key string, node Node[T]))
 
 	Dup() (newNode *nodeS[T])
 

@@ -102,6 +102,13 @@ type Store interface {
 	// At this scene, the parent store still holds the cleanup closers.
 	Dup() (newStore *storeS)
 
+	// Walk iterates the whole Store.
+	//
+	// Walk("") walks from top-level root node.
+	// Walk("app") walks from the parent of "app" node.
+	// Walk("app.") walks from the "app." node.
+	Walk(path string, cb func(prefix, key string, node radix.Node[any]))
+
 	// WithPrefix makes a lightweight copy from current storeS.
 	//
 	// The new copy is enough lite so that you can always use it with
@@ -122,7 +129,7 @@ type Store interface {
 	//
 	// A [Delimiter] will be inserted at jointing prefix and key. Also at
 	// jointing old and new prefix.
-	WithPrefix(prefix string) (newStore *storeS)
+	WithPrefix(prefix string) (newStore *storeS) // todo need a balance on returning *storeS or Store, for WithPrefix
 
 	// WithPrefixReplaced is similar with WithPrefix but it replace old
 	// prefix with new one instead of appending it.
@@ -133,7 +140,7 @@ type Store interface {
 	//	println(ns.MustGet("type"))     # print conf["app.server.type"]
 	//
 	// A [Delimiter] will be inserted at jointing prefix and key.
-	WithPrefixReplaced(prefix string) (newStore *storeS)
+	WithPrefixReplaced(prefix string) (newStore *storeS) // todo need a balance on returning *storeS or Store, for WithPrefixReplaced
 
 	// SetPrefix updates the prefix in current storeS.
 	SetPrefix(prefix string)
