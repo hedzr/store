@@ -282,6 +282,16 @@ func (s *nodeS[T]) dumpR(sb *strings.Builder, lvl int, noColor bool) string { //
 			_, _ = sb.WriteString(color.ToDim(fmt.Sprint(s.data)))
 		}
 
+		if s.comment != "" {
+			_, _ = sb.WriteString(" // ")
+			_, _ = sb.WriteString(color.ToColor(color.FgLightGreen, s.pathS))
+		}
+
+		if s.tag != nil {
+			_, _ = sb.WriteString(" | tag = ")
+			_, _ = sb.WriteString(color.ToColor(color.FgGreen, s.pathS))
+		}
+
 		if !strings.HasSuffix(s.pathS, string(s.path)) {
 			_, _ = fmt.Fprintf(sb, " [WRONG path & pathS: %q / %q]", string(s.path), s.pathS)
 		}
