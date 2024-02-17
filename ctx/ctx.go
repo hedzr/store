@@ -18,6 +18,10 @@ type Ctx interface {
 
 	WithValues(args ...any)
 	WithValue(name string, value Val)
+
+	// Reset resets iterating states so that you can re-iterate
+	// the values via Next
+	Reset()
 }
 
 func TODO() Ctx { return &ctxS{} }
@@ -74,6 +78,7 @@ func (c *ctxS) WithValues(args ...any) {
 }
 
 func (c *ctxS) WithValue(name string, value Val) { c.add(name, value) }
+
 func (c *ctxS) add(name string, value Val) {
 	if c.values == nil {
 		c.values = make(map[string]Val)
@@ -106,6 +111,8 @@ func (c *ctxS) NextName() (ret string) {
 	return
 }
 
+// Reset resets iterating states so that you can re-iterate
+// the values via Next
 func (c *ctxS) Reset() {
 	c.iter, c.picked = nil, ""
 }
