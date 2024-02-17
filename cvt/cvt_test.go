@@ -25,8 +25,25 @@ func TestNormalize(t *testing.T) {
 			1.3: 1.313,
 		},
 		"k2": []string{"s", "w"},
+		"k3": []any{nil, map[any]any{2.7: 2.718}, map[string]any{"e": 2.71828}},
+		"k4": map[any]any{
+			1.3: map[any]any{
+				1.4: 1.34,
+			},
+			2.5: map[any]any{
+				5: map[any]any{
+					uint(5): int64(6),
+				},
+			},
+		},
 	}
-	mm := Normalize(m, nil)
+
+	mm := Normalize(m, func(k string, v any) {
+		t.Logf("[worker] %q => %v", k, v)
+	})
+	t.Logf("result: %v", mm)
+
+	mm = Normalize(m, nil)
 	t.Logf("result: %v", mm)
 	if !reflect.DeepEqual(mm["k1"], map[string]any{"1.3": 1.313}) {
 		t.Fatalf("wrong. k1 = %v", mm["k1"])

@@ -51,10 +51,18 @@ func normalize(m map[string]any, key string, val any, worker func(k string, v an
 				Normalize(x, worker)
 			case map[string]any:
 				Normalize(sub, worker)
+			default:
+				if worker != nil {
+					worker(key, val)
+				}
 			}
 		}
 	case map[string]any:
 		Normalize(z, worker)
+	default:
+		if worker != nil {
+			worker(key, val)
+		}
 	}
 }
 
