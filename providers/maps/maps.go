@@ -6,7 +6,7 @@ import (
 )
 
 func New(m map[string]any, delimiter string, opts ...Opt) *pvdr { //nolint:revive
-	s := &pvdr{}
+	s := &pvdr{delimiter: delimiter}
 	for _, opt := range opts {
 		opt(s)
 	}
