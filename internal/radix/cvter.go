@@ -6,8 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hedzr/evendeep"
 	logz "github.com/hedzr/logg/slog"
+
+	"github.com/hedzr/evendeep"
 
 	"gopkg.in/yaml.v3"
 )
@@ -18,6 +19,11 @@ type TypedGetters[T any] interface {
 	MustString(path string, defaultVal ...string) (ret string)
 	GetStringSlice(path string, defaultVal ...string) (ret []string, err error)
 	MustStringSlice(path string, defaultVal ...string) (ret []string)
+
+	// GetStringMap locates a node and returns its data as a string map.
+	//
+	// Note that it doesn't care about the sub-nodes and these children's data.
+	// If you want to extract a nodes tree from a given node, using GetM, or GetR.
 	GetStringMap(path string, defaultVal ...map[string]string) (ret map[string]string, err error)
 	MustStringMap(path string, defaultVal ...map[string]string) (ret map[string]string)
 
@@ -33,7 +39,7 @@ type TypedGetters[T any] interface {
 	//
 	// See MustR for a sample result.
 	//
-	// GetR / MustR returns the whole tree when you gave the path was "".
+	// GetR / MustR returns the whole tree when you gave the path "".
 	GetR(path string, defaultVal ...map[string]any) (ret map[string]any, err error)
 	// MustR finds a given path in tree recursively, and returns
 	// the matched subtree as a map, which key is a dotted key path.
@@ -57,7 +63,9 @@ type TypedGetters[T any] interface {
 	//       "app.verbose": bool(true),
 	//     }
 	//
-	// GetR / MustR returns the whole tree when you gave the path was "".
+	// Note the `GetR("app")` return the same result.
+	//
+	// GetR / MustR returns the whole tree when you gave the path "".
 	MustR(path string, defaultVal ...map[string]any) (ret map[string]any)
 
 	// GetM finds a given path recursively, and returns the matched
@@ -69,6 +77,7 @@ type TypedGetters[T any] interface {
 	// The optional MOpt operators could be:
 	//  - WithKeepPrefix
 	//  - WithFilter
+	//  - WithoutFlattenKeys
 	GetM(path string, opt ...MOpt[T]) (ret map[string]any, err error)
 	// MustM finds a given path recursively, and returns the matched
 	// subtree as a map, which keys keep the original hierarchical
@@ -79,6 +88,28 @@ type TypedGetters[T any] interface {
 	// The optional MOpt operators could be:
 	//  - WithKeepPrefix
 	//  - WithFilter
+	//  - WithoutFlattenKeys
+	//
+	// MustM("app.logging") returns a subtree like:
+	//
+	//     map[string]any{
+	//       "file": "/tmp/1.log",
+	//       "rotate": int(6),
+	//       "words": []string{
+	//         "a",
+	//         "1",
+	//         "false",
+	//       },
+	//     }
+	//
+	// Note the key is without prefix 'app.logging.'.
+	//
+	// If you want to extract subtree with full prefixed keys, using
+	// filter is a good idea:
+	//
+	//    m, err := trie.GetM("", WithFilter[any](func(node Node[any]){
+	//       return strings.HasPrefix(node.Key(), "app.logging.")
+	//    }))
 	MustM(path string, opt ...MOpt[T]) (ret map[string]any)
 	// GetSectionFrom finds a given path and loads the subtree into
 	// 'holder', typically 'holder' could be a struct.
@@ -344,6 +375,9 @@ func (s *trieS[T]) GetM(path string, opts ...MOpt[T]) (ret map[string]any, err e
 				ret[prefix] = node.Data()
 			}
 		})
+		if putter.noFlatten {
+			ret = s.splitCompactKeys(ret)
+		}
 		return
 	}
 
@@ -362,6 +396,9 @@ func (s *trieS[T]) GetM(path string, opts ...MOpt[T]) (ret map[string]any, err e
 			}
 		})
 		logz.Verbose("[GetM] ", "ret", ret)
+		if putter.noFlatten {
+			ret = s.splitCompactKeys(ret)
+		}
 	}
 	return
 }
@@ -371,13 +408,52 @@ func (s *trieS[T]) MustM(path string, opts ...MOpt[T]) (ret map[string]any) {
 	return
 }
 
+func (s *trieS[T]) splitCompactKeys(in map[string]any) (out map[string]any) {
+	out = make(map[string]any)
+	for k, v := range in {
+		if strings.ContainsRune(k, s.delimiter) {
+			a := strings.Split(k, string(s.delimiter))
+			s.submap(out, a, v)
+		} else {
+			out[k] = v
+		}
+	}
+	return
+}
+
+func (s *trieS[T]) submap(src map[string]any, keys []string, v any) {
+	if len(keys) == 0 {
+		return
+	}
+	if len(keys) == 1 {
+		src[keys[0]] = v
+		return
+	}
+
+	k, rest := keys[0], keys[1:]
+	if m1, ok := src[k]; ok {
+		if m2, ok := m1.(map[string]any); ok {
+			s.submap(m2, rest, v)
+		}
+	} else {
+		m2 := make(map[string]any)
+		s.submap(m2, rest, v)
+		src[k] = m2
+	}
+}
+
+// func (s *trieS[T]) mergemap(m map[string]any, key string, v map[string]any) {}
+
+// func runeToString(runes ...rune) string { return string(runes) }
+
 func (s *trieS[T]) GetSectionFrom(path string, holder any, opts ...MOpt[T]) (err error) {
 	var ret map[string]any
 	ret, err = s.GetM(path, opts...)
 	if err == nil && ret != nil {
 		defer handleSerializeError(&err)
+		m := s.splitCompactKeys(ret)
 		var b []byte
-		b, err = yaml.Marshal(ret)
+		b, err = yaml.Marshal(m)
 		if err == nil {
 			err = yaml.Unmarshal(b, holder)
 			// if err == nil {
@@ -388,8 +464,9 @@ func (s *trieS[T]) GetSectionFrom(path string, holder any, opts ...MOpt[T]) (err
 		ret, err = s.GetR(path)
 		if err == nil && ret != nil {
 			defer handleSerializeError(&err)
+			m := s.splitCompactKeys(ret)
 			var b []byte
-			b, err = yaml.Marshal(ret)
+			b, err = yaml.Marshal(m)
 			if err == nil {
 				err = yaml.Unmarshal(b, holder)
 			}
@@ -420,6 +497,7 @@ func handleSerializeError(err *error) { //nolint:gocritic //can't opt
 	}
 }
 
+// WithKeepPrefix _
 func WithKeepPrefix[T any](b bool) MOpt[T] {
 	return func(s *prefixPutter[T]) {
 		s.keepPrefix = b
@@ -433,13 +511,23 @@ func WithFilter[T any](filter FilterFn[T]) MOpt[T] {
 	}
 }
 
-type FilterFn[T any] func(node Node[T]) bool
+// WithoutFlattenKeys allows returns a nested map.
+// If the keys contain delimiter char, they will be split as
+// nested sub-map.
+func WithoutFlattenKeys[T any](b bool) MOpt[T] {
+	return func(s *prefixPutter[T]) {
+		s.noFlatten = b
+	}
+}
 
-type MOpt[T any] func(s *prefixPutter[T])
+type FilterFn[T any] func(node Node[T]) bool // used by GetM, MustM, ...
+
+type MOpt[T any] func(s *prefixPutter[T]) // used by GetM, MustM, ...
 
 type prefixPutter[T any] struct {
 	prefix     []string
 	keepPrefix bool // constructing the result map by keeping prefix structure?
+	noFlatten  bool // split key like 'app.logging.files' as nested sub-map
 	filterFn   FilterFn[T]
 }
 
