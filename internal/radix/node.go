@@ -287,13 +287,16 @@ func (s *nodeS[T]) dumpR(sb *strings.Builder, lvl int, noColor bool) string { //
 		}
 
 		if s.comment != "" {
-			_, _ = sb.WriteString(" // ")
-			_, _ = sb.WriteString(color.ToColor(color.FgLightGreen, s.pathS))
+			_, _ = sb.WriteString(color.ToColor(color.FgLightGreen, " // "+s.comment))
 		}
 
 		if s.tag != nil {
 			_, _ = sb.WriteString(" | tag = ")
-			_, _ = sb.WriteString(color.ToColor(color.FgGreen, s.pathS))
+			_, _ = sb.WriteString(color.ToColor(color.FgGreen, fmt.Sprint(s.tag)))
+		}
+
+		if s.description != "" {
+			_, _ = sb.WriteString(color.ToColor(color.FgLightGreen, " ~ "+s.description))
 		}
 
 		if !strings.HasSuffix(s.pathS, string(s.path)) {
