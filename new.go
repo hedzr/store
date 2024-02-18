@@ -111,10 +111,12 @@ type Store interface {
 
 	// WithPrefix makes a lightweight copy from current storeS.
 	//
-	// The new copy is enough lite so that you can always use it with
-	// quite a low price.
+	// The new copy is enough light so that you can always use
+	// it with quite a low price.
 	//
-	// WithPrefix appends an extra prefix at end of current prefix.
+	// WithPrefix appends an extra prefix at the end of the current
+	// prefix.
+	//
 	// For example, on a store with old prefix "app",
 	// WithPrefix("store") will return a new store 'NS' with prefix
 	// "app.server". And NS.MustGet("type") retrieve value at key path
@@ -129,9 +131,9 @@ type Store interface {
 	//
 	// A [Delimiter] will be inserted at jointing prefix and key. Also at
 	// jointing old and new prefix.
-	WithPrefix(prefix string) (newStore *storeS) // todo need a balance on returning *storeS or Store, for WithPrefix
+	WithPrefix(prefix ...string) (newStore *storeS) // todo need a balance on returning *storeS or Store, for WithPrefix
 
-	// WithPrefixReplaced is similar with WithPrefix but it replace old
+	// WithPrefixReplaced is similar with WithPrefix, but it replaces old
 	// prefix with new one instead of appending it.
 	//
 	//	conf := store.New()
@@ -140,10 +142,12 @@ type Store interface {
 	//	println(ns.MustGet("type"))     # print conf["app.server.type"]
 	//
 	// A [Delimiter] will be inserted at jointing prefix and key.
-	WithPrefixReplaced(prefix string) (newStore *storeS) // todo need a balance on returning *storeS or Store, for WithPrefixReplaced
+	//
+	// todo need a balance on returning *storeS or Store, for WithPrefixReplaced.
+	WithPrefixReplaced(newPrefix ...string) (newStore *storeS)
 
 	// SetPrefix updates the prefix in current storeS.
-	SetPrefix(prefix string)
+	SetPrefix(newPrefix ...string)
 
 	Prefix() string              // return current prefix string
 	Delimiter() rune             // return current delimiter, generally it's dot ('.')

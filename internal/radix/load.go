@@ -6,26 +6,34 @@ import (
 	"gopkg.in/hedzr/errors.v3"
 )
 
+// Prefix returns the current prefix setting.
 func (s *trieS[T]) Prefix() string { return s.prefix }
 
-func (s *trieS[T]) WithPrefix(prefix string) (entry Trie[T]) {
-	return s.withPrefixR(prefix)
+// WithPrefix makes a new Trie instance with a new prefix,
+// which is the joint value with the current prefix setting
+// and the given prefix value.
+func (s *trieS[T]) WithPrefix(prefix ...string) (entry Trie[T]) {
+	return s.withPrefix(prefix...)
 }
 
-func (s *trieS[T]) withPrefixR(prefix string) (entry *trieS[T]) {
-	return &trieS[T]{root: s.root, prefix: s.join(s.prefix, prefix), delimiter: s.delimiter}
+func (s *trieS[T]) withPrefix(prefix ...string) (entry *trieS[T]) {
+	return s.dupS(s.root, s.join1(s.prefix, prefix...))
 }
 
-func (s *trieS[T]) WithPrefixReplaced(prefix string) (entry Trie[T]) {
-	return s.withPrefixSimple(prefix)
+// WithPrefixReplaced makes a new Trie instance with a new
+// prefix with the given prefix value.
+// The current prefix setting was ignored.
+func (s *trieS[T]) WithPrefixReplaced(newPrefix ...string) (entry Trie[T]) {
+	return s.withPrefixReplaced(newPrefix...)
 }
 
-func (s *trieS[T]) withPrefixSimple(prefix string) (entry *trieS[T]) {
-	return &trieS[T]{root: s.root, prefix: prefix, delimiter: s.delimiter}
+func (s *trieS[T]) withPrefixReplaced(newPrefix ...string) (entry *trieS[T]) {
+	return s.dupS(s.root, s.join(newPrefix...))
 }
 
-func (s *trieS[T]) SetPrefix(prefix string) {
-	s.prefix = prefix
+// SetPrefix replaces the current prefix setting with the given new value.
+func (s *trieS[T]) SetPrefix(newPrefix ...string) {
+	s.prefix = s.join(newPrefix...)
 }
 
 func (s *trieS[T]) loadMap(m map[string]any) (err error) {
@@ -40,14 +48,14 @@ func (s *trieS[T]) loadMap(m map[string]any) (err error) {
 func (s *trieS[T]) loadMapByValueType(ec errors.Error, m map[string]any, k string, v any) {
 	switch vv := v.(type) {
 	case map[string]any:
-		ec.Attach(s.withPrefixSimple(k).loadMap(vv))
+		ec.Attach(s.withPrefixReplaced(k).loadMap(vv))
 	case []map[string]any:
 		buf := make([]byte, 0, len(k)+16)
 		for i, mm := range vv {
 			buf = append(buf, k...)
 			buf = append(buf, byte(s.delimiter))
 			buf = strconv.AppendInt(buf, int64(i), 10)
-			ec.Attach(s.withPrefixR(string(buf)).loadMap(mm))
+			ec.Attach(s.withPrefix(string(buf)).loadMap(mm))
 			buf = buf[:0]
 		}
 	case []any:
