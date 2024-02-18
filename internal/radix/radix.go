@@ -31,12 +31,12 @@ type Trie[T any] interface {
 
 	TypedGetters[T] // getters
 
-	WithPrefix(prefix string) (entry Trie[T])         // appends prefix string and make a new instance of Trie[T]
-	WithPrefixReplaced(prefix string) (entry Trie[T]) // make a new instance of Trie with prefix
-	SetPrefix(prefix string)                          // set prefix. Change it on a store takes your own advantages.
-	Prefix() string                                   // return current prefix string
-	Delimiter() rune                                  // return current delimiter, generally it's dot ('.')
-	SetDelimiter(delimiter rune)                      // setter. Change it in runtime doesn't update old delimiter inside tree nodes.
+	WithPrefix(prefix ...string) (entry Trie[T])            // appends prefix string and make a new instance of Trie[T]
+	WithPrefixReplaced(newPrefix ...string) (entry Trie[T]) // make a new instance of Trie with prefix
+	SetPrefix(newPrefix ...string)                          // set prefix. Change it on a store takes your own advantages.
+	Prefix() string                                         // return current prefix string
+	Delimiter() rune                                        // return current delimiter, generally it's dot ('.')
+	SetDelimiter(delimiter rune)                            // setter. Change it in runtime doesn't update old delimiter inside tree nodes.
 
 	Dup() (newTrie *trieS[T]) // a native Clone function
 

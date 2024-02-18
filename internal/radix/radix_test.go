@@ -8,6 +8,41 @@ import (
 	"github.com/hedzr/is/states"
 )
 
+func newTrieTree() *trieS[any] {
+	trie := newTrie[any]()
+	trie.Insert("app.debug", 1)
+	// t.Logf("\nPath\n%v\n", trie.dump())
+	trie.Insert("app.verbose", 2)
+	// t.Logf("\nPath\n%v\n", trie.dump())
+	trie.Insert("app.dump", 3)
+	trie.Insert("app.logging.file", 4)
+	trie.Insert("app.server.start", 5)
+	trie.Insert("app.logging.rotate", 6)
+	trie.Insert("app.logging.words", []any{"a", 1, false})
+	// trie.Insert("app.logging.words", []string{"a", "1", "false"})
+	trie.Insert("app.server.sites", 1)
+	return trie
+}
+
+func newBasicStore() *trieS[any] {
+	conf := newTrie[any]()
+	conf.Set("app.debug", false)
+	// t.Logf("\nPath\n%v\n", conf.dump())
+	conf.Set("app.verbose", true)
+	// t.Logf("\nPath\n%v\n", conf.dump())
+	conf.Set("app.dump", 3)
+	conf.Set("app.logging.file", "/tmp/1.log")
+	conf.Set("app.server.start", 5)
+
+	// conf.Set("app.logging.rotate", 6)
+	// conf.Set("app.logging.words", []string{"a", "1", "false"})
+
+	ss := conf.WithPrefix("app.logging")
+	ss.Set("rotate", 6)
+	ss.Set("words", []string{"a", "1", "false"})
+	return conf
+}
+
 func TestTrieS_General(t *testing.T) {
 	trie := newTrie[any]()
 	trie.Insert("apple", 1)
@@ -20,53 +55,10 @@ func TestTrieS_General(t *testing.T) {
 	assertTrue(t, trie.Search("app"), `expecting trie.Search("app") again return true`) // 返回 True
 }
 
-func TestTrieS_InsertPath(t *testing.T) {
-	states.Env().SetNoColorMode(true)
-
-	trie := newTrie[any]()
-	trie.Insert("/search", 1)
-	// t.Logf("\nPath\n%v\n", trie.dump())
-	trie.Insert("/support", 2)
-	// t.Logf("\nPath\n%v\n", trie.dump())
-	trie.Insert("/blog/:post/", 3)
-	trie.Insert("/about-us/team", 4)
-	trie.Insert("/contact", 5)
-	trie.Insert("/about-us/legal", 6)
-	ret := trie.dump(true)
-	t.Logf("\nPath\n%v\n", ret)
-	// assertTrue(t, trie.Search("apple"), `expecting trie.Search("apple") return true`)     // 返回 True
-	// assertFalse(t, trie.Search("app"), `expecting trie.Search("app") return false`)       // 返回 False
-	// assertTrue(t, trie.StartsWith("app"), `expecting trie.StartsWith("app") return true`) // 返回 True
-	// trie.Insert("app")
-	// assertTrue(t, trie.Search("app"), `expecting trie.Search("app") return true`) // 返回 True
-
-	expect := `  /                             <B>
-    s                           <B>
-      earch                     <L> /search => 1
-      upport                    <L> /support => 2
-    blog/:post/                 <L> /blog/:post/ => 3
-    about-us/                   <B>
-      team                      <L> /about-us/team => 4
-      legal                     <L> /about-us/legal => 6
-    contact                     <L> /contact => 5
-`
-	if ret != expect {
-		t.Fatalf("failed insertions")
-	}
-}
-
 func TestTrieS_Insert(t *testing.T) {
 	states.Env().SetNoColorMode(true)
 
-	trie := newTrie[any]()
-	trie.Insert("app.debug", 1)
-	// t.Logf("\nPath\n%v\n", trie.dump())
-	trie.Insert("app.verbose", 2)
-	// t.Logf("\nPath\n%v\n", trie.dump())
-	trie.Insert("app.dump", 3)
-	trie.Insert("app.logging.file", 4)
-	trie.Insert("app.server.start", 5)
-	trie.Insert("app.logging.rotate", 6)
+	trie := newBasicStore()
 	ret := trie.dump(true)
 	t.Logf("\nPath\n%v\n", ret)
 	// assertTrue(t, trie.Search("apple"), `expecting trie.Search("apple") return true`)     // 返回 True
@@ -77,12 +69,13 @@ func TestTrieS_Insert(t *testing.T) {
 
 	expect := `  app.                          <B>
     d                           <B>
-      ebug                      <L> app.debug => 1
+      ebug                      <L> app.debug => false
       ump                       <L> app.dump => 3
-    verbose                     <L> app.verbose => 2
+    verbose                     <L> app.verbose => true
     logging.                    <B>
-      file                      <L> app.logging.file => 4
+      file                      <L> app.logging.file => /tmp/1.log
       rotate                    <L> app.logging.rotate => 6
+      words                     <L> app.logging.words => [a 1 false]
     server.start                <L> app.server.start => 5
 `
 	if ret != expect {
@@ -132,35 +125,8 @@ func TestTrieS_WithPrefix(t *testing.T) {
 	assertTrue(t, trie.MustGet("app.logging.rotate") == 6, `expecting trie.Get("app.logging.rotate") return 6`)
 }
 
-func newBasicStore() *trieS[any] {
-	store := newTrie[any]()
-	store.Set("app.debug", false)
-	// t.Logf("\nPath\n%v\n", store.dump())
-	store.Set("app.verbose", true)
-	// t.Logf("\nPath\n%v\n", store.dump())
-	store.Set("app.dump", 3)
-	store.Set("app.logging.file", "/tmp/1.log")
-	store.Set("app.server.start", 5)
-
-	// store.Set("app.logging.rotate", 6)
-	// store.Set("app.logging.words", []string{"a", "1", "false"})
-
-	ss := store.WithPrefix("app.logging")
-	ss.Set("rotate", 6)
-	ss.Set("words", []string{"a", "1", "false"})
-	return store
-}
-
 func TestTrieS_Query(t *testing.T) {
-	trie := newTrie[any]()
-	trie.Insert("app.debug", 1)
-	// t.Logf("\nPath\n%v\n", trie.dump())
-	trie.Insert("app.verbose", 2)
-	// t.Logf("\nPath\n%v\n", trie.dump())
-	trie.Insert("app.dump", 3)
-	trie.Insert("app.logging.file", 4)
-	trie.Insert("app.server.start", 5)
-	trie.Insert("app.logging.rotate", 6)
+	trie := newTrieTree()
 	ret := trie.dump(true)
 	t.Logf("\nPath\n%v\n", ret)
 	// assertTrue(t, trie.Search("apple"), `expecting trie.Search("apple") return true`)     // 返回 True
@@ -197,18 +163,8 @@ func TestTrieS_Query(t *testing.T) {
 	}
 }
 
-func TestTrieS_GetR(t *testing.T) {
-	trie := newTrie[any]()
-	trie.Insert("app.debug", 1)
-	// t.Logf("\nPath\n%v\n", trie.dump())
-	trie.Insert("app.verbose", 2)
-	// t.Logf("\nPath\n%v\n", trie.dump())
-	trie.Insert("app.dump", 3)
-	trie.Insert("app.logging.file", 4)
-	trie.Insert("app.server.start", 5)
-	trie.Insert("app.logging.rotate", 6)
-	trie.Insert("app.logging.words", []any{"a", 1, false})
-	trie.Insert("app.logging.words", []string{"a", "1", "false"})
+func TestTrieS_GetR_2(t *testing.T) {
+	trie := newTrieTree()
 	ret := trie.dump(true)
 	t.Logf("\nPath\n%v\n", ret)
 	// assertTrue(t, trie.Search("apple"), `expecting trie.Search("apple") return true`)     // 返回 True
@@ -234,19 +190,8 @@ func TestTrieS_GetR(t *testing.T) {
 	// spew.Default.Println(m)
 }
 
-func TestTrieS_GetM(t *testing.T) {
-	trie := newTrie[any]()
-	trie.Insert("app.debug", 1)
-	// t.Logf("\nPath\n%v\n", trie.dump())
-	trie.Insert("app.verbose", 2)
-	// t.Logf("\nPath\n%v\n", trie.dump())
-	trie.Insert("app.dump", 3)
-	trie.Insert("app.server.start", 5)
-	trie.Insert("app.logging.file", 4)
-	trie.Insert("app.logging.rotate", 6)
-	trie.Insert("app.logging.words", []any{"a", 1, false})
-	trie.Insert("app.logging.words", []string{"a", "1", "false"})
-	trie.Insert("app.server.sites", 1)
+func TestTrieS_GetM_2(t *testing.T) {
+	trie := newTrieTree()
 	ret := trie.dump(true)
 	t.Logf("\nPath\n%v\n", ret)
 	m, err := trie.GetM("")
