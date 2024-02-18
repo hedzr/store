@@ -9,9 +9,12 @@ import (
 	logz "github.com/hedzr/logg/slog"
 )
 
+// NewTrie returns a Trie-tree instance.
 func NewTrie[T any]() *trieS[T] {
 	return &trieS[T]{root: &nodeS[T]{}, delimiter: dotChar}
 }
+
+var _ Trie[any] = (*trieS[any])(nil)
 
 func newTrie[T any]() *trieS[T] { //nolint:revive
 	return &trieS[T]{root: &nodeS[T]{}, delimiter: dotChar}
