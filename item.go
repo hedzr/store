@@ -32,6 +32,11 @@ func Uint64(key string, v uint64) Item {
 	return Item{key, Uint64Value(v)}
 }
 
+// Uint returns an Item for uint64.
+func Uint(key string, v uint) Item {
+	return Item{key, UintValue(v)}
+}
+
 // Float64 returns an Item for a floating-point number.
 func Float64(key string, v float64) Item {
 	return Item{key, Float64Value(v)}
@@ -95,4 +100,11 @@ func (a Item) String() string {
 // That can be written as Item{} or Any("", nil).
 func (a Item) isEmpty() bool {
 	return a.Key == "" && a.Value.num == 0 && a.Value.any == nil
+}
+
+func (a Item) Kind() Kind {
+	if !a.isEmpty() {
+		return a.Value.Kind()
+	}
+	return KindAny
 }
