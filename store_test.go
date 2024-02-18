@@ -211,6 +211,23 @@ func TestStore_Monitoring(t *testing.T) {
 
 //
 
+func assertEqual(t testing.TB, expect, actual any, msg ...any) { //nolint:govet //it's a printf/println dual interface
+	if reflect.DeepEqual(expect, actual) {
+		return
+	}
+
+	var mesg string
+	if len(msg) > 0 {
+		if format, ok := msg[0].(string); ok {
+			mesg = fmt.Sprintf(format, msg[1:]...)
+		} else {
+			mesg = fmt.Sprint(msg...)
+		}
+	}
+
+	t.Fatalf("assertEqual failed: %v\n    expect: %v\n    actual: %v\n", mesg, expect, actual)
+}
+
 func assertTrue(t testing.TB, cond bool, msg ...any) { //nolint:govet //it's a printf/println dual interface
 	if cond {
 		return
