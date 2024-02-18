@@ -146,9 +146,9 @@ func (s *dummyS) MustUintMap(path string, defaultVal ...map[string]uint) (ret ma
 }
 
 func (s *dummyS) GetKibiBytes(path string, defaultVal ...uint64) (ret uint64, err error) { return } //nolint:revive
-func (s *dummyS) MustKibibytes(path string, defaultVal ...uint64) (ret uint64)           { return } //nolint:revive
+func (s *dummyS) MustKibiBytes(path string, defaultVal ...uint64) (ret uint64)           { return } //nolint:revive
 func (s *dummyS) GetKiloBytes(path string, defaultVal ...uint64) (ret uint64, err error) { return } //nolint:revive
-func (s *dummyS) MustKilobytes(path string, defaultVal ...uint64) (ret uint64)           { return } //nolint:revive
+func (s *dummyS) MustKiloBytes(path string, defaultVal ...uint64) (ret uint64)           { return } //nolint:revive
 
 func (s *dummyS) GetFloat64(path string, defaultVal ...float64) (ret float64, err error) { return } //nolint:revive
 func (s *dummyS) MustFloat64(path string, defaultVal ...float64) (ret float64)           { return } //nolint:revive
@@ -261,9 +261,9 @@ func (s *dummyS) Dump() (text string)                                           
 func (s *dummyS) Clone() (newStore *storeS)                                           { return }    //nolint:revive
 func (s *dummyS) Dup() (newStore *storeS)                                             { return }    //nolint:revive
 func (s *dummyS) Walk(path string, cb func(prefix, key string, node radix.Node[any])) {}            //nolint:revive
-func (s *dummyS) WithPrefix(prefix string) (newStore *storeS)                         { return }    //nolint:revive
-func (s *dummyS) WithPrefixReplaced(prefix string) (newStore *storeS)                 { return }    //nolint:revive
-func (s *dummyS) SetPrefix(prefix string)                                             {}            //nolint:revive
+func (s *dummyS) WithPrefix(prefix ...string) (newStore *storeS)                      { return }    //nolint:revive
+func (s *dummyS) WithPrefixReplaced(prefix ...string) (newStore *storeS)              { return }    //nolint:revive
+func (s *dummyS) SetPrefix(prefix ...string)                                          {}            //nolint:revive
 func (s *dummyS) Prefix() string                                                      { return "" } //nolint:revive
 func (s *dummyS) Delimiter() rune                                                     { return 0 }  //nolint:revive
 func (s *dummyS) SetDelimiter(delimiter rune)                                         {}            //nolint:revive
