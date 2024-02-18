@@ -131,10 +131,7 @@ type Change interface {
 }
 
 func (s *storeS) startWatch(ctx context.Context, loader *loadS) {
-	if !s.allowWatch {
-		return
-	}
-	if loader.provider == nil {
+	if !s.allowWatch || loader.provider == nil {
 		return
 	}
 	if w, ok := loader.provider.(Watchable); ok {
@@ -232,15 +229,17 @@ func newLoader(st *storeS, opts ...LoadOpt) *loadS {
 		}
 	}
 
-	if loader.codec == nil {
-		loader.codec = loader.provider.GetCodec()
-	} else {
-		loader.provider.WithCodec(loader.codec)
-	}
-	if loader.position == "" {
-		loader.position = loader.provider.GetPosition()
-	} else {
-		loader.provider.WithPosition(loader.position)
+	if loader.provider != nil {
+		if loader.codec == nil {
+			loader.codec = loader.provider.GetCodec()
+		} else {
+			loader.provider.WithCodec(loader.codec)
+		}
+		if loader.position == "" {
+			loader.position = loader.provider.GetPosition()
+		} else {
+			loader.provider.WithPosition(loader.position)
+		}
 	}
 
 	// loader.provider.WithStorePrefix(s.prefix)
@@ -292,7 +291,7 @@ func WithStoreFlattenSlice(b bool) LoadOpt {
 //
 // By default, the prefix will be stripped from a given key path.
 //
-// For example, with a store set a prefix 'app.server',
+// For example, if a store has a prefix 'app.server',
 // `store.Put("app.server.tls", map[string]any{ "certs": "some/where.pem" }` will
 // produce the tree structure like:
 //
@@ -306,18 +305,30 @@ func WithStoreFlattenSlice(b bool) LoadOpt {
 //	store.Put("tls", map[string]any{ "certs": "some/where.pem" }
 //
 // We recommend using our default setting except that you knew what you want.
-// By using the default setting, i.e. keepPrefix == false, we will strip
+// By using the default setting, i.e., keepPrefix == false, we will strip
 // the may-be-there prefix if necessary. So both "app.server.tls" and "tls"
 // will work properly as you really want.
 func WithKeepPrefix[T any](b bool) radix.MOpt[T] {
 	return radix.WithKeepPrefix[T](b)
 }
 
+// WithFilter can be used in calling GetM(path, ...)
 func WithFilter[T any](filter radix.FilterFn[T]) radix.MOpt[T] {
 	return radix.WithFilter[T](filter)
 }
 
+// WithoutFlattenKeys allows returns a nested map.
+// If the keys contain delimiter char, they will be split as
+// nested sub-map.
+func WithoutFlattenKeys[T any](b bool) radix.MOpt[T] {
+	return radix.WithoutFlattenKeys[T](b)
+}
+
 func (s *loadS) tryLoad(ctx context.Context) (data map[string]any, err error) {
+	if s.provider == nil {
+		return
+	}
+
 	var b []byte
 
 	// try Read() at first
@@ -355,7 +366,7 @@ func (s *loadS) tryLoad(ctx context.Context) (data map[string]any, err error) {
 
 func (s *loadS) Save(ctx context.Context) (err error) { return s.trySave(ctx) }
 func (s *loadS) trySave(ctx context.Context) (err error) {
-	if s.codec != nil {
+	if s.codec != nil && s.provider != nil {
 		var m map[string]any
 		if m, err = s.GetM("", WithFilter[any](func(node radix.Node[any]) bool {
 			return node.Modified() // && !strings.HasPrefix(node.Key(), "app.cmd.")
