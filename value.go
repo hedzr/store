@@ -123,6 +123,11 @@ func Uint64Value(v uint64) Value {
 	return Value{num: v, any: KindUint64}
 }
 
+// UintValue returns a Value for a uint64.
+func UintValue(v uint) Value {
+	return Value{num: uint64(v), any: KindUint64}
+}
+
 // Float64Value returns a Value for a floating-point number.
 func Float64Value(v float64) Value {
 	return Value{num: math.Float64bits(v), any: KindFloat64}
