@@ -35,7 +35,8 @@ type LogEntry struct {
 
 	// Allocation optimization: an inline array sized to hold
 	// the majority of log calls (based on examination of open-source
-	// code). It holds the start of the list of Attrs.
+	// code).
+	// It holds the beginning of the list of Attrs.
 	front [nItemsInline]Item
 
 	// The number of Attrs in front.
@@ -66,7 +67,7 @@ func NewLogEntry(t time.Time, level slog.Level, msg string, pc uintptr) LogEntry
 // The original record and the clone can both be modified
 // without interfering with each other.
 func (r LogEntry) Clone() LogEntry {
-	r.back = slices.Clip(r.back) // prevent append from mutating shared array
+	r.back = slices.Clip(r.back) // prevent appending from mutating a shared array
 	return r
 }
 
@@ -190,7 +191,8 @@ type Source struct {
 	Line int    `json:"line"`
 }
 
-// attrs returns the non-zero fields of s as a slice of attrs.
+// The group returns a Value representation of the stack Source.
+// The attrs returns the non-zero fields of s as a slice of attrs.
 // It is similar to a StoreValue method, but we don't want Source
 // to implement Valuer because it would be resolved before
 // the ReplaceAttr function was called.
@@ -208,7 +210,7 @@ func (s *Source) group() Value {
 	return GroupValue(as...)
 }
 
-// source returns a Source for the log event.
+// The source returns a Source for the log event.
 // If the LogEntry was created without the necessary information,
 // or if the location is unavailable, it returns a non-nil *Source
 // with zero fields.
