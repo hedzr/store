@@ -649,9 +649,9 @@ func TestTrieS_GetKibiBytes(t *testing.T) {
 	if err != nil {
 		t.Fail()
 	}
-	ss64 = trie.MustKibibytes("app.kibi")
+	ss64 = trie.MustKibiBytes("app.kibi")
 	t.Logf("app.kibi: %v", ss64)
-	ss := trie.MustKibibytes("app.kibi-absent", 102)
+	ss := trie.MustKibiBytes("app.kibi-absent", 102)
 	t.Logf("app.kibi-absent: %v", ss)
 	ss, err = trie.GetKibiBytes("app.kibi-absent", 102)
 	t.Logf("app.kibi-absent: %v", ss)
@@ -669,9 +669,9 @@ func TestTrieS_GetKiloBytes(t *testing.T) {
 	if err != nil {
 		t.Fail()
 	}
-	ss64 = trie.MustKilobytes("app.kilo")
+	ss64 = trie.MustKiloBytes("app.kilo")
 	t.Logf("app.kilo: %v", ss64)
-	ss := trie.MustKilobytes("app.kilo-absent", 102)
+	ss := trie.MustKiloBytes("app.kilo-absent", 102)
 	t.Logf("app.kilo-absent: %v", ss)
 	ss, err = trie.GetKiloBytes("app.kilo-absent", 102)
 	t.Logf("app.kilo-absent: %v", ss)

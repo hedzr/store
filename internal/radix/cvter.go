@@ -227,9 +227,9 @@ type TypedIntegersGetters interface {
 
 type MoreIntegersGetters interface {
 	GetKibiBytes(key string, defaultVal ...uint64) (ret uint64, err error)
-	MustKibibytes(key string, defaultVal ...uint64) (ret uint64)
+	MustKibiBytes(key string, defaultVal ...uint64) (ret uint64)
 	GetKiloBytes(key string, defaultVal ...uint64) (ret uint64, err error)
-	MustKilobytes(key string, defaultVal ...uint64) (ret uint64)
+	MustKiloBytes(key string, defaultVal ...uint64) (ret uint64)
 }
 
 type TypedFloatsGetters interface {
@@ -1434,7 +1434,7 @@ func (s *trieS[T]) GetKibiBytes(key string, defaultVal ...uint64) (ir64 uint64, 
 	return
 }
 
-func (s *trieS[T]) MustKibibytes(key string, defaultVal ...uint64) (ir64 uint64) {
+func (s *trieS[T]) MustKibiBytes(key string, defaultVal ...uint64) (ir64 uint64) {
 	ir64, _ = s.GetKibiBytes(key, defaultVal...)
 	return
 }
@@ -1520,7 +1520,7 @@ func (s *trieS[T]) GetKiloBytes(key string, defaultVal ...uint64) (ir64 uint64, 
 	return
 }
 
-func (s *trieS[T]) MustKilobytes(key string, defaultVal ...uint64) (ir64 uint64) {
+func (s *trieS[T]) MustKiloBytes(key string, defaultVal ...uint64) (ir64 uint64) {
 	ir64, _ = s.GetKiloBytes(key, defaultVal...)
 	return
 }
