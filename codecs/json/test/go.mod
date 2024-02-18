@@ -18,7 +18,7 @@ require (
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
-	github.com/hedzr/evendeep v1.0.0 // indirect
+	github.com/hedzr/evendeep v1.0.2 // indirect
 	github.com/hedzr/is v0.5.15 // indirect
 	github.com/hedzr/logg v0.5.8 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
