@@ -18,10 +18,21 @@ use (
 	./codecs/yaml
 	./codecs/yaml/test
 
+	./examples/consul
+
+	./examples/etcd
+
+	./examples/flags
+	./providers/consul
+
 	./providers/env
+	./providers/etcd
 	./providers/file
+	./providers/flags
 	./providers/fs
 	./providers/maps
+
+	./providers/vault
 
 	./tests
 

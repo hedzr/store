@@ -1,3 +1,5 @@
+github.com/hedzr/evendeep v1.1.0 h1:pU3yQauvOtbK06nMxWjRcXPczJTFnEuH6Ov51TR7y1Q=
+github.com/hedzr/evendeep v1.1.0/go.mod h1:8fHLn5VUI9KqDfATzEZ/H25RerPmYo/NXQrZLx6RY1Y=
 github.com/hedzr/is v0.5.15 h1:XVCrpzE6PF/p8agcNbTvZ6IO5qkSq8p/sBOfcm9Fyt8=
 github.com/hedzr/is v0.5.15/go.mod h1:UQGMVvpL+DAYzScJd0pp9fFsGUelG35NqwJEeb4eYcg=
 github.com/hedzr/logg v0.5.8 h1:rZp7ygJ3QQvpCS6jzAXJrOL09Y9MKUm2FqF9j682NJ0=
