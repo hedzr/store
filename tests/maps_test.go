@@ -30,16 +30,3 @@ func TestStore_maps_Load(t *testing.T) {
 	assert.Equal(t, true, s.MustGet("app.maps.cool.station.8s"))
 	assert.Equal(t, 5*time.Hour, s.MustGet("app.maps.cool.station.flush.interval"))
 }
-
-func newMap() map[string]any {
-	return map[string]any{
-		"cool.station": map[any]any{
-			8 * time.Second: true,
-			"flush": map[string]any{
-				"always":   false,
-				"interval": 5 * time.Hour,
-			},
-		},
-		"desc": "a desc string",
-	}
-}
