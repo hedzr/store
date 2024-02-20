@@ -1,27 +1,29 @@
-go 1.21
+go 1.22
+
+toolchain go1.22.0
 
 use (
 	.
 
 	./codecs/hcl
+	./codecs/hcl/test
 	./codecs/hjson
+	./codecs/hjson/test
 	./codecs/json
+	./codecs/json/test
 	./codecs/nestext
+	./codecs/nestext/test
 	./codecs/toml
+	./codecs/toml/test
 	./codecs/yaml
-	
+	./codecs/yaml/test
+
 	./providers/env
 	./providers/file
 	./providers/fs
 	./providers/maps
-	
+
 	./tests
-	./codecs/hcl/test
-	./codecs/hjson/test
-	./codecs/json/test
-	./codecs/nestext/test
-	./codecs/toml/test
-	./codecs/yaml/test
 
 //../../cmdr-series/libs/evendeep
 )
