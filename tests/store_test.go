@@ -71,7 +71,8 @@ func TestStore_Merge(t *testing.T) {
 	}
 	t.Logf("\nPath\n%v\n", trie.Dump())
 
-	assert.Equal(t, true, slices.Equal(trie.MustGet("app.debug.map.tags").([]string), []string{"delve", "verbose"}),
+	z := trie.MustGet("app.debug.map.tags").([]string)
+	assert.Equal(t, true, slices.Equal(z, []string{"delve", "verbose"}),
 		`expecting trie.Get("app.debug.map.tags") return '[delve verbose]'`)
 }
 
@@ -113,7 +114,8 @@ func TestStore_GetR(t *testing.T) {
 	assert.Equal(t, 0.0, trie.MustFloat64("app.dump."))
 
 	_, err := trie.GetFloat64("app.dump.")
-	t.Logf("Get 'app.dump.', should be notfound: %v | notfound: %v", err, store.ErrIsNotFound(err))
+	t.Logf("Get 'app.dump.', should be notfound: %v | notfound: %v",
+		err, store.ErrorIsNotFound(err))
 
 	// assert.EqualTrue(t, newStore.MustGet("app.logging.rotate") == 6, `expecting trie.Get("app.logging.rotate") return 6`)
 }

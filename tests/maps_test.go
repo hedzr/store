@@ -18,6 +18,8 @@ func TestStore_maps_Load(t *testing.T) {
 		store.WithStorePrefix("app.maps"),
 		// store.WithCodec(json.New()),
 		store.WithProvider(maps.New(m, "_")),
+
+		store.WithStoreFlattenSlice(true), // expand map or slice in value
 	); err != nil {
 		t.Fatalf("failed: %v", err)
 	}

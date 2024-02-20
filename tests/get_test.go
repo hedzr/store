@@ -10,8 +10,8 @@ import (
 	"github.com/hedzr/store"
 	"github.com/hedzr/store/codecs/hcl"
 	"github.com/hedzr/store/codecs/toml"
+	"github.com/hedzr/store/internal/times"
 	"github.com/hedzr/store/providers/file"
-	"github.com/hedzr/store/tests/times"
 )
 
 func TestStoreResultTypedGetters(t *testing.T) {
