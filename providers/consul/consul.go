@@ -136,12 +136,12 @@ func (s *pvdr) Reader() (r store.Reader, err error) {
 	return
 }
 
-func (s *pvdr) Read() (data map[string]any, err error) {
+func (s *pvdr) Read() (data map[string]store.ValPkg, err error) {
 	var kv = s.Client.KV()
 	var pairs api.KVPairs
 	var pair *api.KVPair
 
-	data = make(map[string]any)
+	data = make(map[string]store.ValPkg)
 
 	if s.recursive {
 		pairs, _, err = kv.List(s.position, nil)
@@ -173,11 +173,18 @@ func (s *pvdr) Read() (data map[string]any, err error) {
 
 				m["Value"] = string(pair.Value)
 
-				data[s.NormalizeKey(pair.Key)] = m
+				data[s.NormalizeKey(pair.Key)] = store.ValPkg{
+					Value:   string(pair.Value),
+					Desc:    "",
+					Comment: "",
+					Tag:     m,
+				}
 			}
 		} else {
 			for _, pair := range pairs {
-				data[s.NormalizeKey(pair.Key)] = string(pair.Value)
+				data[s.NormalizeKey(pair.Key)] = store.ValPkg{
+					Value: string(pair.Value),
+				}
 			}
 		}
 
@@ -204,9 +211,16 @@ func (s *pvdr) Read() (data map[string]any, err error) {
 
 		m["Value"] = string(pair.Value)
 
-		data[s.NormalizeKey(pair.Key)] = m
+		data[s.NormalizeKey(pair.Key)] = store.ValPkg{
+			Value:   string(pair.Value),
+			Desc:    "",
+			Comment: "",
+			Tag:     m,
+		}
 	} else {
-		data[s.NormalizeKey(pair.Key)] = string(pair.Value)
+		data[s.NormalizeKey(pair.Key)] = store.ValPkg{
+			Value: string(pair.Value),
+		}
 	}
 
 	return

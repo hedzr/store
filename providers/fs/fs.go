@@ -76,7 +76,7 @@ func (s *pvdr) Reader() (r store.Reader, err error) {
 }
 
 // Read returns the loaded map[string]interface{}.
-func (s *pvdr) Read() (data map[string]interface{}, err error) {
+func (s *pvdr) Read() (data map[string]store.ValPkg, err error) {
 	err = store.ErrNotImplemented
 	return
 }

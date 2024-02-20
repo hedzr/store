@@ -1,7 +1,7 @@
-package env
+package flags
 
 import (
-	"os"
+	"flag"
 	"regexp"
 	"sort"
 	"strings"
@@ -90,38 +90,38 @@ func WithUnderlineToDot(b ...bool) Opt {
 }
 
 func (s *pvdr) prepare() (err error) {
+	s.m = make(map[string]store.ValPkg)
 	re := regexp.MustCompile(`([^_]*)_([^_])`)
-	vec := os.Environ()
-	s.keys = make([]string, 0, len(vec))
-	s.m = make(map[string]store.ValPkg, len(vec))
-	for _, p := range vec {
-		pos := strings.Index(p, "=")
-		if pos > 0 {
-			k, v := p[:pos], p[pos+1:]
-			if s.prefix != "" {
-				if !strings.HasPrefix(k, s.prefix) {
-					continue
-				}
+	flag.Visit(func(f *flag.Flag) {
+		k := f.Name
+		if s.prefix != "" {
+			if !strings.HasPrefix(k, s.prefix) {
+				return
 			}
-			if s.lowerCase {
-				k = strings.ToLower(k)
-			}
-			if s.stripped != "" {
-				k = strings.TrimPrefix(k, s.stripped)
-			}
-			if s.underline2dot {
-				k = k[:1] + re.ReplaceAllString(k[1:], "$1.$2")
-			}
-			if s.cb != nil {
-				k = s.cb(k)
-			}
-			if s.storePrefix != "" {
-				k = s.storePrefix + "." + k
-			}
-			s.m[k] = store.ValPkg{Value: v}
-			s.keys = append(s.keys, k)
 		}
-	}
+		if s.lowerCase {
+			k = strings.ToLower(k)
+		}
+		if s.stripped != "" {
+			k = strings.TrimPrefix(k, s.stripped)
+		}
+		if s.underline2dot {
+			k = k[:1] + re.ReplaceAllString(k[1:], "$1.$2")
+		}
+		if s.cb != nil {
+			k = s.cb(k)
+		}
+		if s.storePrefix != "" {
+			k = s.storePrefix + "." + k
+		}
+		s.m[k] = store.ValPkg{
+			Value:   f.Value,
+			Desc:    f.Usage,
+			Comment: "",
+			Tag:     f.DefValue,
+		}
+		s.keys = append(s.keys, k)
+	})
 	sort.Strings(s.keys)
 	s.pos = 0
 	return
@@ -162,6 +162,14 @@ func (s *pvdr) MustValue(key string) (value any) {
 	val, ok := s.m[key]
 	if ok {
 		value = val.Value
+	}
+	return
+}
+
+func (s *pvdr) Extras(key string) (description, comment string, tag any) {
+	val, ok := s.m[key]
+	if ok {
+		description, comment, tag = val.Desc, val.Comment, val.Tag
 	}
 	return
 }

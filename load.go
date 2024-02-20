@@ -29,20 +29,33 @@ func (s *storeS) Load(ctx context.Context, opts ...LoadOpt) (wr Writeable, err e
 
 		loader := newLoader(s, opts...)
 
-		var data map[string]any
-		data, err = loader.tryLoad(ctx) // load dataset from source via loader
+		var data map[string]ValPkg
+		var bin map[string]any
+		data, bin, err = loader.tryLoad(ctx) // load dataset from source via loader
 		if err != nil {
 			return
 		}
 
 		// merge dataset into store
-		if err = loader.loadMap(data, loader.Prefix(), true); err != nil {
-			return
+		prefix := loader.Prefix()
+		ok := false
+		if data != nil {
+			if err = loader.loadMapDedicated(data, prefix, true); err != nil {
+				return
+			}
+			ok = true
+		}
+		if bin != nil {
+			if err = loader.loadMap(bin, prefix, true, nil); err != nil {
+				return
+			}
+			ok = true
 		}
 
-		wr = loader
-
-		loader.startWatch(ctx, loader)
+		if ok {
+			wr = loader
+			loader.startWatch(ctx, loader)
+		}
 	}
 	return
 }
@@ -58,19 +71,35 @@ func (s *storeS) Load(ctx context.Context, opts ...LoadOpt) (wr Writeable, err e
 // 	return
 // }
 
-func (s *storeS) loadMap(m map[string]any, position string, creating bool) (err error) {
+type lmOnSet func(node radix.Node[any])
+
+func (s *storeS) loadMapDedicated(m map[string]ValPkg, position string, creating bool) (err error) {
 	ec := errors.New()
 	defer ec.Defer(&err)
 	for k, v := range m {
-		s.loadMapByValueType(ec, m, position, k, v, creating)
+		s.loadMapByValueType(ec, position, k, v.Value, creating, func(node radix.Node[any]) {
+			node.SetComment(v.Desc, v.Comment)
+			node.SetTag(v.Tag)
+		})
 	}
 	return
 }
 
-func (s *storeS) loadMapByValueType(ec errors.Error, m map[string]any, position, k string, v any, creating bool) {
+func (s *storeS) loadMap(m map[string]any, position string, creating bool, onSet lmOnSet) (err error) {
+	ec := errors.New()
+	defer ec.Defer(&err)
+	for k, v := range m {
+		s.loadMapByValueType(ec, position, k, v, creating, onSet)
+	}
+	return
+}
+
+func (s *storeS) loadMapByValueType(ec errors.Error, position, k string, v any, creating bool, onSet lmOnSet) {
 	switch vv := v.(type) {
+	case ValPkg:
+		s.loadMapByValueType(ec, position, k, vv.Value, creating, onSet)
 	case map[string]any:
-		ec.Attach(s.loadMap(vv, s.join(position, k), creating))
+		ec.Attach(s.loadMap(vv, s.join(position, k), creating, onSet))
 	case []map[string]any:
 		if s.flattenSlice {
 			buf := make([]byte, 0, len(k)+16)
@@ -78,12 +107,12 @@ func (s *storeS) loadMapByValueType(ec errors.Error, m map[string]any, position,
 				buf = append(buf, k...)
 				buf = append(buf, byte(s.Delimiter()))
 				buf = strconv.AppendInt(buf, int64(i), 10)
-				ec.Attach(s.loadMap(mm, s.join(position, string(buf)), creating))
+				ec.Attach(s.loadMap(mm, s.join(position, string(buf)), creating, onSet))
 				buf = buf[:0]
 			}
 			break
 		}
-		s.WithPrefixReplaced(position).setKV(k, v, creating)
+		s.WithPrefixReplaced(position).setKV(k, v, creating, onSet)
 	case []any:
 		if s.flattenSlice {
 			buf := make([]byte, 0, len(k)+16)
@@ -95,14 +124,14 @@ func (s *storeS) loadMapByValueType(ec errors.Error, m map[string]any, position,
 				buf = append(buf, k...)
 				buf = append(buf, byte(s.Delimiter()))
 				buf = strconv.AppendInt(buf, int64(i), 10)
-				s.loadMapByValueType(ec, m, position, string(buf), mm, creating)
+				s.loadMapByValueType(ec, position, string(buf), mm, creating, onSet)
 				buf = buf[:0]
 			}
 			break
 		}
-		s.WithPrefixReplaced(position).setKV(k, v, creating)
+		s.WithPrefixReplaced(position).setKV(k, v, creating, onSet)
 	default:
-		s.WithPrefixReplaced(position).setKV(k, v, creating)
+		s.WithPrefixReplaced(position).setKV(k, v, creating, onSet)
 	}
 	return
 }
@@ -165,7 +194,7 @@ func (s *storeS) applyChanges(ev Change) {
 			if !ok {
 				break
 			}
-			s.setKV(key, val, true)
+			s.setKV(key, val, true, nil)
 			logz.Debug("created: ", key, s.MustGet(key), "event", ev.Op())
 		}
 	} else if ev.Has(OpWrite) {
@@ -175,7 +204,7 @@ func (s *storeS) applyChanges(ev Change) {
 			if !ok {
 				break
 			}
-			s.setKV(key, val, false)
+			s.setKV(key, val, false, nil)
 			logz.Debug("modified: ", key, s.MustGet(key), "event", ev.Op())
 		}
 	} else if ev.Has(OpRename) {
@@ -267,6 +296,8 @@ func WithCodec(codec Codec) LoadOpt {
 	}
 }
 
+// WithStorePrefix gives a prefix position, which the external settings
+// will be merged at.
 func WithStorePrefix(prefix string) LoadOpt {
 	return func(s *loadS) {
 		s.storeS = s.storeS.WithPrefixReplaced(prefix)
@@ -324,15 +355,21 @@ func WithoutFlattenKeys[T any](b bool) radix.MOpt[T] {
 	return radix.WithoutFlattenKeys[T](b)
 }
 
-func (s *loadS) tryLoad(ctx context.Context) (data map[string]any, err error) {
+// tryLoad inspect the provider's api, try reading settings in the best way.
+//
+// See also [storeS.Load].
+func (s *loadS) tryLoad(ctx context.Context) (data map[string]ValPkg, bin map[string]any, err error) {
 	if s.provider == nil {
 		return
 	}
 
-	var b []byte
-
 	// try Read() at first
 	data, err = s.provider.Read()
+	if err == nil {
+		return
+	}
+
+	var b []byte
 
 	if errors.Is(err, ErrNotImplemented) {
 		// the 2nd is OnceProvider and/or StreamProvider
@@ -346,7 +383,7 @@ func (s *loadS) tryLoad(ctx context.Context) (data map[string]any, err error) {
 				if eol {
 					break
 				}
-				s.setKV(k, fp.MustValue(k), true)
+				s.setKV(k, fp.MustValue(k), true, nil)
 			}
 		}
 	}
@@ -356,11 +393,12 @@ func (s *loadS) tryLoad(ctx context.Context) (data map[string]any, err error) {
 
 	// Decode it after loaded
 	if s.codec != nil {
-		data, err = s.codec.Unmarshal(b)
+		bin, err = s.codec.Unmarshal(b)
 	} else if data == nil {
 		// or fallback to json decoder
-		err = json.Unmarshal(b, &data)
+		err = json.Unmarshal(b, &bin)
 	}
+
 	return
 }
 

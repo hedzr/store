@@ -15,19 +15,22 @@ func New(m map[string]any, delimiter string, opts ...Opt) *pvdr { //nolint:reviv
 	if s.delimiter != "" {
 		cp = cvt.Deflate(cp, s.delimiter)
 	}
-	s.m = cp
 
+	// s.m = cp
+
+	s.m = make(map[string]store.ValPkg)
+	for k, v := range cp {
+		s.m[k] = store.ValPkg{
+			Value:   v,
+			Desc:    "",
+			Comment: "",
+			Tag:     nil,
+		}
+	}
 	return s
 }
 
 type Opt func(s *pvdr)
-
-type pvdr struct {
-	m         map[string]any
-	delimiter string
-	prefix    string
-	codec     store.Codec
-}
 
 func WithCodec(codec store.Codec) Opt {
 	return func(s *pvdr) {
@@ -45,6 +48,13 @@ func WithDelimiter(d string) Opt {
 	return func(s *pvdr) {
 		s.delimiter = d
 	}
+}
+
+type pvdr struct {
+	m         map[string]store.ValPkg
+	delimiter string
+	prefix    string
+	codec     store.Codec
 }
 
 func (s *pvdr) GetCodec() (codec store.Codec) { return s.codec }
@@ -85,7 +95,7 @@ func (s *pvdr) Reader() (r store.Reader, err error) { //nolint:revive
 }
 
 // Read returns the loaded map[string]interface{}.
-func (s *pvdr) Read() (data map[string]any, err error) {
+func (s *pvdr) Read() (data map[string]store.ValPkg, err error) {
 	return s.m, nil
 }
 

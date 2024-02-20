@@ -16,6 +16,22 @@
   
   "language": "zh",
   
+  "map":     {
+               "id": "Hello {From}!",
+               "message": "Hello {From}!",
+               "translation": "",
+               "placeholders": [
+                 {
+                   "id": "From", // this is an id
+                   "string": "%[1]s", // this is a string
+                   "type": "string",
+                   "underlyingType": "string",
+                   "argNum": 1,
+                   "expr": "r.Header.Get(\"From\")"
+                 }
+               ]
+             },
+  
   "messages": [
     {
       "id": "Hello {From}!",
@@ -23,8 +39,8 @@
       "translation": "",
       "placeholders": [
         {
-          "id": "From",
-          "string": "%[1]s",
+          "id": "From", // this is an id
+          "string": "%[1]s", // this is a string
           "type": "string",
           "underlyingType": "string",
           "argNum": 1,

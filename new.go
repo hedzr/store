@@ -181,31 +181,44 @@ var ErrNotImplemented = stderr.New("not implemented")
 //
 // The typical data sources are: consul, etcd, file, OS environ, ....
 //
-// The interfaces are split to several groups: Streamable, Reader, Read, ReadBytes and Write.
+// The interfaces are split to several groups: Streamable, Reader,
+// Read, ReadBytes and Write.
 //
 // A provider can implement just one of the above groups.
 // At this time, the other interfaces should return ErrNotImplemented.
 //
-// The Streamable API includes these: Keys, Count, Has, Next, Value and MustValue.
-// If you are implementing it, Keys, Value and Next are Must-Have. Because our kernel
-// uses Keys to confirm the provider is Streamable, and invokes Next to
-// iterate the key one by one. Once a key got, Value to get its associated value.
+// The Streamable API includes these: Keys, Count, Has, Next, Value
+// and "MustValue".
+// If you are implementing it, Keys, Value and Next are Must-Have.
+// Because our kernel uses Keys to confirm the provider is Streamable,
+// and invokes Next to iterate the key one by one.
+// Once a key got, Value to get its associated value.
 //
-// If the dataset is not very large scale, implementing Read is recommended
-// to you. Read returns hierarchical data set as a nested map[string]any
-// at once. Our kernel (loader) like its simple logics.
+// If the dataset is not very large scale, implementing Read is
+// recommended to you.
+// Read returns hierarchical data set as a nested `map[string]any`
+// at once.
+// Our kernel (loader) likes its simple logics.
 //
 // Some providers may support Watchable API.
 //
 // All providers should always accept Codec and Position and store them.
-// When changes was been monitoring by a provider, storeS will request
-// a reload action and these two Properties shall be usable.
+// When a provider monitored changes, storeS will request a reload
+// action and these two Properties shall be usable.
 //
-// Implementing OnceProvider.Write allows the provider to support Write-back mechanism.
+// Implementing OnceProvider.Write allows the provider to support
+// Write-back mechanism.
 type Provider interface {
-	Read() (m map[string]any, err error) // return ErrNotImplemented as an identifier if it wants to be skipped
+	Read() (m map[string]ValPkg, err error) // return ErrNotImplemented as an identifier if it wants to be skipped
 
 	ProviderSupports
+}
+
+type ValPkg struct {
+	Value   any
+	Desc    string
+	Comment string
+	Tag     any
 }
 
 // OnceProvider is fit for a small-scale provider.
@@ -225,7 +238,7 @@ type StreamProvider interface {
 	Has(key string) bool                   // test if the key exists
 	Next() (key string, eol bool)          // return next usable key
 	Value(key string) (value any, ok bool) // return the associated value
-	MustValue(key string) (value any)      // return the value, or nil for non-existence key
+	MustValue(key string) (value any)      // return the value, or nil for a non-existence key
 
 	ProviderSupports
 }

@@ -90,7 +90,7 @@ func (s *pvdr) Reader() (r store.Reader, err error) {
 	return
 }
 
-func (s *pvdr) Read() (data map[string]any, err error) {
+func (s *pvdr) Read() (data map[string]store.ValPkg, err error) {
 	err = store.ErrNotImplemented
 	return
 }

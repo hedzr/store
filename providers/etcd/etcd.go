@@ -167,7 +167,7 @@ func (s *pvdr) NormalizeKey(key string) string {
 	return key
 }
 
-func (s *pvdr) Read() (data map[string]any, err error) {
+func (s *pvdr) Read() (data map[string]store.ValPkg, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), s.config.DialTimeout)
 	defer cancel()
 
@@ -191,9 +191,14 @@ func (s *pvdr) Read() (data map[string]any, err error) {
 		}
 	}
 
-	data = make(map[string]any, len(resp.Kvs))
+	data = make(map[string]store.ValPkg, len(resp.Kvs))
 	for _, r := range resp.Kvs {
-		data[s.NormalizeKey(string(r.Key))] = string(r.Value)
+		data[s.NormalizeKey(string(r.Key))] = store.ValPkg{
+			Value:   string(r.Value),
+			Desc:    "",
+			Comment: "",
+			Tag:     nil,
+		}
 	}
 
 	return
