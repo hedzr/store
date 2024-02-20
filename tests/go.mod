@@ -59,7 +59,7 @@ require (
 require (
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/hedzr/evendeep v1.0.0 // indirect
+	github.com/hedzr/evendeep v1.0.2 // indirect
 	github.com/hedzr/is v0.5.15 // indirect
 	github.com/hedzr/logg v0.5.8 // indirect
 	github.com/hjson/hjson-go/v4 v4.4.0 // indirect
