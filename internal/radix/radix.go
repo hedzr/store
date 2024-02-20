@@ -64,6 +64,10 @@ type Node[T any] interface {
 	Comment() string
 	Tag() any
 
+	SetData(data T)
+	SetComment(desc, comment string)
+	SetTag(tag any)
+
 	Modified() bool     // node data changed by user?
 	SetModified(b bool) // set modified state
 	ToggleModified()    // toggle modified state

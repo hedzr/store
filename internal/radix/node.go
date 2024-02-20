@@ -65,6 +65,27 @@ func (s *nodeS[T]) Data() (data T) {
 	return
 }
 
+func (s *nodeS[T]) SetData(data T) {
+	if !s.isBranch() {
+		s.data = data
+	}
+	return
+}
+
+func (s *nodeS[T]) SetComment(desc, comment string) {
+	if !s.isBranch() {
+		s.description, s.comment = desc, comment
+	}
+	return
+}
+
+func (s *nodeS[T]) SetTag(tag any) {
+	if !s.isBranch() {
+		s.tag = tag
+	}
+	return
+}
+
 func (s *nodeS[T]) endsWith(ch rune) bool { //nolint:revive
 	if len(s.path) == 0 {
 		return false
