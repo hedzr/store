@@ -2,9 +2,11 @@ package tests
 
 import (
 	"context"
+	"fmt"
 	"testing"
 	"time"
 
+	"github.com/hedzr/evendeep"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/hedzr/store"
@@ -97,4 +99,27 @@ func TestTagAndComment(t *testing.T) {
 	}
 
 	println(conf.Dump())
+}
+
+//
+
+//
+
+//
+
+func assertEqual(t testing.TB, expect, actual any, msg ...any) { //nolint:govet //it's a printf/println dual interface
+	if evendeep.DeepEqual(expect, actual) {
+		return
+	}
+
+	var mesg string
+	if len(msg) > 0 {
+		if format, ok := msg[0].(string); ok {
+			mesg = fmt.Sprintf(format, msg[1:]...)
+		} else {
+			mesg = fmt.Sprint(msg...)
+		}
+	}
+
+	t.Fatalf("assertEqual failed: %v\n    expect: %v\n    actual: %v\n", mesg, expect, actual)
 }
