@@ -47,6 +47,31 @@ func (s *trieS[T]) deferPoolGet(bb *bytes.Buffer) {
 	}
 }
 
+func (s *trieS[T]) join1(pre string, args ...string) (ret string) {
+	if pre == "" {
+		return s.join(args...)
+	}
+
+	switch len(args) {
+	case 0:
+		return pre
+	}
+
+	i, bb := 0, s.poolGet()
+	defer s.deferPoolGet(bb)
+
+	_, _ = bb.WriteString(pre)
+
+	for _, it := range args {
+		if it != "" {
+			_ = bb.WriteByte(byte(s.delimiter))
+			_, _ = bb.WriteString(it)
+			i++
+		}
+	}
+	return bb.String()
+}
+
 func (s *trieS[T]) join(args ...string) (ret string) {
 	switch len(args) {
 	case 0:
@@ -63,10 +88,10 @@ func (s *trieS[T]) join(args ...string) (ret string) {
 	defer s.deferPoolGet(bb)
 
 	for _, it := range args {
-		if i > 0 {
-			_ = bb.WriteByte(byte(s.delimiter))
-		}
 		if it != "" {
+			if i > 0 {
+				_ = bb.WriteByte(byte(s.delimiter))
+			}
 			_, _ = bb.WriteString(it)
 			i++
 		}

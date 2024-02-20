@@ -126,10 +126,10 @@ func (s *storeS) join(args ...string) (ret string) {
 	defer s.deferPoolGet(bb)
 
 	for _, it := range args {
-		if i > 0 {
-			bb.WriteByte(byte(s.Delimiter()))
-		}
 		if it != "" {
+			if i > 0 {
+				bb.WriteByte(byte(s.Delimiter()))
+			}
 			bb.WriteString(it)
 			i++
 		}
