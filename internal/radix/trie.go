@@ -262,9 +262,31 @@ func (s *trieS[T]) search(word string) (found, parent *nodeS[T], partialMatched 
 }
 
 func (s *trieS[T]) Delimiter() rune { return s.delimiter }
-func (s *trieS[T]) SetDelimiter(delimiter rune) {
-	s.delimiter = delimiter
-}
+
+// SetDelimiter sets the delimiter rune.
+//
+// When extracting a node and its data, the delimiter character is
+// the decisive factor.
+//
+// The Store's default delimiter is '.' (dot). But you can construct
+// a Trie-tree with other char, such as path separator ('/').
+//
+// For example,
+//
+//	trie := newTrie[any]()
+//	trie.Insert("/search", 1)
+//	trie.Insert("/support", 2)
+//	trie.Insert("/blog/:post/", 3)
+//	trie.Insert("/about-us/team", 4)
+//	trie.Insert("/contact", 5)
+//	trie.Insert("/about-us/legal", 6)
+//
+//	trie.SetDelimiter('/')
+//	data, err := trie.GetM("/about-us")
+//	assert.True(reflect.DeepEqual(data, map[string]any{"legal": 6, "team": 4}))
+//
+// See also TestTrieS_Delimiter(),
+func (s *trieS[T]) SetDelimiter(delimiter rune) { s.delimiter = delimiter }
 
 func (s *trieS[T]) endsWith(str string, ch rune) bool { //nolint:revive
 	if str != "" {
