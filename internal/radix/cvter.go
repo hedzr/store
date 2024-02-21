@@ -447,6 +447,10 @@ func (s *trieS[T]) submap(src map[string]any, keys []string, v any) {
 // func runeToString(runes ...rune) string { return string(runes) }
 
 func (s *trieS[T]) GetSectionFrom(path string, holder any, opts ...MOpt[T]) (err error) {
+	if holder == nil {
+		return
+	}
+
 	var ret map[string]any
 	ret, err = s.GetM(path, opts...)
 	if err == nil && ret != nil {
