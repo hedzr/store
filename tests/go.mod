@@ -1,6 +1,8 @@
 module github.com/hedzr/store/tests
 
-go 1.21
+go 1.22
+
+toolchain go1.22.0
 
 // replace gopkg.in/hedzr/errors.v3 => ../../../24/libs.errors
 
@@ -36,12 +38,15 @@ replace github.com/hedzr/store/providers/etcd => ../providers/etcd
 
 replace github.com/hedzr/store/providers/file => ../providers/file
 
+replace github.com/hedzr/store/providers/flags => ../providers/flags
+
 replace github.com/hedzr/store/providers/fs => ../providers/fs
 
 replace github.com/hedzr/store/providers/maps => ../providers/maps
 
 require (
 	github.com/davecgh/go-spew v1.1.1
+	github.com/hedzr/evendeep v1.1.0
 	github.com/hedzr/store v0.0.0-00010101000000-000000000000
 	github.com/hedzr/store/codecs/hcl v0.0.0-00010101000000-000000000000
 	github.com/hedzr/store/codecs/hjson v0.0.0-00010101000000-000000000000
@@ -51,6 +56,7 @@ require (
 	github.com/hedzr/store/codecs/yaml v0.0.0-00010101000000-000000000000
 	github.com/hedzr/store/providers/env v0.0.0-00010101000000-000000000000
 	github.com/hedzr/store/providers/file v0.0.0-00010101000000-000000000000
+	github.com/hedzr/store/providers/flags v0.0.0-00010101000000-000000000000
 	github.com/hedzr/store/providers/fs v0.0.0-00010101000000-000000000000
 	github.com/hedzr/store/providers/maps v0.0.0-00010101000000-000000000000
 	github.com/stretchr/testify v1.8.4
@@ -59,7 +65,6 @@ require (
 require (
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/hedzr/evendeep v1.0.2 // indirect
 	github.com/hedzr/is v0.5.15 // indirect
 	github.com/hedzr/logg v0.5.8 // indirect
 	github.com/hjson/hjson-go/v4 v4.4.0 // indirect

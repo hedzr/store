@@ -2,6 +2,7 @@ package flags
 
 import (
 	"flag"
+	"reflect"
 	"regexp"
 	"sort"
 	"strings"
@@ -92,7 +93,7 @@ func WithUnderlineToDot(b ...bool) Opt {
 func (s *pvdr) prepare() (err error) {
 	s.m = make(map[string]store.ValPkg)
 	re := regexp.MustCompile(`([^_]*)_([^_])`)
-	flag.Visit(func(f *flag.Flag) {
+	flag.VisitAll(func(f *flag.Flag) {
 		k := f.Name
 		if s.prefix != "" {
 			if !strings.HasPrefix(k, s.prefix) {
@@ -114,8 +115,14 @@ func (s *pvdr) prepare() (err error) {
 		if s.storePrefix != "" {
 			k = s.storePrefix + "." + k
 		}
+
+		var v any = f.Value
+		if rv := reflect.ValueOf(v); rv.Kind() == reflect.Pointer {
+			v = rv.Elem().Interface()
+		}
+
 		s.m[k] = store.ValPkg{
-			Value:   f.Value,
+			Value:   v,
 			Desc:    f.Usage,
 			Comment: "",
 			Tag:     f.DefValue,
