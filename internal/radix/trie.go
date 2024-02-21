@@ -26,6 +26,17 @@ type trieS[T any] struct {
 	delimiter rune
 }
 
+func (s *trieS[T]) dupS(root *nodeS[T], prefix string) (newTrie *trieS[T]) { //nolint:revive
+	newTrie = &trieS[T]{root: root, prefix: prefix, delimiter: s.delimiter}
+	return
+}
+
+//
+
+//
+
+//
+
 const (
 	dotChar                 rune = '.'
 	initialPrefixBufferSize      = 64
@@ -138,7 +149,7 @@ func (s *trieS[T]) Merge(pathAt string, data map[string]any) (err error) {
 	if s.prefix != "" {
 		pathAt = s.join(s.prefix, pathAt) //nolint:revive
 	}
-	err = s.withPrefixR(pathAt).loadMap(data)
+	err = s.withPrefix(pathAt).loadMap(data)
 	return
 }
 
@@ -267,8 +278,7 @@ func (s *trieS[T]) Dump() string             { return s.root.dump(false) }   //n
 func (s *trieS[T]) dump(noColor bool) string { return s.root.dump(noColor) } //nolint:revive
 
 func (s *trieS[T]) Dup() (newTrie *trieS[T]) { //nolint:revive
-	newTrie = &trieS[T]{root: s.root.Dup(), prefix: s.prefix, delimiter: s.delimiter}
-	return
+	return s.dupS(s.root.Dup(), s.prefix)
 }
 
 func (s *trieS[T]) Walk(path string, cb func(prefix, key string, node Node[T])) {

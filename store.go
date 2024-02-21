@@ -75,10 +75,31 @@ type storeS struct {
 	onChangeHandlers []OnChangeHandler
 	onNewHandlers    []OnNewHandler
 	OnDeleteHandlers []OnDeleteHandler
-	flattenSlice     bool
-	allowWatch       bool
-	parent           *storeS
+
+	// The following members need to Dup, WithPrefix, and
+	// WithPrefixReplaced.
+	// See dupS()
+
+	parent       *storeS
+	flattenSlice bool
+	allowWatch   bool
 }
+
+func (s *storeS) dupS(trie radix.Trie[any]) (newStore *storeS) {
+	newStore = &storeS{
+		Trie:         trie,
+		flattenSlice: s.flattenSlice,
+		allowWatch:   s.allowWatch,
+		// don't dup the member 'parent' here
+	}
+	return
+}
+
+//
+
+//
+
+//
 
 var _ radix.TypedGetters[any] = (*storeS)(nil) // assertion helper
 
@@ -297,23 +318,23 @@ func (s *storeS) Clone() (newStore *storeS) { return s.Dup() } // make a clone f
 
 // Dup is a native Clone tool.
 //
-// After Dup, a copy of original store will be created, but closers not.
+// After Dup, a copy of the original store will be created, but
+// closers not.
 // Most of the closers are cleanup code fragments coming
 // from Load(WithProvider()), some of them needs to shut down the
 // remote connection such as what want to do by consul provider.
 //
 // At this scene, the parent store still holds the cleanup closers.
 func (s *storeS) Dup() (newStore *storeS) {
-	newStore = &storeS{Trie: s.Trie.Dup(), flattenSlice: s.flattenSlice}
-	return
+	return s.dupS(s.Trie.Dup())
 }
 
 // WithPrefix makes a lightweight copy from current storeS.
 //
-// The new copy is enough lite so that you can always use it with
+// The new copy is enough light so that you can always use it with
 // quite a low price.
 //
-// WithPrefix appends an extra prefix at end of current prefix.
+// WithPrefix appends an extra prefix at the end of the current prefix.
 // For example, on a store with old prefix "app",
 // WithPrefix("store") will return a new store 'NS' with prefix
 // "app.server". And NS.MustGet("type") retrieve value at key path
@@ -328,13 +349,12 @@ func (s *storeS) Dup() (newStore *storeS) {
 //
 // A [Delimiter] will be inserted at jointing prefix and key. Also at
 // jointing old and new prefix.
-func (s *storeS) WithPrefix(prefix string) (newStore *storeS) {
-	return &storeS{parent: s, Trie: s.Trie.WithPrefix(prefix), flattenSlice: s.flattenSlice}
-	// return s.withPrefixR(prefix)
+func (s *storeS) WithPrefix(prefix ...string) (newStore *storeS) {
+	return s.dupS(s.Trie.WithPrefix(prefix...))
 }
 
-// WithPrefixReplaced is similar with WithPrefix but it replace old
-// prefix with new one instead of appending it.
+// WithPrefixReplaced is similar with WithPrefix, but it replaces
+// old prefix with new one instead of appending it.
 //
 //	conf := store.New()
 //	s1 := conf.WithPrefix("app")
@@ -342,11 +362,11 @@ func (s *storeS) WithPrefix(prefix string) (newStore *storeS) {
 //	println(ns.MustGet("type"))     # print conf["app.server.type"]
 //
 // A [Delimiter] will be inserted at jointing prefix and key.
-func (s *storeS) WithPrefixReplaced(prefix string) (newStore *storeS) {
-	return &storeS{parent: s, Trie: s.Trie.WithPrefixReplaced(prefix), flattenSlice: s.flattenSlice}
+func (s *storeS) WithPrefixReplaced(newPrefix ...string) (newStore *storeS) {
+	return s.dupS(s.Trie.WithPrefixReplaced(newPrefix...))
 }
 
 // SetPrefix updates the prefix in current storeS.
-func (s *storeS) SetPrefix(prefix string) {
-	s.Trie.SetPrefix(prefix)
+func (s *storeS) SetPrefix(newPrefix ...string) {
+	s.Trie.SetPrefix(newPrefix...)
 }
