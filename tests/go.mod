@@ -46,7 +46,8 @@ replace github.com/hedzr/store/providers/maps => ../providers/maps
 
 require (
 	github.com/davecgh/go-spew v1.1.1
-	github.com/hedzr/evendeep v1.1.0
+	github.com/hedzr/evendeep v1.1.1
+	github.com/hedzr/is v0.5.15
 	github.com/hedzr/store v0.0.0-00010101000000-000000000000
 	github.com/hedzr/store/codecs/hcl v0.0.0-00010101000000-000000000000
 	github.com/hedzr/store/codecs/hjson v0.0.0-00010101000000-000000000000
@@ -65,8 +66,7 @@ require (
 require (
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/hedzr/is v0.5.15 // indirect
-	github.com/hedzr/logg v0.5.8 // indirect
+	github.com/hedzr/logg v0.5.9 // indirect
 	github.com/hjson/hjson-go/v4 v4.4.0 // indirect
 	github.com/npillmayer/nestext v0.1.3 // indirect
 	github.com/pelletier/go-toml/v2 v2.1.1 // indirect

@@ -24,9 +24,9 @@ require (
 )
 
 require (
-	github.com/hedzr/evendeep v1.1.0 // indirect
+	github.com/hedzr/evendeep v1.1.1 // indirect
 	github.com/hedzr/is v0.5.15 // indirect
-	github.com/hedzr/logg v0.5.8 // indirect
+	github.com/hedzr/logg v0.5.9 // indirect
 	golang.org/x/crypto v0.19.0 // indirect
 	golang.org/x/net v0.21.0 // indirect
 	golang.org/x/sys v0.17.0 // indirect

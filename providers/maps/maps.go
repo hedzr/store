@@ -1,6 +1,9 @@
 package maps
 
 import (
+	"context"
+	"sync/atomic"
+
 	"github.com/hedzr/store"
 	"github.com/hedzr/store/cvt"
 )
@@ -55,6 +58,7 @@ type pvdr struct {
 	delimiter string
 	prefix    string
 	codec     store.Codec
+	watching  int32
 }
 
 func (s *pvdr) GetCodec() (codec store.Codec) { return s.codec }
@@ -107,5 +111,19 @@ func (s *pvdr) ReadBytes() (data []byte, err error) {
 
 func (s *pvdr) Write(data []byte) (err error) { //nolint:revive
 	err = store.ErrNotImplemented
+	return
+}
+
+func (s *pvdr) Close() {
+	atomic.CompareAndSwapInt32(&s.watching, 1, 0)
+}
+
+func (s *pvdr) Watch(ctx context.Context, cb func(event any, err error)) (err error) {
+	if !atomic.CompareAndSwapInt32(&s.watching, 0, 1) {
+		return
+	}
+
+	// todo do some stuff here to enable watching for maps provider
+
 	return
 }
