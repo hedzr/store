@@ -7,14 +7,14 @@ import (
 
 // MustSmartParseTime parses a formatted string and returns the time value it represents.
 func MustSmartParseTime(str string) (tm time.Time) {
-	tm, _ = smartParseTime(str)
+	tm, _ = SmartParseTime(str)
 	return
 }
 
 // MustSmartParseTimePtr parses a formatted string and returns the time value it represents.
 func MustSmartParseTimePtr(str string) (tm *time.Time) {
 	var tm1 time.Time
-	tm1, _ = smartParseTime(str)
+	tm1, _ = SmartParseTime(str)
 	return &tm1
 }
 
@@ -58,10 +58,6 @@ func MustSmartParseTimePtr(str string) (tm *time.Time) {
 // differ by the actual zone offset. To avoid such problems, prefer time layouts
 // that use a numeric zone offset, or use ParseInLocation.
 func SmartParseTime(str string) (tm time.Time, err error) {
-	return smartParseTime(str)
-}
-
-func smartParseTime(str string) (tm time.Time, err error) {
 	for _, layout := range onceInitTimeFormats() {
 		if tm, err = time.Parse(layout, str); err == nil {
 			break
@@ -70,8 +66,10 @@ func smartParseTime(str string) (tm time.Time, err error) {
 	return
 }
 
-var knownDateTimeFormats []string
-var onceFormats sync.Once
+var (
+	knownDateTimeFormats []string
+	onceFormats          sync.Once
+)
 
 func onceInitTimeFormats() []string {
 	onceFormats.Do(func() {

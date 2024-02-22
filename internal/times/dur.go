@@ -6,8 +6,20 @@ import (
 	"time"
 )
 
+// SmartDurationString converts a time.Duration value to string.
+//
+// It's better than time.Duration.String() because it produce days part.
+// For example, 37h will be "3d1h".
 func SmartDurationString(d time.Duration) string { return SmartDurationStringEx(d, false) }
 
+// SmartDurationStringEx converts a time.Duration value to string.
+//
+// The boolean param 'frac' can be true, which means converter will try
+// to format a float-point number as second part.
+// For example, 11s13µs will be "11.000013s".
+//
+// By default, such as SmartDurationString, frac shall be set true
+// so that will produce ms, µs and ns part.
 func SmartDurationStringEx(d time.Duration, frac bool) string { return shortDur(d, frac) }
 
 func shortDur(d time.Duration, frac bool) string {
@@ -176,17 +188,17 @@ func fmtMsec(buf []byte, u uint64, w int) (nw int) {
 func fmtFrac(buf []byte, v uint64, prec int) (nw int, nv uint64) {
 	// Omit trailing zeros up to and including decimal point.
 	w := len(buf)
-	print := false
+	printed := false
 	for i := 0; i < prec; i++ {
 		digit := v % 10
-		print = print || digit != 0
-		if print {
+		printed = printed || digit != 0
+		if printed {
 			w--
 			buf[w] = byte(digit) + '0'
 		}
 		v /= 10
 	}
-	if print {
+	if printed {
 		w--
 		buf[w] = '.'
 	}
@@ -229,6 +241,11 @@ func shortDurSimple(d time.Duration) string {
 	return s
 }
 
+// DurationFromFloat converts a float-point number to
+// time.Duration value.
+//
+// It treats the float number as seconds. The fraction part
+// will be transformed as ms or smaller parts.
 func DurationFromFloat(f float64) time.Duration {
 	return time.Duration(f * float64(time.Second))
 }
@@ -244,10 +261,13 @@ func MustParseDuration(s string) (dur time.Duration) {
 }
 
 // ParseDuration parses a duration string.
+//
 // A duration string is a possibly signed sequence of
 // decimal numbers, each with optional fraction and a unit suffix,
 // such as "300ms", "-1.5h" or "2h45m".
 // Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
+//
+// The difference is we accept day part, such as '3d7s'.
 func ParseDuration(s string) (time.Duration, error) {
 	// [-+]?([0-9]*(\.[0-9]*)?[a-z]+)+
 	orig := s
