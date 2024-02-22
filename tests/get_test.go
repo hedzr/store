@@ -6,8 +6,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/hedzr/evendeep"
+	"github.com/davecgh/go-spew/spew"
+	"github.com/hedzr/is/states"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/hedzr/evendeep"
 
 	"github.com/hedzr/store"
 	"github.com/hedzr/store/codecs/hcl"
@@ -16,9 +19,147 @@ import (
 	"github.com/hedzr/store/providers/file"
 )
 
+func ExampleDump1() {
+	conf := store.New()
+	conf.Set("app.debug", false)
+	conf.Set("app.verbose", true)
+	conf.Set("app.dump", 3)
+	conf.Set("app.logging.file", "/tmp/1.log")
+	conf.Set("app.server.start", 5)
+
+	ss := conf.WithPrefix("app.logging")
+	ss.Set("rotate", 6)
+	ss.Set("words", []any{"a", 1, false})
+	ss.Set("keys", map[any]any{"a": 3.13, 1.73: "zz", false: true})
+
+	states.Env().SetNoColorMode(true) // to disable ansi escape sequences in dump output
+	fmt.Println(conf.Dump())
+
+	// Output:
+	//   app.                          <B>
+	//     d                           <B>
+	//       ebug                      <L> app.debug => false
+	//       ump                       <L> app.dump => 3
+	//     verbose                     <L> app.verbose => true
+	//     logging.                    <B>
+	//       file                      <L> app.logging.file => /tmp/1.log
+	//       rotate                    <L> app.logging.rotate => 6
+	//       words                     <L> app.logging.words => [a 1 false]
+	//       keys                      <L> app.logging.keys => map[a:3.13 1.73:zz false:true]
+	//     server.start                <L> app.server.start => 5
+}
+
+func ExampleDump2() {
+	conf := store.New()
+	conf.Set("app.debug", false)
+	conf.Set("app.verbose", true)
+	conf.Set("app.dump", 3)
+	conf.Set("app.logging.file", "/tmp/1.log")
+	conf.Set("app.server.start", 5)
+
+	ss := conf.WithPrefix("app.logging")
+	ss.Set("rotate", 6)
+	ss.Set("words", []any{"a", 1, false})
+	ss.Set("keys", map[any]any{"a": 3.13, 1.73: "zz", false: true})
+
+	conf.Set("app.bool", "[on,off,   true]")
+	conf.SetComment("app.bool", "a bool slice", "remarks here")
+	conf.SetTag("app.bool", []any{"on", "off", true})
+
+	states.Env().SetNoColorMode(true) // to disable ansi escape sequences in dump output
+	fmt.Println(conf.Dump())
+
+	// Output:
+	//   app.                          <B>
+	//     d                           <B>
+	//       ebug                      <L> app.debug => false
+	//       ump                       <L> app.dump => 3
+	//     verbose                     <L> app.verbose => true
+	//     logging.                    <B>
+	//       file                      <L> app.logging.file => /tmp/1.log
+	//       rotate                    <L> app.logging.rotate => 6
+	//       words                     <L> app.logging.words => [a 1 false]
+	//       keys                      <L> app.logging.keys => map[a:3.13 1.73:zz false:true]
+	//     server.start                <L> app.server.start => 5
+	//     bool                        <L> app.bool => [on,off,   true] // remarks here | tag = [on off true] ~ a bool slice
+}
+
+func TestStoreS_Dump2(t *testing.T) {
+	conf := store.New()
+	conf.Set("app.debug", false)
+	conf.Set("app.verbose", true)
+	conf.Set("app.dump", 3)
+	conf.Set("app.logging.file", "/tmp/1.log")
+	conf.Set("app.server.start", 5)
+
+	ss := conf.WithPrefix("app.logging")
+	ss.Set("rotate", 6)
+	ss.Set("words", []any{"a", 1, false})
+	ss.Set("keys", map[any]any{"a": 3.13, 1.73: "zz", false: true})
+
+	conf.Set("app.bool", "[on,off,   true]")
+	conf.SetComment("app.bool", "a bool slice", "remarks here")
+	conf.SetTag("app.bool", []any{"on", "off", true})
+
+	// states.Env().SetNoColorMode(true) // to disable ansi escape sequences in dump output
+	t.Log("\n", conf.Dump())
+}
+
+func TestStoreS_Get(t *testing.T) {
+	conf := store.New()
+	conf.Set("app.debug", false)
+	conf.Set("app.verbose", true)
+	conf.Set("app.dump", 3)
+	conf.Set("app.logging.file", "/tmp/1.log")
+	conf.Set("app.server.start", 5)
+
+	ss := conf.WithPrefix("app.logging")
+	ss.Set("rotate", 6)
+	ss.Set("words", []any{"a", 1, false})
+	ss.Set("keys", map[any]any{"a": 3.13, 1.73: "zz", false: true})
+
+	conf.Set("app.bool", "[on,off,   true]")
+	conf.SetComment("app.bool", "a bool slice", "remarks here")
+	conf.SetTag("app.bool", []any{"on", "off", true})
+
+	// data, found := conf.Get("app.logging.rotate")
+	// println(data, found)
+	// data = conf.MustGet("app.logging.rotate")
+	// println(data)
+	// fmt.Println(conf.MustInt("app.dump"))
+	// fmt.Println(conf.MustString("app.dump"))
+	// fmt.Println(conf.MustBool("app.dump")) // convert 3 to bool will get true since hedzr/evendeep v1.1.0
+
+	data, found := conf.Get("app.logging.rotate")
+	assert.Equal(t, 6, data)
+	assert.Equal(t, true, found)
+	data = conf.MustGet("app.logging.rotate")
+	assert.Equal(t, 6, data)
+
+	assert.Equal(t, 3, conf.MustInt("app.dump"))
+	assert.Equal(t, "3", conf.MustString("app.dump"))
+	assert.Equal(t, true, conf.MustBool("app.dump"))
+
+	assert.Equal(t, []bool{false, true, false}, conf.MustBoolSlice("app.logging.words"))
+	assert.Equal(t, []string{"a", "1", "false"}, conf.MustStringSlice("app.logging.words"))
+	assert.Equal(t, []int{0, 1, 0}, conf.MustIntSlice("app.logging.words"))
+	assert.Equal(t, []int32{0, 1, 0}, conf.MustInt32Slice("app.logging.words"))
+	assert.Equal(t, []uint32{0, 1, 0}, conf.MustUint32Slice("app.logging.words"))
+	assert.Equal(t, map[string]any{"words": []any{"a", 1, false}}, conf.MustM("app.logging.words"))
+
+	assert.Equal(t, map[string]string{"a": "3.13", "1.73": "zz", "false": "true"}, conf.MustStringMap("app.logging.keys"))
+	assert.Equal(t, map[any]any{"a": 3.13, 1.73: "zz", false: true}, conf.MustGet("app.logging.keys"))
+	assert.Equal(t, map[string]any{"keys": map[any]any{"a": 3.13, 1.73: "zz", false: true}},
+		conf.MustM("app.logging.keys"))
+	assert.Equal(t, map[string]any{"app.logging.keys": map[any]any{"a": 3.13, 1.73: "zz", false: true}},
+		conf.MustR("app.logging.keys"))
+
+	t.Logf("\n%v", conf.Dump())
+}
+
 func TestStoreResultTypedGetters(t *testing.T) {
 	s := store.New()
-	parser := hcl.New(hcl.WithFlattenSlices(true))
+	parser := hcl.New() // hcl.WithFlattenSlices(true))
 	if _, err := s.Load(context.TODO(),
 		store.WithStorePrefix("app.hcl"),
 		store.WithCodec(parser),
@@ -121,5 +262,5 @@ func assertEqual(t testing.TB, expect, actual any, msg ...any) { //nolint:govet 
 		}
 	}
 
-	t.Fatalf("assertEqual failed: %v\n    expect: %v\n    actual: %v\n", mesg, expect, actual)
+	t.Fatalf("assertEqual failed: %v\n    expect: %v\n    actual: %v\n", mesg, spew.Sdump(expect), spew.Sdump(actual))
 }
