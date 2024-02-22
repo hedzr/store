@@ -15,6 +15,7 @@ man*/
 *.8
 *.bak
 .vagrant/
+_assets/
 
 .tmp.*
 *.code-workspace
