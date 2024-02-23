@@ -299,9 +299,9 @@ func (s *trieS[T]) GetR(path string, defaultVal ...map[string]any) (ret map[stri
 		// ret[node.pathS] = node.data
 
 		ret = make(map[string]any)
-		s.root.Walk(func(prefix, key string, node Node[T]) {
-			if (path == "" || !s.endsWith(prefix, s.delimiter)) && !node.isBranch() {
-				ret[prefix] = node.Data()
+		s.root.Walk(func(path, fragment string, node Node[T]) {
+			if (path == "" || !s.endsWith(path, s.delimiter)) && !node.isBranch() {
+				ret[path] = node.Data()
 			}
 		})
 		return
@@ -311,8 +311,8 @@ func (s *trieS[T]) GetR(path string, defaultVal ...map[string]any) (ret map[stri
 	if found || partialMatched {
 		_, _, ret = branch, partialMatched, make(map[string]any)
 
-		node.Walk(func(prefix, key string, node Node[T]) {
-			if !s.endsWith(prefix, s.delimiter) && !node.isBranch() {
+		node.Walk(func(path, fragment string, node Node[T]) {
+			if !s.endsWith(path, s.delimiter) && !node.isBranch() {
 				// For a trie like:
 				//
 				//     app.                          <B>
@@ -334,7 +334,7 @@ func (s *trieS[T]) GetR(path string, defaultVal ...map[string]any) (ret map[stri
 				// like 'app.dump' or 'app.dump.to'.
 				//
 				// See also TestStore_GetR()
-				ret[prefix] = node.Data()
+				ret[path] = node.Data()
 			}
 		})
 		logz.Debug("[GetR] ", "ret", ret)
@@ -365,14 +365,14 @@ func (s *trieS[T]) GetM(path string, opts ...MOpt[T]) (ret map[string]any, err e
 		for _, opt := range opts {
 			opt(&putter)
 		}
-		s.root.Walk(func(prefix, key string, node Node[T]) {
-			if (path == "" || !s.endsWith(prefix, s.delimiter)) && !node.isBranch() {
+		s.root.Walk(func(path, fragment string, node Node[T]) {
+			if (path == "" || !s.endsWith(path, s.delimiter)) && !node.isBranch() {
 				if putter.filterFn != nil {
 					if !putter.filterFn(node) {
 						return
 					}
 				}
-				ret[prefix] = node.Data()
+				ret[path] = node.Data()
 			}
 		})
 		if putter.noFlatten {
@@ -389,10 +389,10 @@ func (s *trieS[T]) GetM(path string, opts ...MOpt[T]) (ret map[string]any, err e
 			opt(&putter)
 		}
 		logz.Verbose("[GetM] loop subtree and return as a map", "path", putter.prefix)
-		node.Walk(func(prefix, key string, node Node[T]) {
-			if !s.endsWith(prefix, s.delimiter) && !node.isBranch() {
-				logz.Verbose("  - put into map", "prefix", prefix, "key", key)
-				putter.put(ret, prefix, string(s.delimiter), node.Data())
+		node.Walk(func(path, fragment string, node Node[T]) {
+			if !s.endsWith(path, s.delimiter) && !node.isBranch() {
+				logz.Verbose("  - put into map", "path", path, "fragment", fragment)
+				putter.put(ret, path, string(s.delimiter), node.Data())
 			}
 		})
 		logz.Verbose("[GetM] ", "ret", ret)

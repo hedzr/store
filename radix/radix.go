@@ -4,7 +4,7 @@ import (
 	"github.com/hedzr/store/ctx"
 )
 
-// Trie tree, radix-tree
+// Trie tree, an radix-tree
 type Trie[T any] interface {
 	// Insert and Search, more Basic Trie Operations
 
@@ -38,11 +38,14 @@ type Trie[T any] interface {
 	Delimiter() rune                                        // return current delimiter, generally it's dot ('.')
 	SetDelimiter(delimiter rune)                            // setter. Change it in runtime doesn't update old delimiter inside tree nodes.
 
+	// Dup duplicates a new instance from this one. = Clone.
 	Dup() (newTrie *trieS[T]) // a native Clone function
 
-	Walk(path string, cb func(prefix, key string, node Node[T]))
+	// Walk iterators the whole tree for each node.
+	Walk(path string, cb func(path, fragment string, node Node[T]))
 }
 
+// Node is a Trie-tree node.
 type Node[T any] interface {
 	isBranch() bool
 	hasData() bool
@@ -53,27 +56,31 @@ type Node[T any] interface {
 	matchR(word []rune, delimiter rune, parentNode *nodeS[T]) (matched, partialMatched bool, child, parent *nodeS[T])
 	dump(noColor bool) string
 
-	Walk(cb func(prefix, key string, node Node[T]))
+	// Walk iterators the whole sub-tree from this node.
+	Walk(cb func(path, fragment string, node Node[T]))
 
+	// Dup duplicates a new instance from this one. = Clone.
 	Dup() (newNode *nodeS[T])
 
-	Data() T
+	Data() T             // retrieve the data value, just valid for leaf node
+	Key() string         // retrieve the key field, just valid for leaf node
+	Description() string // retrieve the description field, just valid for leaf node
+	Comment() string     // retrieve the remarks field, just valid for leaf node
+	Tag() any            // retrieve the tag field, just valid for leaf node
 
-	Key() string
-	Description() string
-	Comment() string
-	Tag() any
-
-	SetData(data T)
-	SetComment(desc, comment string)
-	SetTag(tag any)
+	SetData(data T)                  // setter for data field
+	SetComment(desc, comment string) // setter for desc and comment field
+	SetTag(tag any)                  // setter for tag field
 
 	Modified() bool     // node data changed by user?
 	SetModified(b bool) // set modified state
 	ToggleModified()    // toggle modified state
+
+	IsLeaf() bool  // check if a node type is leaf
+	HasData() bool // check if a node has data. only leaf node can contain data field
 }
 
-const NoDelimiter rune = 0
+const NoDelimiter rune = 0 // reserved for an internal special tree
 
 type HandlersChain func(c ctx.Ctx, next Handler)
 

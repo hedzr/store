@@ -141,12 +141,12 @@ func TestTrieS_Delimiter(t *testing.T) {
 
 	// t.Logf("\nPath of 'conf'\n%v\n", conf.Dump())
 
-	trie.Walk("", func(prefix, key string, node Node[any]) {
-		t.Logf("%v %v | %v", prefix, key, node)
+	trie.Walk("", func(path, fragment string, node Node[any]) {
+		t.Logf("%v %v | %v", path, fragment, node)
 	})
 
-	trie.Walk("/about-us", func(prefix, key string, node Node[any]) {
-		t.Logf("%v %v | %v", prefix, key, node)
+	trie.Walk("/about-us", func(path, fragment string, node Node[any]) {
+		t.Logf("%v %v | %v", path, fragment, node)
 	})
 }
 

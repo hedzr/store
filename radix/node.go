@@ -42,6 +42,9 @@ func (s *nodeS[T]) Comment() string     { return s.comment }
 func (s *nodeS[T]) Tag() any            { return s.tag }
 func (s *nodeS[T]) Key() string         { return s.pathS }
 
+func (s *nodeS[T]) IsLeaf() bool  { return s.nType&NTMask == NTLeaf }
+func (s *nodeS[T]) HasData() bool { return s.nType&NTData != 0 }
+
 func (s *nodeS[T]) SetModified(b bool) {
 	if b {
 		s.nType |= NTModified
@@ -354,11 +357,11 @@ func (s *nodeS[T]) Dup() (newNode *nodeS[T]) { //nolint:revive
 	return
 }
 
-func (s *nodeS[T]) Walk(cb func(prefix, key string, node Node[T])) {
+func (s *nodeS[T]) Walk(cb func(path, fragment string, node Node[T])) {
 	s.walk(0, cb)
 }
 
-func (s *nodeS[T]) walk(level int, cb func(prefix, key string, node Node[T])) { //nolint:revive
+func (s *nodeS[T]) walk(level int, cb func(path, fragment string, node Node[T])) { //nolint:revive
 	cb(s.pathS, string(s.path), s)
 	for _, ch := range s.children {
 		ch.walk(level+1, cb)

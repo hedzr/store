@@ -254,6 +254,7 @@ func (s *trieS[T]) Query(path string) (data T, branch, found bool, err error) { 
 
 func (s *trieS[T]) search(word string) (found, parent *nodeS[T], partialMatched bool) { //nolint:revive
 	found = s.root
+	// stringtoslicerune needs two pass full-scanning for a string, but it have to be to do.
 	if matched, pm, child, p := found.matchR([]rune(word), s.delimiter, nil); matched || pm {
 		return child, p, pm
 	}
@@ -303,7 +304,7 @@ func (s *trieS[T]) Dup() (newTrie *trieS[T]) { //nolint:revive
 	return s.dupS(s.root.Dup(), s.prefix)
 }
 
-func (s *trieS[T]) Walk(path string, cb func(prefix, key string, node Node[T])) {
+func (s *trieS[T]) Walk(path string, cb func(path, fragment string, node Node[T])) {
 	root := s.root
 	if path != "" {
 		node, parent, partialMatched := s.search(path)
