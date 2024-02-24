@@ -5,9 +5,12 @@ import (
 	"sync/atomic"
 
 	"github.com/hedzr/store"
-	"github.com/hedzr/store/cvt"
+	"github.com/hedzr/store/internal/cvt"
 )
 
+// New makes a new instance for importing a map.
+//
+// The map must be a map[string]any, it can be nested.
 func New(m map[string]any, delimiter string, opts ...Opt) *pvdr { //nolint:revive
 	s := &pvdr{delimiter: delimiter}
 	for _, opt := range opts {
