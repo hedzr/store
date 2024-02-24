@@ -568,8 +568,8 @@ func (s *prefixPutter[T]) putKeys(m map[string]any, keys []string, v any) {
 	if c, ok := m[k]; ok {
 		if cm, ok := c.(map[string]any); ok {
 			s.putKeys(cm, rest, v)
-		} else { //nolint:staticcheck,revive
-			// ? panic
+			// } else { //nolint:staticcheck,revive
+			// 	// ? panic
 		}
 	} else {
 		cm := make(map[string]any)
