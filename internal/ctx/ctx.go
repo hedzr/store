@@ -7,8 +7,10 @@ import (
 
 // type Val *Value
 
+// Val represents a value.
 type Val any
 
+// Ctx is like go context but has a stronger value api.
 type Ctx interface {
 	NamesCount() int
 	Next() bool

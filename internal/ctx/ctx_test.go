@@ -6,6 +6,22 @@ import (
 	"time"
 )
 
+func TestCtxS_Next_Short(t *testing.T) {
+	c := TODO() //nolint:gocritic
+	for c.Next() {
+		t.Log(c.Key())
+	}
+}
+
+func TestCtxS_Next_Simple(t *testing.T) {
+	c := WithValue(TODO(), "k1", 1)
+	c.WithValues("k2", 2, "k3", 3)
+
+	for c.Next() {
+		t.Log(c.Key())
+	}
+}
+
 func TestCtxS_NamesCount(t *testing.T) {
 	ctx := WithValues(nil, "k1", 1, "k2", 2, "k3", time.Now(), time.Now(), "now").(*ctxS)
 	if ctx.NamesCount() != 4 {
