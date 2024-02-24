@@ -19,11 +19,14 @@ func New(opts ...Opt) *pvdr {
 }
 
 type pvdr struct {
-	codec         store.Codec // keep it nil
-	prefix        string
-	stripped      string
-	storePrefix   string
-	cb            func(key string) string
+	codec       store.Codec // keep it nil
+	prefix      string
+	stripped    string
+	storePrefix string
+
+	cb func(key string) string
+	// w             func(key, value string) (processed bool)
+
 	keys          []string
 	m             map[string]store.ValPkg
 	pos           int
@@ -44,7 +47,7 @@ func WithCodec(codec store.Codec) Opt {
 // Only names which have given prefix are available.
 // Such as app.Name()+"_".
 //
-// The filtered names will be stripped by strippedPrefix.
+// The filtered names will be stripped.
 func WithPrefix(prefix string, strippedPrefix ...string) Opt {
 	return func(s *pvdr) {
 		s.prefix = strings.ToUpper(prefix)
@@ -63,11 +66,21 @@ func WithStorePrefix(position string) Opt {
 	}
 }
 
+// WithKeyCB gives a callback functor to transform an envvar key
+// name.
+//
+// This action happens at preparing time.
 func WithKeyCB(cb func(key string) string) Opt {
 	return func(s *pvdr) {
 		s.cb = cb
 	}
 }
+
+// func WithWorker(w func(key, value string) (processed bool)) Opt {
+// 	return func(s *pvdr) {
+// 		s.w = w
+// 	}
+// }
 
 func WithLowerCase(b ...bool) Opt {
 	return func(s *pvdr) {
