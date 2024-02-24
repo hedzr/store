@@ -37,6 +37,10 @@ func TestStore_Env_Load(t *testing.T) {
 			env.WithPrefix(""),
 			env.WithLowerCase(true),
 			env.WithUnderlineToDot(true),
+			env.WithKeyCB(func(key string) string {
+				return "poor." + key
+			}),
+			env.WithCodec(nil),
 		)),
 
 		store.WithStoreFlattenSlice(true), // decode and flatten slice into tree structure instead treat it as a simple value
@@ -47,7 +51,7 @@ func TestStore_Env_Load(t *testing.T) {
 	ret := s.Dump()
 	t.Logf("\nPath\n%v\n", ret)
 
-	assert.Equal(t, `on`, s.MustGet("app.env.go111module"))
+	assert.Equal(t, `on`, s.MustGet("app.env.poor.go111module"))
 
 	// assertTrue(t, store.MustGet("app.env.HOME") == `/Users/hz`,
 	//    `expecting store.Get("app.env.HOME") return '/Users/hz', but got '%`+`v'`,
