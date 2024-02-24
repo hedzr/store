@@ -1,15 +1,11 @@
 package radix
 
-import (
-	"github.com/hedzr/store/ctx"
-)
-
 // Trie tree, an radix-tree
 type Trie[T any] interface {
 	// Insert and Search, more Basic Trie Operations
 
 	Insert(path string, data T) (oldData any)                                // Insert data (T) to path
-	StartsWith(word string) (yes bool)                                       // tests if word exists, even partial matched
+	StartsWith(word string) (yes bool)                                       // tests if word exists, even if a partial matching.
 	Search(word string) (found bool)                                         // tests if word exists (= Has)
 	Query(path string) (data T, branch, found bool, err error)               // full ability word searching (=enhanced Has)
 	Locate(path string) (node *nodeS[T], branch, partialMatched, found bool) // Locate is an enhanced Has and returns more internal information (=enhanced Has)
@@ -82,6 +78,6 @@ type Node[T any] interface {
 
 const NoDelimiter rune = 0 // reserved for an internal special tree
 
-type HandlersChain func(c ctx.Ctx, next Handler)
-
-type Handler func(c ctx.Ctx)
+// type HandlersChain func(c ctx.Ctx, next Handler)
+//
+// type Handler func(c ctx.Ctx)
