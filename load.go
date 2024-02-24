@@ -11,7 +11,9 @@ import (
 	logz "github.com/hedzr/logg/slog"
 	"gopkg.in/hedzr/errors.v3"
 
-	"github.com/hedzr/store/internal/radix"
+	"github.com/hedzr/evendeep"
+
+	"github.com/hedzr/store/radix"
 )
 
 func (s *storeS) inLoading() bool { return atomic.LoadInt32(&s.loading) == 1 }
@@ -85,6 +87,16 @@ func (s *storeS) loadMapDedicated(m map[string]ValPkg, position string, creating
 	return
 }
 
+func (s *storeS) loadMapAny(m map[any]any, position string, creating bool, onSet lmOnSet) (err error) {
+	ec := errors.New()
+	defer ec.Defer(&err)
+	cvt := evendeep.Cvt{}
+	for k, v := range m {
+		s.loadMapByValueType(ec, position, cvt.String(k), v, creating, onSet)
+	}
+	return
+}
+
 func (s *storeS) loadMap(m map[string]any, position string, creating bool, onSet lmOnSet) (err error) {
 	ec := errors.New()
 	defer ec.Defer(&err)
@@ -100,6 +112,8 @@ func (s *storeS) loadMapByValueType(ec errors.Error, position, k string, v any, 
 		s.loadMapByValueType(ec, position, k, vv.Value, creating, onSet)
 	case map[string]any:
 		ec.Attach(s.loadMap(vv, s.join(position, k), creating, onSet))
+	case map[any]any:
+		ec.Attach(s.loadMapAny(vv, s.join(position, k), creating, onSet))
 	case []map[string]any:
 		if s.flattenSlice {
 			buf := make([]byte, 0, len(k)+16)
@@ -108,6 +122,19 @@ func (s *storeS) loadMapByValueType(ec errors.Error, position, k string, v any, 
 				buf = append(buf, byte(s.Delimiter()))
 				buf = strconv.AppendInt(buf, int64(i), 10)
 				ec.Attach(s.loadMap(mm, s.join(position, string(buf)), creating, onSet))
+				buf = buf[:0]
+			}
+			break
+		}
+		s.WithPrefixReplaced(position).setKV(k, v, creating, onSet)
+	case []map[any]any:
+		if s.flattenSlice {
+			buf := make([]byte, 0, len(k)+16)
+			for i, mm := range vv {
+				buf = append(buf, k...)
+				buf = append(buf, byte(s.Delimiter()))
+				buf = strconv.AppendInt(buf, int64(i), 10)
+				ec.Attach(s.loadMapAny(mm, s.join(position, string(buf)), creating, onSet))
 				buf = buf[:0]
 			}
 			break
@@ -187,35 +214,15 @@ func (s *storeS) applyChanges(ev Change) {
 	// if err := s.Load(WithProvider(ev.Provider())); err != nil {
 	// 	logz.Error("[Watcher.applyChanges]", "err", err)
 	// }
-	if ev.Has(OpCreate) {
-		logz.Debug("debug create")
+	if hasCreate, hasWrite := ev.Has(OpCreate), ev.Has(OpWrite); hasCreate || hasWrite {
+		logz.Debug("debug create/write", "create", hasCreate, "write", hasWrite)
 		for {
 			key, val, ok := ev.Next()
 			if !ok {
 				break
 			}
-			s.setKV(key, val, true, nil)
-			logz.Debug("created: ", key, s.MustGet(key), "event", ev.Op())
-		}
-	} else if ev.Has(OpWrite) {
-		logz.Debug("debug write")
-		for {
-			key, val, ok := ev.Next()
-			if !ok {
-				break
-			}
-			s.setKV(key, val, false, nil)
-			logz.Debug("modified: ", key, s.MustGet(key), "event", ev.Op())
-		}
-	} else if ev.Has(OpRename) {
-		logz.Debug("debug rename")
-		for {
-			key, _, ok := ev.Next()
-			if !ok {
-				break
-			}
-			// s.Set(key, val)
-			logz.Debug("renamed: ", key, s.MustGet(key), "event", ev.Op())
+			s.setKV(key, val, hasCreate, nil)
+			logz.Debug("created/wrote: ", key, s.MustGet(key), "event", ev.Op())
 		}
 	} else if ev.Has(OpRemove) {
 		logz.Debug("debug remove")
@@ -227,15 +234,15 @@ func (s *storeS) applyChanges(ev Change) {
 			s.Remove(key)
 			logz.Debug("removed: ", key, val, "event", ev.Op())
 		}
-	} else if ev.Has(OpChmod) {
-		logz.Debug("debug chmod")
+	} else if hasRename, hasChmod := ev.Has(OpRename), ev.Has(OpChmod); hasRename || hasChmod {
+		logz.Debug("debug rename/chmod", "rename", hasRename, "chmod", hasChmod)
 		for {
 			key, val, ok := ev.Next()
 			if !ok {
 				break
 			}
 			// s.Set(key, nil)
-			logz.Debug("chmod: ", key, val, "event", ev.Op())
+			logz.Debug("renamed/chmod'ed: ", key, val, "event", ev.Op())
 		}
 	}
 }
@@ -366,7 +373,7 @@ func (s *loadS) tryLoad(ctx context.Context) (data map[string]ValPkg, bin map[st
 	// try Read() at first
 	data, err = s.provider.Read()
 	if err == nil {
-		return
+		return // Read ok, return the data directly
 	}
 
 	var b []byte
