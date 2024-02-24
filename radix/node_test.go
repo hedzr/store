@@ -37,6 +37,16 @@ func TestNodeS_Tag(t *testing.T) {
 	if node.endsWithLite('.') {
 		t.Fail()
 	}
+
+	assert(!node.IsLeaf())
+	assert(!node.HasData())
+	node.SetData(1)
+	node.SetComment("desc", "comment")
+	node.SetTag(2)
+	assertEqual(t, 1, node.Data())
+	assertEqual(t, 2, node.Tag())
+	assertEqual(t, "desc", node.Description())
+	assertEqual(t, "comment", node.Comment())
 }
 
 func TestNodeS_remove(t *testing.T) {
