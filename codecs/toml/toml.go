@@ -12,13 +12,13 @@ func New() store.Codec {
 
 type ldr struct{}
 
-// Unmarshal parses the given YAML bytes.
+// Unmarshal parses the given TOML bytes.
 func (p *ldr) Unmarshal(b []byte) (data map[string]any, err error) {
 	err = toml.Unmarshal(b, &data)
 	return
 }
 
-// Marshal marshals the given config map to YAML bytes.
+// Marshal marshals the given config map to TOML bytes.
 func (p *ldr) Marshal(m map[string]any) (data []byte, err error) {
 	return toml.Marshal(m)
 }

@@ -16,13 +16,13 @@ type ldr struct {
 
 var _ store.Codec = (*ldr)(nil)
 
-// Unmarshal parses the given YAML bytes.
+// Unmarshal parses the given hjson bytes.
 func (p *ldr) Unmarshal(b []byte) (data map[string]any, err error) {
 	err = hjson.Unmarshal(b, &data)
 	return
 }
 
-// Marshal marshals the given config map to YAML bytes.
+// Marshal marshals the given config map to hjson bytes.
 func (p *ldr) Marshal(m map[string]any) (data []byte, err error) {
 	return hjson.Marshal(m)
 }

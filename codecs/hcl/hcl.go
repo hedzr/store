@@ -24,7 +24,7 @@ func WithFlattenSlices(b bool) Opt {
 type Opt func(s *ldr)
 type ldr struct{ flattenSlices bool }
 
-// Unmarshal parses the given YAML bytes.
+// Unmarshal parses the given hcl bytes.
 func (p *ldr) Unmarshal(b []byte) (data map[string]any, err error) {
 	err = hcl.Unmarshal(b, &data)
 
@@ -45,7 +45,7 @@ func (p *ldr) Unmarshal(b []byte) (data map[string]any, err error) {
 	return
 }
 
-// Marshal marshals the given config map to YAML bytes.
+// Marshal marshals the given config map to hcl bytes.
 func (p *ldr) Marshal(m map[string]any) (data []byte, err error) {
 	// return hcl.Marshal(m)
 	err = store.ErrNotImplemented
