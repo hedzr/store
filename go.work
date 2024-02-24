@@ -32,6 +32,7 @@ use (
 	./providers/fs
 	./providers/maps
 
+	./codecs/gob
 	./providers/vault
 
 	./tests
