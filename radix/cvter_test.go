@@ -175,6 +175,12 @@ func TestTrieS_GetString(t *testing.T) {
 	t.Logf("app.logging.words: %v", a)
 	a = trie.MustStringSlice("app.logging.words111", "")
 	t.Logf("app.logging.words: %v", a)
+
+	b, e := trie.GetStringSlice("app.logging.words111", "")
+	if e == nil {
+		t.Fail()
+	}
+	t.Logf("app.logging.words: %v", b)
 }
 
 func TestTrieS_GetStringMap(t *testing.T) {
