@@ -96,6 +96,11 @@ func TestTrieS_Delimiter(t *testing.T) {
 		t.Fail()
 	}
 
+	assertEqual(t, true, trie.StartsWith("/"))
+	assertEqual(t, true, trie.StartsWith("/sup"))
+	assertEqual(t, true, trie.StartsWith("/support"))
+	assertEqual(t, false, trie.StartsWith("/suspend"))
+
 	conf := trie.WithPrefix("/about-us")
 	conf.SetComment("team", "desc1", "comment1")
 	conf.SetTag("team", 3.1313)
@@ -103,6 +108,19 @@ func TestTrieS_Delimiter(t *testing.T) {
 	if !reflect.DeepEqual(i, 4) {
 		t.Fail()
 	}
+
+	_ = conf.Merge("y", map[string]any{"tr": 1})
+
+	t.Logf("\nPath of 'trie' (delimeter=%v)\n%v\n",
+		trie.Delimiter(),
+		trie.Dump())
+
+	assertEqual(t, true, conf.StartsWith("y"))
+	assertEqual(t, true, conf.StartsWith("y/tr"))
+	assertEqual(t, false, conf.StartsWith("y/tr/1"))
+
+	d := conf.MustGet("x")
+	assertEqual(t, nil, d)
 
 	ia, _ := conf.Get("team")
 	if !reflect.DeepEqual(ia, 4) {

@@ -2,6 +2,7 @@ package radix
 
 import (
 	"bytes"
+	"strings"
 	"sync"
 
 	"gopkg.in/hedzr/errors.v3"
@@ -159,6 +160,9 @@ func (s *trieS[T]) StartsWith(path string) (yes bool) {
 	}
 	node, _, partialMatched := s.search(path)
 	yes = node != nil || partialMatched
+	if partialMatched {
+		yes = strings.HasPrefix(node.pathS, path)
+	}
 	return
 }
 
