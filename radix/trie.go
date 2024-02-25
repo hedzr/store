@@ -146,9 +146,9 @@ func (s *trieS[T]) SetTag(path string, tag any) (ok bool) { // set extra notable
 
 // Merge a map at path point 'pathAt'
 func (s *trieS[T]) Merge(pathAt string, data map[string]any) (err error) {
-	if s.prefix != "" {
-		pathAt = s.join(s.prefix, pathAt) //nolint:revive
-	}
+	// if s.prefix != "" {
+	// 	pathAt = s.join(s.prefix, pathAt) //nolint:revive
+	// }
 	err = s.withPrefix(pathAt).loadMap(data)
 	return
 }
