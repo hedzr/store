@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"sync"
 
-	"github.com/hedzr/store/internal/radix"
+	"github.com/hedzr/store/radix"
 )
 
 func newStore(opts ...Opt) *storeS {
@@ -17,12 +17,17 @@ func newStore(opts ...Opt) *storeS {
 	return s
 }
 
+// WithDelimiter sets the delimiter char.
+//
+// A delimiter char is generally used for extracting the key-value
+// pair via GetXXX, MustXXX, e.g., MustInt, MustStringSlice, ....
 func WithDelimiter(delimiter rune) Opt {
 	return func(s *storeS) {
 		s.SetDelimiter(delimiter)
 	}
 }
 
+// WithPrefix sets the associated prefix for the tree path.
 func WithPrefix(prefix string) Opt {
 	return func(s *storeS) {
 		s.SetPrefix(prefix)
@@ -65,7 +70,7 @@ type Peripheral interface {
 	Close()
 }
 
-// storeS is a in-memory key-value container with tree structure.
+// storeS is an in-memory key-value container with tree structure.
 // The keys are typically dotted to represent the tree position.
 type storeS struct {
 	radix.Trie[any]
@@ -197,29 +202,47 @@ func (s *storeS) Set(path string, data any) (node radix.Node[any], oldData any) 
 		oldData = old
 	}
 
-	node, oldData = s.setKV(path, data, !found)
+	node, oldData = s.setKV(path, data, !found, nil)
 	// s.tryOnSet(path, false, old, data)
 	return
 }
 
 // Merge a map at path point 'pathAt'.
 func (s *storeS) Merge(pathAt string, data map[string]any) (err error) {
-	_, _, _, err = s.Trie.Query(pathAt)
-	// if !found {
-	// 	if err1 != nil || !branch {
-	// 		old = nil
-	// 	}
+	// _, _, _, err = s.Trie.Query(pathAt)
+	// // if !found {
+	// // 	if err1 != nil || !branch {
+	// // 		old = nil
+	// // 	}
+	// // }
+	// if err != nil {
+	// 	return
 	// }
-	if err != nil {
-		return
-	}
 
-	err = s.loadMap(data, pathAt, false)
+	err = s.loadMap(data, pathAt, false, nil)
 	// s.tryOnSet(pathAt, true, old, data)
 	return
 }
 
-func (s *storeS) setKV(path string, data any, createOrModify bool) (node radix.Node[any], oldData any) {
+// func (s *storeS) setKValPkg(path string, vp ValPkg, createOrModify bool) (node radix.Node[any], oldData any) {
+// 	s.Trie.SetComment(path, vp.Desc, vp.Comment)
+// 	s.Trie.SetTag(path, vp.Tag)
+//
+// 	loading := s.inLoading()
+// 	user := !loading
+// 	if user {
+// 		if oldData != nil {
+// 			createOrModify = false // set it to is-modifying instead of is-creating
+// 		}
+// 		if node != nil {
+// 			node.SetModified(true)
+// 		}
+// 	}
+// 	s.tryOnSet(path, user, oldData, vp.Value, createOrModify)
+// 	return
+// }
+
+func (s *storeS) setKV(path string, data any, createOrModify bool, onSet lmOnSet) (node radix.Node[any], oldData any) {
 	node, oldData = s.Trie.Set(path, data)
 	loading := s.inLoading()
 	user := !loading
@@ -228,6 +251,9 @@ func (s *storeS) setKV(path string, data any, createOrModify bool) (node radix.N
 			createOrModify = false // set it to is-modifying instead of is-creating
 		}
 		if node != nil {
+			if onSet != nil {
+				onSet(node)
+			}
 			node.SetModified(true)
 		}
 	}
@@ -266,6 +292,7 @@ retryPM:
 
 func (s *storeS) tryOnDelete(path string, user bool, oldData any, node, np radix.Node[any]) {
 	ptr := s
+	_, _ = node, np
 retryPD:
 	for _, cb := range ptr.OnDeleteHandlers {
 		if cb != nil {
