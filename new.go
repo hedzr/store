@@ -5,49 +5,53 @@ import (
 	stderr "errors"
 	"io"
 
-	"github.com/hedzr/store/internal/radix"
-
 	"gopkg.in/hedzr/errors.v3"
+
+	"github.com/hedzr/store/radix"
 )
 
-// New makes a new instance of storeS and return it.
+// New makes a new instance of storeS and returns it.
 //
 // A storeS is a key-value container in memory with hierarchical
 // tree data. A leaf or branch node can hold data. The dotted
 // path
-func New(opts ...Opt) *storeS { return newStore(opts...) }
+func New(opts ...Opt) Store { return newStore(opts...) }
 
+// NewStoreT allows reimplementing your own Store if necessary.
+//
+// Any suggestions welcome, please notify me, issue me.
 func NewStoreT[T any]() StoreT[T] {
 	return radix.NewTrie[T]()
 }
 
 // type storeS interface {
-// 	Get(path string) (data any, found bool)
-// 	Set(path string, data any)
-// 	Has(path string) (found bool)
+//  Get (path string) (data any, found bool)
+//  Set (path string, data any)
+//  Has (path string) (found bool)
 // }
-
+//
 // type entryS struct {
-// 	name  string
-// 	value Value
+//  name string
+//  value Value
 // }
 //
 // type storeSs struct {
-// 	root  *entryS
-// 	rootM map[string]any
+//  root *entryS
+//  rootM map[string]any
 //
-// 	items *itemS
+//  items *itemS
+// }
+//
+// type itemS struct { //nolint:unused
+// 	leaves   map[string]any
+// 	children map[string]*direntS
+// }
+//
+// type direntS struct { //nolint:unused
+// 	items map[string]*itemS
 // }
 
-type itemS struct { //nolint:unused
-	leaves   map[string]any
-	children map[string]*direntS
-}
-
-type direntS struct { //nolint:unused
-	items map[string]*itemS
-}
-
+// StoreT holds a minimal typed Store interface.
 type StoreT[T any] interface {
 	MustGet(path string) (data T)
 	Get(path string) (data T, found bool)
@@ -55,12 +59,14 @@ type StoreT[T any] interface {
 	Has(path string) (found bool)
 }
 
+// Store holds a standard Store interface.
 type Store interface {
 	// Close cleanup the internal resources.
 	// See [basics.Peripheral] for more information.
 	Close()
 
-	// MustGet is shortcut version of Get without error return.
+	// MustGet is the shortcut version of Get without
+	// returning any error.
 	MustGet(path string) (data any)
 
 	// Get the value at path point 'path'.
@@ -94,7 +100,8 @@ type Store interface {
 
 	// Dup is a native Clone tool.
 	//
-	// After Dup, a copy of original store will be created, but closers not.
+	// After Dup, a copy of the original store will be created,
+	// but closers not.
 	// Most of the closers are cleanup code fragments coming
 	// from Load(WithProvider()), some of them needs to shut down the
 	// remote connection such as what want to do by consul provider.
@@ -102,12 +109,12 @@ type Store interface {
 	// At this scene, the parent store still holds the cleanup closers.
 	Dup() (newStore *storeS)
 
-	// Walk iterates the whole Store.
+	// Walk does iterate the whole Store.
 	//
 	// Walk("") walks from top-level root node.
 	// Walk("app") walks from the parent of "app" node.
 	// Walk("app.") walks from the "app." node.
-	Walk(path string, cb func(prefix, key string, node radix.Node[any]))
+	Walk(path string, cb func(path, fragment string, node radix.Node[any]))
 
 	// WithPrefix makes a lightweight copy from current storeS.
 	//
@@ -252,7 +259,7 @@ type FallbackProvider interface {
 
 type ProviderSupports interface {
 	GetCodec() (codec Codec)   // return the bound codec decoder
-	GetPosition() (pos string) // return a position pointed to trie node path
+	GetPosition() (pos string) // return a position pointed to a Trie-node path
 	WithCodec(codec Codec)
 	WithPosition(pos string)
 }
@@ -295,15 +302,21 @@ type Codec interface {
 	Unmarshal(b []byte) (data map[string]any, err error)
 }
 
+// CodecEx reserved.
+type CodecEx interface {
+	MarshalEx(m map[string]ValPkg) (data []byte, err error)
+	UnmarshalEx(b []byte) (data map[string]ValPkg, err error)
+}
+
 // Writeable interface
 type Writeable interface {
 	Save(ctx context.Context) (err error)
 }
 
-// ErrIsNotFound checks if TypedGetters returning a NotFound error.
+// ErrorIsNotFound checks if TypedGetters returning a NotFound error.
 //
 //	_, err := trie.GetFloat64("app.dump.")
-//	println(store.ErrIsNotFound(err))       # should be 'true'
+//	println(store.ErrorIsNotFound(err))       # this should be 'true'
 //
 // If you don't care about these errors, use MustXXX such as [radix.Trie.MustFloat64].
-func ErrIsNotFound(err error) bool { return errors.Is(err, errors.NotFound) }
+func ErrorIsNotFound(err error) bool { return errors.Is(err, errors.NotFound) }
