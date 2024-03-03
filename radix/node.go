@@ -5,8 +5,6 @@ import (
 	"strings"
 
 	"github.com/hedzr/evendeep"
-
-	"github.com/hedzr/is/term/color"
 )
 
 type nodeType int
@@ -297,9 +295,9 @@ func (s *nodeS[T]) dumpR(sb *strings.Builder, lvl int, noColor bool) string { //
 			}
 		} else {
 			if s.isBranch() {
-				_, _ = sb.WriteString(color.ToDim(branchTitle))
+				_, _ = sb.WriteString(ColorToDim(branchTitle))
 			} else {
-				_, _ = sb.WriteString(color.ToDim(leafTitle))
+				_, _ = sb.WriteString(ColorToDim(leafTitle))
 			}
 		}
 
@@ -307,20 +305,20 @@ func (s *nodeS[T]) dumpR(sb *strings.Builder, lvl int, noColor bool) string { //
 			_, _ = sb.WriteString(" ")
 			_, _ = sb.WriteString(s.pathS)
 			_, _ = sb.WriteString(" => ")
-			_, _ = sb.WriteString(color.ToDim(fmt.Sprint(s.data)))
+			_, _ = sb.WriteString(ColorToDim(fmt.Sprint(s.data)))
 		}
 
 		if s.comment != "" {
-			_, _ = sb.WriteString(color.ToColor(color.FgLightGreen, " // "+s.comment))
+			_, _ = sb.WriteString(ColorToColor(FgLightGreen, " // "+s.comment))
 		}
 
 		if s.tag != nil {
 			_, _ = sb.WriteString(" | tag = ")
-			_, _ = sb.WriteString(color.ToColor(color.FgGreen, fmt.Sprint(s.tag)))
+			_, _ = sb.WriteString(ColorToColor(FgGreen, fmt.Sprint(s.tag)))
 		}
 
 		if s.description != "" {
-			_, _ = sb.WriteString(color.ToColor(color.FgLightGreen, " ~ "+s.description))
+			_, _ = sb.WriteString(ColorToColor(FgLightGreen, " ~ "+s.description))
 		}
 
 		if !strings.HasSuffix(s.pathS, string(s.path)) {

@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/davecgh/go-spew/spew"
-	"github.com/hedzr/is/states"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/hedzr/evendeep"
@@ -17,6 +16,7 @@ import (
 	"github.com/hedzr/store/codecs/toml"
 	"github.com/hedzr/store/internal/times"
 	"github.com/hedzr/store/providers/file"
+	"github.com/hedzr/store/radix"
 )
 
 func ExampleDump1() {
@@ -32,7 +32,7 @@ func ExampleDump1() {
 	ss.Set("words", []any{"a", 1, false})
 	ss.Set("keys", map[any]any{"a": 3.13, 1.73: "zz", false: true})
 
-	states.Env().SetNoColorMode(true) // to disable ansi escape sequences in dump output
+	radix.StatesEnvSetColorMode(true) // to disable ansi escape sequences in dump output
 	fmt.Println(conf.Dump())
 
 	// Output:
@@ -66,7 +66,7 @@ func ExampleDump2() {
 	conf.SetComment("app.bool", "a bool slice", "remarks here")
 	conf.SetTag("app.bool", []any{"on", "off", true})
 
-	states.Env().SetNoColorMode(true) // to disable ansi escape sequences in dump output
+	radix.StatesEnvSetColorMode(true) // to disable ansi escape sequences in dump output
 	fmt.Println(conf.Dump())
 
 	// Output:
@@ -101,7 +101,7 @@ func TestStoreS_Dump2(t *testing.T) {
 	conf.SetComment("app.bool", "a bool slice", "remarks here")
 	conf.SetTag("app.bool", []any{"on", "off", true})
 
-	// states.Env().SetNoColorMode(true) // to disable ansi escape sequences in dump output
+	// radix.StatesEnvSetColorMode(true) // to disable ansi escape sequences in dump output
 	t.Log("\n", conf.Dump())
 }
 

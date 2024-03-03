@@ -5,8 +5,6 @@ import (
 	"reflect"
 	"slices"
 	"testing"
-
-	"github.com/hedzr/is/states"
 )
 
 func newTrieTree() *trieS[any] {
@@ -57,7 +55,7 @@ func TestTrieS_General(t *testing.T) {
 }
 
 func TestTrieS_Insert(t *testing.T) {
-	states.Env().SetNoColorMode(true)
+	StatesEnvSetColorMode(true) // to disable ansi escape sequences in dump output
 
 	trie := newBasicStore()
 	ret := trie.dump(true)
@@ -85,7 +83,7 @@ func TestTrieS_Insert(t *testing.T) {
 }
 
 func TestTrieS_Set(t *testing.T) {
-	states.Env().SetNoColorMode(true)
+	StatesEnvSetColorMode(true) // to disable ansi escape sequences in dump output
 
 	trie := newBasicStore()
 	ret := trie.dump(true)

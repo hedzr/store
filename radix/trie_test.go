@@ -3,8 +3,6 @@ package radix
 import (
 	"reflect"
 	"testing"
-
-	"github.com/hedzr/is/states"
 )
 
 func TestStoreS_join(t *testing.T) {
@@ -48,7 +46,7 @@ func TestStoreS_join1(t *testing.T) {
 }
 
 func TestTrieS_InsertPath(t *testing.T) {
-	states.Env().SetNoColorMode(true)
+	StatesEnvSetColorMode(true) // to disable ansi escape sequences in dump output
 
 	trie := newTrieTree2()
 	ret := trie.dump(true)
