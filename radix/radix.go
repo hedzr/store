@@ -20,6 +20,9 @@ type Trie[T any] interface {
 
 	Merge(pathAt string, data map[string]any) (err error) // advanced operation to Merge hierarchical data
 
+	// Set and Get and MustGet and Has, for Store interface
+
+	// Set = Insert
 	Set(path string, data T) (node Node[T], oldData any) // = Insert
 	Has(path string) (found bool)                        // = Search
 	Get(path string) (data T, found bool)                // shortcut to Query

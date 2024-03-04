@@ -53,6 +53,7 @@ func TestNodeS_remove(t *testing.T) {
 	trie := newBasicStore()
 	trie.SetComment("app.dump", "desc", "comment")
 	trie.SetTag("app.dump", 3.13)
+
 	conf := trie.Dup()
 	trie.Remove("app.debug")
 	trie.Remove("app.logging.file")
