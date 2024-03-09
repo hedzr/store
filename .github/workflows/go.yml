@@ -72,7 +72,6 @@ jobs:
       COVERALLS_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     runs-on: ubuntu-latest
-    if: env.ENABLE_Coveralls_Sender != 0
     steps:
       - name: Install Go
         uses: actions/setup-go@v2
