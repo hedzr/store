@@ -21,24 +21,24 @@ The `store` is designed to provide the basic skeleton for [hedzr/cmdr v2 (stay i
 The `store` accesses tree data with a dotted key path, that means you may point to a specified tree node and access it, modify it, monitor it or remove it. You can use a different delimiter char like `/` or `\`.
 
 ```go
-	conf := store.New()
-	conf.Set("app.debug", false)
-	conf.Set("app.verbose", true)
-	conf.Set("app.dump", 3)
-	conf.Set("app.logging.file", "/tmp/1.log")
-	conf.Set("app.server.start", 5)
+conf := store.New()
+conf.Set("app.debug", false)
+conf.Set("app.verbose", true)
+conf.Set("app.dump", 3)
+conf.Set("app.logging.file", "/tmp/1.log")
+conf.Set("app.server.start", 5)
 
-	ss := conf.WithPrefix("app.logging")
-	ss.Set("rotate", 6)
-	ss.Set("words", []any{"a", 1, false})
-	ss.Set("keys", map[any]any{"a": 3.13, 1.73: "zz", false: true})
+ss := conf.WithPrefix("app.logging")
+ss.Set("rotate", 6)
+ss.Set("words", []any{"a", 1, false})
+ss.Set("keys", map[any]any{"a": 3.13, 1.73: "zz", false: true})
 
-	conf.Set("app.bool", "[on,off,   true]")
-	conf.SetComment("app.bool", "a bool slice", "remarks here")
-	conf.SetTag("app.bool", []any{"on", "off", true})
+conf.Set("app.bool", "[on,off,   true]")
+conf.SetComment("app.bool", "a bool slice", "remarks here")
+conf.SetTag("app.bool", []any{"on", "off", true})
 
-	states.Env().SetNoColorMode(true) // to disable ansi escape sequences in dump output
-	fmt.Println(conf.Dump())
+states.Env().SetNoColorMode(true) // to disable ansi escape sequences in dump output
+fmt.Println(conf.Dump())
 ```
 
 It dumps as (internal data structure):
@@ -108,28 +108,28 @@ A config entry, so-called as a node (in our Trie-tree), can be retrieved as a ty
 
 ```go
 func ExampleStoreS_Get() {
-	trie := newBasicStore()
-	fmt.Println(trie.MustInt("app.dump"))
-	fmt.Println(trie.MustString("app.dump"))
-	fmt.Println(trie.MustBool("app.dump")) // convert 3 to bool will get false, only 1 -> true.
-	// Output:
-	// 3
-	// 3
-	// false
+    trie := newBasicStore()
+    fmt.Println(trie.MustInt("app.dump"))
+    fmt.Println(trie.MustString("app.dump"))
+    fmt.Println(trie.MustBool("app.dump")) // convert 3 to bool will get false, only 1 -> true.
+    // Output:
+    // 3
+    // 3
+    // false
 }
 
 func newBasicStore(opts ...Opt) *storeS {
-	conf := New(opts...)
-	conf.Set("app.debug", false)
-	conf.Set("app.verbose", true)
-	conf.Set("app.dump", 3)
-	conf.Set("app.logging.file", "/tmp/1.log")
-	conf.Set("app.server.start", 5)
+    conf := New(opts...)
+    conf.Set("app.debug", false)
+    conf.Set("app.verbose", true)
+    conf.Set("app.dump", 3)
+    conf.Set("app.logging.file", "/tmp/1.log")
+    conf.Set("app.server.start", 5)
 
-	ss := conf.WithPrefix("app.logging")
-	ss.Set("rotate", 6)
-	ss.Set("words", []any{"a", 1, false})
-	return conf
+    ss := conf.WithPrefix("app.logging")
+    ss.Set("rotate", 6)
+    ss.Set("words", []any{"a", 1, false})
+    return conf
 }
 ```
 
@@ -148,30 +148,30 @@ The test code is:
 
 ```go
 func TestStore_GetM(t *testing.T) {
-	conf := newBasicStore()
+    conf := newBasicStore()
 
-	m, err := conf.GetM("")
-	if err != nil {
-		t.Fatalf("wrong in calling GetM(\"\"): %v", err)
-	}
-	t.Logf("whole tree: %v", m)
+    m, err := conf.GetM("")
+    if err != nil {
+        t.Fatalf("wrong in calling GetM(\"\"): %v", err)
+    }
+    t.Logf("whole tree: %v", m)
 
-	// filter by a functor
+    // filter by a functor
 
-	m, err = conf.GetM("", WithFilter[any](func(node radix.Node[any]) bool {
-		return strings.HasPrefix(node.Key(), "app.logging.")
-	}))
-	if err != nil {
-		t.Fatalf("wrong in calling GetM(\"\"): %v", err)
-	}
-	t.Logf("app.logging sub-tree: %v", m)
+    m, err = conf.GetM("", WithFilter[any](func(node radix.Node[any]) bool {
+        return strings.HasPrefix(node.Key(), "app.logging.")
+    }))
+    if err != nil {
+        t.Fatalf("wrong in calling GetM(\"\"): %v", err)
+    }
+    t.Logf("app.logging sub-tree: %v", m)
 }
 ```
 
 `GetM("")` can extract the whole tree, and `GetM("app.logging")` extract that subtree.
 
 With filter functor, you can extract `app.logging` subtree by `GetM("", WithFilter[any](func(node radix.Node[any]) bool {
-	return strings.HasPrefix(node.Key(), "app.logging.")
+    return strings.HasPrefix(node.Key(), "app.logging.")
 })))`.
 
 ### Extract Subtree Into Struct
@@ -180,44 +180,44 @@ With filter functor, you can extract `app.logging` subtree by `GetM("", WithFilt
 
 ```go
 func TestStore_GetSectionFrom(t *testing.T) {
-	conf := newBasicStore()
-	conf.Set("app.logging.words", []any{"a", 1, false})
-	conf.Set("app.server.sites", -1)
-	t.Logf("\nPath\n%v\n", conf.Dump())
+    conf := newBasicStore()
+    conf.Set("app.logging.words", []any{"a", 1, false})
+    conf.Set("app.server.sites", -1)
+    t.Logf("\nPath\n%v\n", conf.Dump())
 
-	type loggingS struct {
-		File   uint
-		Rotate uint64
-		Words  []any
-	}
+    type loggingS struct {
+        File   uint
+        Rotate uint64
+        Words  []any
+    }
 
-	type serverS struct {
-		Start int
-		Sites int
-	}
+    type serverS struct {
+        Start int
+        Sites int
+    }
 
-	type appS struct {
-		Debug   int
-		Dump    int
-		Verbose int64
-		Logging loggingS
-		Server  serverS
-	}
+    type appS struct {
+        Debug   int
+        Dump    int
+        Verbose int64
+        Logging loggingS
+        Server  serverS
+    }
 
-	type cfgS struct {
-		App appS
-	}
+    type cfgS struct {
+        App appS
+    }
 
-	var ss cfgS
-	err := conf.GetSectionFrom("", &ss) // extract the whole tree
-	t.Logf("cfgS: %v | err: %v", ss, err)
+    var ss cfgS
+    err := conf.GetSectionFrom("", &ss) // extract the whole tree
+    t.Logf("cfgS: %v | err: %v", ss, err)
 
-	assertEqual(t, []any{"a", 1, false}, ss.App.Logging.Words)
-	assertEqual(t, -1, ss.App.Server.Sites)
+    assertEqual(t, []any{"a", 1, false}, ss.App.Logging.Words)
+    assertEqual(t, -1, ss.App.Server.Sites)
 
-	if !reflect.DeepEqual(ss.App.Logging.Words, []any{"a", 1, false}) {
-		t.Fail()
-	}
+    if !reflect.DeepEqual(ss.App.Logging.Words, []any{"a", 1, false}) {
+        t.Fail()
+    }
 }
 ```
 
@@ -229,18 +229,18 @@ The `store` has a dead lightweight subtree accessor. By using `WithPrefix` or `W
 
 ```go
 func TestStore_WithPrefix(t *testing.T) {
-	trie := newBasicStore()
-	t.Logf("\nPath\n%v\n", trie.Dump())
+    trie := newBasicStore()
+    t.Logf("\nPath\n%v\n", trie.Dump())
 
-	assertEqual(t, 6, trie.MustGet("app.logging.rotate"))
-	conf := trie.WithPrefix("app")
-	assertEqual(t, 6, conf.MustGet("logging.rotate"))
+    assertEqual(t, 6, trie.MustGet("app.logging.rotate"))
+    conf := trie.WithPrefix("app")
+    assertEqual(t, 6, conf.MustGet("logging.rotate"))
   
-	conf = conf.WithPrefix("logging")
-	assertEqual(t, 6, conf.MustGet("rotate"))
-	
+    conf = conf.WithPrefix("logging")
+    assertEqual(t, 6, conf.MustGet("rotate"))
+    
   conf = trie.WithPrefixReplaced("app.logging")
-	assertEqual(t, 6, conf.MustGet("rotate"))
+    assertEqual(t, 6, conf.MustGet("rotate"))
 }
 ```
 
@@ -280,25 +280,25 @@ This feature works when a provider is loading its external source. `Set(k, v)` d
 
 ```go
 func TestDecompoundMap(t *testing.T) {
-	conf := newBasicStore()
+    conf := newBasicStore()
 
-	conf.Set("app.map", false) // ensure key path 'app.map' has already existed
-	// and now merge a map into the point/node
-	err := conf.Merge("app.map", map[string]any{
-		"k1": 1,
-		"k2": false,
-		"m3": map[string]any{
-			"bobo": "joe",
-		},
-	})
+    conf.Set("app.map", false) // ensure key path 'app.map' has already existed
+    // and now merge a map into the point/node
+    err := conf.Merge("app.map", map[string]any{
+        "k1": 1,
+        "k2": false,
+        "m3": map[string]any{
+            "bobo": "joe",
+        },
+    })
 
-	if err != nil {
-		t.Fatalf("Merge failed: %v", err)
-	}
+    if err != nil {
+        t.Fatalf("Merge failed: %v", err)
+    }
 
-	assert.Equal(t, int(1), conf.MustGet("app.map.k1"))
-	assert.Equal(t, false, conf.MustGet("app.map.k2"))
-	assert.Equal(t, "joe", conf.MustGet("app.map.m3.bobo"))
+    assert.Equal(t, int(1), conf.MustGet("app.map.k1"))
+    assert.Equal(t, false, conf.MustGet("app.map.k2"))
+    assert.Equal(t, "joe", conf.MustGet("app.map.m3.bobo"))
 }
 ```
 
@@ -316,21 +316,21 @@ For example:
 
 ```go
 func TestHjson(t *testing.T) {
-	s := store.New()
-	parser := hjson.New()
-	if err := s.Load(context.TODO(),
-		store.WithStorePrefix("app.hjson"),
-		store.WithCodec(parser),
-		store.WithProvider(file.New("../testdata/6.hjson")),
+    s := store.New()
+    parser := hjson.New()
+    if err := s.Load(context.TODO(),
+        store.WithStorePrefix("app.hjson"),
+        store.WithCodec(parser),
+        store.WithProvider(file.New("../testdata/6.hjson")),
 
-		store.WithStoreFlattenSlice(true),
-	); err != nil {
-		t.Fatalf("Load failed: %v", err)
-	}
-	t.Logf("\n%-32sData\n%v\n", "Path", s.Dump())
+        store.WithStoreFlattenSlice(true),
+    ); err != nil {
+        t.Fatalf("Load failed: %v", err)
+    }
+    t.Logf("\n%-32sData\n%v\n", "Path", s.Dump())
 
-	assert.Equal(t, `r.Header.Get("From")`, s.MustGet("app.hjson.messages.0.placeholders.0.expr"))
-	assert.Equal(t, `r.Header.Get("User-Agent")`, s.MustGet("app.hjson.messages.1.placeholders.0.expr"))
+    assert.Equal(t, `r.Header.Get("From")`, s.MustGet("app.hjson.messages.0.placeholders.0.expr"))
+    assert.Equal(t, `r.Header.Get("User-Agent")`, s.MustGet("app.hjson.messages.1.placeholders.0.expr"))
 }
 ```
 
@@ -404,10 +404,10 @@ t.Log(conf.Dump())
 
 ```go
 func TestStore_Walk(t *testing.T) {
-	var conf Store = newBasicStore()
-	conf.Walk("", func(path, fragment string, node radix.Node[any]) {
-		t.Logf("%v / %v => %v", path, fragment, node)
-	})
+    var conf Store = newBasicStore()
+    conf.Walk("", func(path, fragment string, node radix.Node[any]) {
+        t.Logf("%v / %v => %v", path, fragment, node)
+    })
 }
 
 // Output:
@@ -435,29 +435,29 @@ Each node has a modified state, so we can extract them from the `Store`:
 ```go
 func (s *loadS) Save(ctx context.Context) (err error) { return s.trySave(ctx) }
 func (s *loadS) trySave(ctx context.Context) (err error) {
-	if s.codec != nil {
-		var m map[string]any
-		if m, err = s.GetM("", WithFilter[any](func(node radix.Node[any]) bool {
-			return node.Modified()
-		})); err == nil {
-			var data []byte
-			if data, err = s.codec.Marshal(m); err == nil {
-				switch fp := s.provider.(type) {
-				case OnceProvider:
-					err = fp.Write(data)
-				default:
-					err = ErrNotImplemented
-				}
+    if s.codec != nil {
+        var m map[string]any
+        if m, err = s.GetM("", WithFilter[any](func(node radix.Node[any]) bool {
+            return node.Modified()
+        })); err == nil {
+            var data []byte
+            if data, err = s.codec.Marshal(m); err == nil {
+                switch fp := s.provider.(type) {
+                case OnceProvider:
+                    err = fp.Write(data)
+                default:
+                    err = ErrNotImplemented
+                }
 
-				if errors.Is(err, ErrNotImplemented) {
-					if wr, ok := s.provider.(io.Writer); ok {
-						_, err = wr.Write(data)
-					}
-				}
-			}
-		}
-	}
-	return
+                if errors.Is(err, ErrNotImplemented) {
+                    if wr, ok := s.provider.(io.Writer); ok {
+                        _, err = wr.Write(data)
+                    }
+                }
+            }
+        }
+    }
+    return
 }
 ```
 
@@ -473,23 +473,23 @@ A typical loading logic is:
 
 ```go
 func TestTOML(t *testing.T) {
-	s := store.New()
-	parser := toml.New()
-	if err := s.Load(context.TODO(),
-		store.WithStorePrefix("app.toml"),
-		store.WithCodec(parser),
-		store.WithProvider(file.New("../testdata/5.toml")),
+    s := store.New()
+    parser := toml.New()
+    if err := s.Load(context.TODO(),
+        store.WithStorePrefix("app.toml"),
+        store.WithCodec(parser),
+        store.WithProvider(file.New("../testdata/5.toml")),
 
-		store.WithStoreFlattenSlice(true),
-	); err != nil {
-		t.Fatalf("Load failed: %v", err)
-	}
-	t.Logf("\n%-32sData\n%v\n", "Path", s.Dump())
+        store.WithStoreFlattenSlice(true),
+    ); err != nil {
+        t.Fatalf("Load failed: %v", err)
+    }
+    t.Logf("\n%-32sData\n%v\n", "Path", s.Dump())
 
-	assert.Equal(t, `127.0.0.1`, s.MustGet("app.toml.host"))
-	assert.Equal(t, `TLS 1.3`, s.MustGet("app.toml.TLS.version"))
-	assert.Equal(t, `AEAD-AES128-GCM-SHA256`, s.MustGet("app.toml.TLS.cipher"))
-	assert.Equal(t, `go`, s.MustGet("app.toml.tags.0"))
+    assert.Equal(t, `127.0.0.1`, s.MustGet("app.toml.host"))
+    assert.Equal(t, `TLS 1.3`, s.MustGet("app.toml.TLS.version"))
+    assert.Equal(t, `AEAD-AES128-GCM-SHA256`, s.MustGet("app.toml.TLS.cipher"))
+    assert.Equal(t, `go`, s.MustGet("app.toml.tags.0"))
 }
 ```
 
@@ -501,16 +501,16 @@ A `Provider` should support `Read()`:
 
 ```go
 type Provider interface {
-	Read() (m map[string]any, err error) // return ErrNotImplemented as an identifier
+    Read() (m map[string]any, err error) // return ErrNotImplemented as an identifier
 
-	ProviderSupports
+    ProviderSupports
 }
 
 type ProviderSupports interface {
-	GetCodec() (codec Codec)   // return the bound codec decoder
-	GetPosition() (pos string) // return a position pointed to a trie node path
-	WithCodec(codec Codec)
-	WithPosition(pos string)
+    GetCodec() (codec Codec)   // return the bound codec decoder
+    GetPosition() (pos string) // return a position pointed to a trie node path
+    WithCodec(codec Codec)
+    WithPosition(pos string)
 }
 ```
 
@@ -529,9 +529,9 @@ pkg: github.com/hedzr/store/tests
 cpu: Intel(R) Core(TM) i9-9880H CPU @ 2.30GHz
 BenchmarkTrieSearch
 BenchmarkTrieSearch/hedzr/storeT[any]
-BenchmarkTrieSearch/hedzr/storeT[any]-16         	59983291	        18.99 ns/op	       0 B/op	       0 allocs/op
+BenchmarkTrieSearch/hedzr/storeT[any]-16             59983291            18.99 ns/op           0 B/op           0 allocs/op
 BenchmarkTrieSearch/hedzr/store
-BenchmarkTrieSearch/hedzr/store-16               	60454639	        19.43 ns/op	       0 B/op	       0 allocs/op
+BenchmarkTrieSearch/hedzr/store-16                   60454639            19.43 ns/op           0 B/op           0 allocs/op
 PASS
 ```
 
@@ -540,9 +540,9 @@ Some control group with a same executive environment produced:
 ```
 ...
 BenchmarkTrieSearch/kzzzz
-BenchmarkTrieSearch/kzzzz-16                     	46264582	        28.88 ns/op	      16 B/op	       1 allocs/op
+BenchmarkTrieSearch/kzzzz-16                         46264582            28.88 ns/op          16 B/op           1 allocs/op
 BenchmarkTrieSearch/vzzzz
-BenchmarkTrieSearch/vzzzz-16                     	22824562	        51.21 ns/op	      32 B/op	       2 allocs/op
+BenchmarkTrieSearch/vzzzz-16                         22824562            51.21 ns/op          32 B/op           2 allocs/op
 ...
 ```
 
