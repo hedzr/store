@@ -1,16 +1,16 @@
-initial commit
+# CHANGELOG
 
-- trieS[T] passed, StoreT[T] passed, store.NewStore() passed
-- assert(), tip(), stack.go
-- fixed trieS[T]: insert(), Query(), Get()
-- fixed LoadEnvTo. added LoadYAMLTo. improved LoadJSONTo with merging array node
-- fixed withPrefixR/withPrefix/WithPrefix
-- added providers, codecs,
-- consul watch example / fixed Remove
-- etcd watch example
-- cleanup codes
-- added Dup, Clone
-
-- Get/MustR
-- Get/MustM
-- GetSectionFrom
+- v0.3.0 - initial commit
+  - trieS[T] passed, StoreT[T] passed, store.NewStore() passed
+  - assert(), tip(), stack.go
+  - fixed trieS[T] - insert(), Query(), Get()
+  - fixed LoadEnvTo. added LoadYAMLTo. improved LoadJSONTo with merging array node
+  - fixed withPrefixR/withPrefix/WithPrefix
+  - added providers, codecs,
+  - added consul and etcd provider
+  - cleanup codes
+  - added Dup, Clone
+  
+  - Get/MustR
+  - Get/MustM
+  - GetSectionFrom
