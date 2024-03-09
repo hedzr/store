@@ -60,7 +60,7 @@ It dumps as (internal data structure):
 
 As you seen, the internal structure will be printed out for the deep researching.
 
-![image-20240221115843477](./_assets/README/image-20240221115843477.png)
+![image-20240221115843477](https://cdn.jsdelivr.net/gh/hzimg/blog-pics@master/uPic/image-20240221115843477.png)
 
 > `<B>` is branch, `<L>` is leaf.
 >
@@ -550,7 +550,7 @@ BenchmarkTrieSearch/vzzzz-16                     	22824562	        51.21 ns/op	 
 >
 > 2. Both of these testing data sets have the same scale basically. Also, the querying words are same.
 >
->    ![Screenshot 2024-02-22 at 10.55.13](./_assets/README/Screenshot 2024-02-22 at 10.55.13.png)
+>    ![Screenshot 2024-02-22 at 10.55.13](https://cdn.jsdelivr.net/gh/hzimg/blog-pics@master/uPic/Screenshot%202024-02-22%20at%2010.55.13.png)
 >
 > 3. No Warrenties.
 
