@@ -5,7 +5,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hashicorp/consul/api/watch"
 	clientv3 "go.etcd.io/etcd/client/v3"
 
 	"github.com/hedzr/store"
@@ -225,44 +224,8 @@ func (s *pvdr) Close() {
 	}
 }
 
-type changeS struct {
-	ev  *clientv3.Event
-	idx int
-
-	lastOp        store.Op
-	lastEventTime time.Time
-
-	plan *watch.Plan
-
-	provider store.Provider
-}
-
-func (s *changeS) Path() string             { return "" }
-func (s *changeS) Op() store.Op             { return s.lastOp }
-func (s *changeS) Has(op store.Op) bool     { return uint64(s.lastOp)&uint64(op) != 0 }
-func (s *changeS) Timestamp() time.Time     { return s.lastEventTime }
-func (s *changeS) Provider() store.Provider { return s.provider }
-func (s *changeS) Next() (key string, val any, ok bool) {
-	if s.idx == 0 {
-		key, val, ok = s.provider.(*pvdr).NormalizeKey(string(s.ev.Kv.Key)), s.ev.Kv.Value, true
-		s.idx++
-	}
-	return
-}
-func (s *changeS) Set(ev *clientv3.Event) {
-	s.lastEventTime = time.Now()
-	s.ev = ev
-	s.lastOp = store.OpNone
-	if ev.IsCreate() {
-		s.lastOp |= store.OpCreate
-	}
-	if ev.IsModify() {
-		s.lastOp |= store.OpWrite
-	}
-}
-
 // Watch watches for changes in the Consul API and triggers a callback.
-func (s *pvdr) Watch(cb func(event any, err error)) error {
+func (s *pvdr) Watch(ctx context.Context, cb func(event any, err error)) error {
 	if s.watchEnabled == false {
 		return nil
 	}
@@ -277,10 +240,15 @@ func (s *pvdr) Watch(cb func(event any, err error)) error {
 			w = s.Client.Watch(context.Background(), s.storePrefix)
 		}
 
-		for wresp := range w {
-			for _, ev := range wresp.Events {
-				lastChange.Set(ev)
-				cb(&lastChange, nil)
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case wresp := <-w:
+				for _, ev := range wresp.Events {
+					lastChange.Set(ev)
+					cb(&lastChange, nil)
+				}
 			}
 		}
 	}()
