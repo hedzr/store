@@ -47,19 +47,19 @@ replace github.com/hedzr/store/providers/maps => ../providers/maps
 require (
 	github.com/davecgh/go-spew v1.1.1
 	github.com/hedzr/evendeep v1.1.5
-	github.com/hedzr/store v0.0.0-00010101000000-000000000000
-	github.com/hedzr/store/codecs/hcl v0.0.0-00010101000000-000000000000
-	github.com/hedzr/store/codecs/hjson v0.0.0-00010101000000-000000000000
-	github.com/hedzr/store/codecs/json v0.0.0-00010101000000-000000000000
-	github.com/hedzr/store/codecs/nestext v0.0.0-00010101000000-000000000000
-	github.com/hedzr/store/codecs/toml v0.0.0-00010101000000-000000000000
-	github.com/hedzr/store/codecs/yaml v0.0.0-00010101000000-000000000000
-	github.com/hedzr/store/providers/env v0.0.0-00010101000000-000000000000
-	github.com/hedzr/store/providers/file v0.0.0-00010101000000-000000000000
-	github.com/hedzr/store/providers/flags v0.0.0-00010101000000-000000000000
-	github.com/hedzr/store/providers/fs v0.0.0-00010101000000-000000000000
-	github.com/hedzr/store/providers/maps v0.0.0-00010101000000-000000000000
-	github.com/stretchr/testify v1.8.4
+	github.com/hedzr/store v0.5.0
+	github.com/hedzr/store/codecs/hcl v0.0.0-20240309030033-fcd2e2942df2
+	github.com/hedzr/store/codecs/hjson v0.0.0-20240309030033-fcd2e2942df2
+	github.com/hedzr/store/codecs/json v0.0.0-20240309030033-fcd2e2942df2
+	github.com/hedzr/store/codecs/nestext v0.0.0-20240309030033-fcd2e2942df2
+	github.com/hedzr/store/codecs/toml v0.0.0-20240309030033-fcd2e2942df2
+	github.com/hedzr/store/codecs/yaml v0.0.0-20240309030033-fcd2e2942df2
+	github.com/hedzr/store/providers/env v0.0.0-20240309030033-fcd2e2942df2
+	github.com/hedzr/store/providers/file v0.0.0-20240309030033-fcd2e2942df2
+	github.com/hedzr/store/providers/flags v0.0.0-20240309030033-fcd2e2942df2
+	github.com/hedzr/store/providers/fs v0.0.0-20240309030033-fcd2e2942df2
+	github.com/hedzr/store/providers/maps v0.0.0-20240309030033-fcd2e2942df2
+	github.com/stretchr/testify v1.9.0
 )
 
 require (

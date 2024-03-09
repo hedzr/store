@@ -19,7 +19,7 @@ replace github.com/hedzr/store => ../..
 // replace github.com/hedzr/store/providers/file => ../../providers/file
 
 require (
-	github.com/hedzr/store v0.0.0-00010101000000-000000000000
+	github.com/hedzr/store v0.5.0
 	github.com/npillmayer/nestext v0.1.3
 )
 

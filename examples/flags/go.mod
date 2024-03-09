@@ -36,8 +36,8 @@ replace github.com/hedzr/store/providers/maps => ../../providers/maps
 
 require (
 	github.com/hedzr/logg v0.5.12
-	github.com/hedzr/store v0.0.0-00010101000000-000000000000
-	github.com/hedzr/store/providers/flags v0.0.0-00010101000000-000000000000
+	github.com/hedzr/store v0.5.0
+	github.com/hedzr/store/providers/flags v0.0.0-20240309030033-fcd2e2942df2
 )
 
 require (

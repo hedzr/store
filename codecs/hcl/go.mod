@@ -20,7 +20,7 @@ replace github.com/hedzr/store => ../..
 
 require (
 	github.com/hashicorp/hcl v1.0.0
-	github.com/hedzr/store v0.0.0-00010101000000-000000000000
+	github.com/hedzr/store v0.5.0
 )
 
 require (

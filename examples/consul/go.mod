@@ -35,7 +35,7 @@ replace github.com/hedzr/store/providers/maps => ../../providers/maps
 require (
 	github.com/hashicorp/consul/api v1.28.2
 	github.com/hedzr/logg v0.5.12
-	github.com/hedzr/store v0.0.0-00010101000000-000000000000
+	github.com/hedzr/store v0.5.0
 	github.com/hedzr/store/providers/consul v0.0.0-00010101000000-000000000000
 )
 
@@ -57,7 +57,7 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	golang.org/x/crypto v0.21.0 // indirect
-	golang.org/x/exp v0.0.0-20240213143201-ec583247a57a // indirect
+	golang.org/x/exp v0.0.0-20240222234643-814bf88cf225 // indirect
 	golang.org/x/net v0.22.0 // indirect
 	golang.org/x/sys v0.18.0 // indirect
 	golang.org/x/term v0.18.0 // indirect

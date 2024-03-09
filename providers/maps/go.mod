@@ -20,7 +20,7 @@ replace github.com/hedzr/store => ../..
 
 // replace github.com/hedzr/store/codecs/yaml => ../../codecs/yaml
 
-require github.com/hedzr/store v0.0.0-00010101000000-000000000000
+require github.com/hedzr/store v0.5.0
 
 require (
 	github.com/hedzr/evendeep v1.1.5 // indirect
