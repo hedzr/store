@@ -24,8 +24,8 @@ replace github.com/hedzr/store => ../..
 
 require (
 	github.com/hashicorp/consul/api v1.28.2
-	github.com/hedzr/logg v0.5.12
-	github.com/hedzr/store v0.5.0
+	github.com/hedzr/logg v0.5.13
+	github.com/hedzr/store v0.5.1
 )
 
 require (
@@ -39,8 +39,8 @@ require (
 	github.com/hashicorp/go-rootcerts v1.0.2 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/serf v0.10.1 // indirect
-	github.com/hedzr/evendeep v1.1.5 // indirect
-	github.com/hedzr/is v0.5.16 // indirect
+	github.com/hedzr/evendeep v1.1.6 // indirect
+	github.com/hedzr/is v0.5.17 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect

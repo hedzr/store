@@ -9,18 +9,18 @@ replace github.com/hedzr/store/providers/file => ../../../providers/file
 replace github.com/hedzr/store/codecs/json => ../
 
 require (
-	github.com/hedzr/store v0.5.0
-	github.com/hedzr/store/codecs/json v0.0.0-20240309030033-fcd2e2942df2
-	github.com/hedzr/store/providers/file v0.0.0-20240309030033-fcd2e2942df2
+	github.com/hedzr/store v0.5.1
+	github.com/hedzr/store/codecs/json v0.0.0-20240309055652-9bfe2570640d
+	github.com/hedzr/store/providers/file v0.0.0-20240309055652-9bfe2570640d
 	github.com/stretchr/testify v1.9.0
 )
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
-	github.com/hedzr/evendeep v1.1.5 // indirect
-	github.com/hedzr/is v0.5.16 // indirect
-	github.com/hedzr/logg v0.5.12 // indirect
+	github.com/hedzr/evendeep v1.1.6 // indirect
+	github.com/hedzr/is v0.5.17 // indirect
+	github.com/hedzr/logg v0.5.13 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	golang.org/x/crypto v0.21.0 // indirect
 	golang.org/x/net v0.22.0 // indirect

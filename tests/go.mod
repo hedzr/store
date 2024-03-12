@@ -46,27 +46,27 @@ replace github.com/hedzr/store/providers/maps => ../providers/maps
 
 require (
 	github.com/davecgh/go-spew v1.1.1
-	github.com/hedzr/evendeep v1.1.5
-	github.com/hedzr/store v0.5.0
-	github.com/hedzr/store/codecs/hcl v0.0.0-20240309030033-fcd2e2942df2
-	github.com/hedzr/store/codecs/hjson v0.0.0-20240309030033-fcd2e2942df2
-	github.com/hedzr/store/codecs/json v0.0.0-20240309030033-fcd2e2942df2
-	github.com/hedzr/store/codecs/nestext v0.0.0-20240309030033-fcd2e2942df2
-	github.com/hedzr/store/codecs/toml v0.0.0-20240309030033-fcd2e2942df2
-	github.com/hedzr/store/codecs/yaml v0.0.0-20240309030033-fcd2e2942df2
-	github.com/hedzr/store/providers/env v0.0.0-20240309030033-fcd2e2942df2
-	github.com/hedzr/store/providers/file v0.0.0-20240309030033-fcd2e2942df2
-	github.com/hedzr/store/providers/flags v0.0.0-20240309030033-fcd2e2942df2
-	github.com/hedzr/store/providers/fs v0.0.0-20240309030033-fcd2e2942df2
-	github.com/hedzr/store/providers/maps v0.0.0-20240309030033-fcd2e2942df2
+	github.com/hedzr/evendeep v1.1.6
+	github.com/hedzr/store v0.5.1
+	github.com/hedzr/store/codecs/hcl v0.0.0-20240309055652-9bfe2570640d
+	github.com/hedzr/store/codecs/hjson v0.0.0-20240309055652-9bfe2570640d
+	github.com/hedzr/store/codecs/json v0.0.0-20240309055652-9bfe2570640d
+	github.com/hedzr/store/codecs/nestext v0.0.0-20240309055652-9bfe2570640d
+	github.com/hedzr/store/codecs/toml v0.0.0-20240309055652-9bfe2570640d
+	github.com/hedzr/store/codecs/yaml v0.0.0-20240309055652-9bfe2570640d
+	github.com/hedzr/store/providers/env v0.0.0-20240309055652-9bfe2570640d
+	github.com/hedzr/store/providers/file v0.0.0-20240309055652-9bfe2570640d
+	github.com/hedzr/store/providers/flags v0.0.0-20240309055652-9bfe2570640d
+	github.com/hedzr/store/providers/fs v0.0.0-20240309055652-9bfe2570640d
+	github.com/hedzr/store/providers/maps v0.0.0-20240309055652-9bfe2570640d
 	github.com/stretchr/testify v1.9.0
 )
 
 require (
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/hedzr/is v0.5.16 // indirect
-	github.com/hedzr/logg v0.5.12 // indirect
+	github.com/hedzr/is v0.5.17 // indirect
+	github.com/hedzr/logg v0.5.13 // indirect
 	github.com/hjson/hjson-go/v4 v4.4.0 // indirect
 	github.com/npillmayer/nestext v0.1.3 // indirect
 	github.com/pelletier/go-toml/v2 v2.1.1 // indirect

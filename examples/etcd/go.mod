@@ -33,9 +33,9 @@ replace github.com/hedzr/store/providers/fs => ../../providers/fs
 replace github.com/hedzr/store/providers/maps => ../../providers/maps
 
 require (
-	github.com/hedzr/logg v0.5.12
-	github.com/hedzr/store v0.5.0
-	github.com/hedzr/store/providers/etcd v0.0.0-20240309030033-fcd2e2942df2
+	github.com/hedzr/logg v0.5.13
+	github.com/hedzr/store v0.5.1
+	github.com/hedzr/store/providers/etcd v0.0.0-20240309055652-9bfe2570640d
 )
 
 require (
@@ -43,8 +43,8 @@ require (
 	github.com/coreos/go-systemd/v22 v22.5.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
-	github.com/hedzr/evendeep v1.1.5 // indirect
-	github.com/hedzr/is v0.5.16 // indirect
+	github.com/hedzr/evendeep v1.1.6 // indirect
+	github.com/hedzr/is v0.5.17 // indirect
 	github.com/rogpeppe/go-internal v1.12.0 // indirect
 	go.etcd.io/etcd/api/v3 v3.5.12 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.5.12 // indirect
