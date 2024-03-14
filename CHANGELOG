@@ -1,5 +1,7 @@
 # CHANGELOG
 
+- v0.5.3 - upgraded deps
+
 - v0.5.1 - uses the newest online version for the codecs, and providers
 
 - v0.5.0 - initial commit
