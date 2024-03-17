@@ -2,9 +2,9 @@
 
 ![Go](https://github.com/hedzr/store/workflows/Go/badge.svg)
 [![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/hedzr/store.svg?label=release)](https://github.com/hedzr/store/releases)
-[![Go Dev](https://img.shields.io/badge/go-dev-green)](https://pkg.go.dev/github.com/hedzr/store)
 [![Go Report Card](https://goreportcard.com/badge/github.com/hedzr/store)](https://goreportcard.com/report/github.com/hedzr/store)
 [![Coverage Status](https://coveralls.io/repos/github/hedzr/store/badge.svg?branch=master&.9)](https://coveralls.io/github/hedzr/store?branch=master)
+[![Go Dev](https://img.shields.io/badge/go-dev-green)](https://pkg.go.dev/github.com/hedzr/store)
 [![deps.dev](https://img.shields.io/badge/deps-dev-green)](https://deps.dev/go/github.com%2Fhedzr%2Fstore)
 
 > [beta]  
