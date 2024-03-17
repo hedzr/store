@@ -7,8 +7,8 @@
 [![Coverage Status](https://coveralls.io/repos/github/hedzr/store/badge.svg?branch=master&.9)](https://coveralls.io/github/hedzr/store?branch=master)
 [![deps.dev](https://img.shields.io/badge/deps-dev-green)](https://deps.dev/go/github.com%2Fhedzr%2Fstore)
 
-> [pre-release]
-> There are some works still in our plan. We hope they are to finish/stable asap and cmdr v2 can be released in the near future.
+> [beta]  
+> Ready for v2 release of [hedzr/cmdr], testing.
 
 `hedzr/store` provides an extensible, high-performancce  configuration management library. It optimized for accessing hierarchical data.
 
