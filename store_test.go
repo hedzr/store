@@ -98,6 +98,13 @@ func TestStore_Get2(t *testing.T) { // test data with `reflect.DeepEqual`, tests
 	}
 }
 
+func TestSimpleStore(t *testing.T) {
+	conf := newBasicStore()
+	conf.Set("app.logging.words", []any{"a", 1, false})
+	conf.Set("app.server.sites", -1)
+	t.Logf("\nPath\n%v\n", conf.Dump())
+}
+
 func TestStore_GetM(t *testing.T) {
 	conf := newBasicStore()
 
