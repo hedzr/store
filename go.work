@@ -5,6 +5,7 @@ toolchain go1.22.0
 use (
 	.
 
+	./codecs/gob
 	./codecs/hcl
 	./codecs/hcl/test
 	./codecs/hjson
@@ -18,22 +19,21 @@ use (
 	./codecs/yaml
 	./codecs/yaml/test
 
-	./examples/consul
-
-	./examples/etcd
-
-	./examples/flags
-	./providers/consul
-
 	./providers/env
-	./providers/etcd
 	./providers/file
 	./providers/flags
 	./providers/fs
 	./providers/maps
-
-	./codecs/gob
 	./providers/vault
+
+	./examples/consul
+	./providers/consul
+
+	./examples/etcd
+	./providers/etcd
+
+	./examples/flags
+	./examples/simple
 
 	./tests
 
