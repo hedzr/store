@@ -28,24 +28,37 @@ func TestAddKnownTimeFormats(t *testing.T) {
 
 	AddKnownTimeFormats("15")
 
+	timeParse := func(layout, value string) time.Time {
+		tm, _ := time.Parse(layout, value)
+		return tm
+	}
+
 	for i, c := range []struct {
-		src       string
-		expecting any
+		src    string
+		expect any
+		utc    bool
 	}{
-		{"1979-01-29 11:52:00.678910129", 0},
-		{"1979-1-29 11:52:0.67891", 0},
-		{"11", 0},
-		{"0000-01-01 11:00:00 +0000", 0},
+		{"0000-01-01 11:00:00 +0000", (time.Time{}).UTC().Add(11*time.Hour - (24*366)*time.Hour), true},
+		{"11", (time.Time{}).UTC().Add(11*time.Hour - (24*366)*time.Hour), false},
+		{"1979-01-29 11:52:00.678910129", timeParse("2006-1-2 15:4:5.999999999", "1979-01-29 11:52:00.678910129"), false},
+		{"1979-1-29 11:52:0.67891", timeParse("2006-1-2 15:4:5.999999", "1979-01-29 11:52:00.67891"), false},
 	} {
 		tm, err = time.Parse("2006-1-2 15:4:5.999999999", c.src) //nolint:staticcheck
 		if err != nil {
-			t.Fatalf("%5d. time.Parse(%q) failed, err: %v.", i, c.src, err)
+			t.Logf("%5d. [WARN] time.Parse(%q) not ok, err: %v.", i, c.src, err)
 		}
 		tm1, err = SmartParseTime(c.src)
 		if err != nil {
 			t.Fatalf("%5d. SmartParseTime(%q) failed, err: %v.", i, c.src, err)
 		}
-		t.Logf("%5d. time: %v, smart: %v", i, tm, tm1)
+		if c.utc {
+			tm1 = tm1.UTC()
+		}
+		if reflect.DeepEqual(tm1, c.expect) {
+			t.Logf("%5d. time: %v, smart: %v, expect: %v", i, tm, tm1, c.expect)
+			continue
+		}
+		t.Fatalf("%5d. [FAIL] time: %v, expect %v, but got: %v", i, tm, c.expect, tm1)
 	}
 
 	tm, err = SmartParseTime(src)
