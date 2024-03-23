@@ -43,5 +43,5 @@ func TestStore_YAML_Load_Normal(t *testing.T) {
 
 	ret := s.Dump()
 	t.Logf("\nPath\n%v\n", ret)
-	assert.Equal(t, []interface{}{`-s`, "-w"}, s.MustGet("app.yaml.app.bgo.build.projects.000-default-group.items.001-bgo.ldflags"))
+	assert.Equal(t, []any{`-s`, "-w"}, s.MustGet("app.yaml.app.bgo.build.projects.000-default-group.items.001-bgo.ldflags"))
 }

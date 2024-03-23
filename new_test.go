@@ -188,19 +188,19 @@ type pvdr struct {
 	watching  int32
 }
 
-func mapsWithCodec(codec Codec) mapsOpt {
+func mapsWithCodec(codec Codec) mapsOpt { //nolint:unused
 	return func(s *pvdr) {
 		s.codec = codec
 	}
 }
 
-func mapsWithPosition(prefix string) mapsOpt {
+func mapsWithPosition(prefix string) mapsOpt { //nolint:unused
 	return func(s *pvdr) {
 		s.prefix = prefix
 	}
 }
 
-func mapsWithDelimiter(d string) mapsOpt {
+func mapsWithDelimiter(d string) mapsOpt { //nolint:unused
 	return func(s *pvdr) {
 		s.delimiter = d
 	}
@@ -269,6 +269,6 @@ func (s *pvdr) Watch(ctx context.Context, cb func(event any, err error)) (err er
 	}
 
 	// do some stuff here
-
+	_, _ = ctx, cb
 	return
 }

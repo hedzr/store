@@ -71,7 +71,7 @@ func TestStore_Merge(t *testing.T) {
 	}
 	t.Logf("\nPath\n%v\n", trie.Dump())
 
-	z := trie.MustGet("app.debug.map.tags").([]string)
+	z := trie.MustGet("app.debug.map.tags").([]string) //nolint:revive
 	assert.Equal(t, true, slices.Equal(z, []string{"delve", "verbose"}),
 		`expecting trie.Get("app.debug.map.tags") return '[delve verbose]'`)
 }

@@ -10,7 +10,6 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/hedzr/evendeep"
-
 	"github.com/hedzr/store"
 	"github.com/hedzr/store/codecs/hcl"
 	"github.com/hedzr/store/codecs/toml"
@@ -19,7 +18,7 @@ import (
 	"github.com/hedzr/store/radix"
 )
 
-func ExampleDump1() {
+func ExampleNew() {
 	conf := store.New()
 	conf.Set("app.debug", false)
 	conf.Set("app.verbose", true)
@@ -33,7 +32,7 @@ func ExampleDump1() {
 	ss.Set("keys", map[any]any{"a": 3.13, 1.73: "zz", false: true})
 
 	radix.StatesEnvSetColorMode(true) // to disable ansi escape sequences in dump output
-	fmt.Println(conf.Dump())
+	_, _ = fmt.Println(conf.Dump())
 
 	// Output:
 	//   app.                          <B>
@@ -49,7 +48,7 @@ func ExampleDump1() {
 	//     server.start                <L> app.server.start => 5
 }
 
-func ExampleDump2() {
+func ExamplestoreS_Dump() {
 	conf := store.New()
 	conf.Set("app.debug", false)
 	conf.Set("app.verbose", true)
@@ -67,7 +66,7 @@ func ExampleDump2() {
 	conf.SetTag("app.bool", []any{"on", "off", true})
 
 	radix.StatesEnvSetColorMode(true) // to disable ansi escape sequences in dump output
-	fmt.Println(conf.Dump())
+	_, _ = fmt.Println(conf.Dump())
 
 	// Output:
 	//   app.                          <B>
