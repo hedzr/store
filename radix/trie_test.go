@@ -24,7 +24,7 @@ func TestStoreS_join1(t *testing.T) {
 
 	trie := newTrieTree()
 
-	conf := trie.withPrefix("")
+	conf := trie.withPrefixImpl("")
 	assertEqual(t, "", conf.join())
 	assertEqual(t, "", conf.join(""))
 	assertEqual(t, "x", conf.join("x", ""))
@@ -34,7 +34,7 @@ func TestStoreS_join1(t *testing.T) {
 	assertEqual(t, "x.y.z", conf.join("x", "y", "z", ""))
 	assertEqual(t, "x.y.z", conf.join("", "x", "y", "z", ""))
 
-	conf = trie.withPrefix("A")
+	conf = trie.withPrefixImpl("A")
 	assertEqual(t, "A", conf.join1("A"))
 	assertEqual(t, "A", conf.join1("A", ""))
 	assertEqual(t, "A.x", conf.join1("A", "x", ""))
@@ -72,7 +72,7 @@ func TestTrieS_InsertPath(t *testing.T) {
 	}
 }
 
-func TestTrieS_Delimiter(t *testing.T) {
+func TestTrieS_Delimiter(t *testing.T) { //nolint:revive
 	trie := newTrieTree2()
 
 	// conf := trie.Dup()

@@ -10,11 +10,11 @@ import (
 type nodeType int
 
 const (
-	NTBranch nodeType = iota // non-leaf nodes in a tree
-	NTLeaf
-	NTData = 1 << iota
-	NTModified
-	NTMask = NTLeaf
+	NTBranch   nodeType    = iota // non-leaf nodes in a tree
+	NTLeaf                        // leaf node
+	NTData     = 1 << iota        // node has data field, only if it is a leaf node
+	NTModified                    // node attrs(data, desc, comment, or tag) modified?
+	NTMask     = NTLeaf           // mask for checking if it's a branch or leaf
 )
 
 type nodeS[T any] struct {
@@ -30,20 +30,24 @@ type nodeS[T any] struct {
 
 var _ Node[any] = (*nodeS[any])(nil) // assertion helper
 
-type Extractor func(outputPtr any, defaultValue ...any) (err error)
+type Extractor func(outputPtr any, defaultValue ...any) (err error) // data field extractor
 
 func (s *nodeS[T]) isBranch() bool      { return s.nType&NTMask == NTBranch }
 func (s *nodeS[T]) hasData() bool       { return s.nType&NTData != 0 }
-func (s *nodeS[T]) Modified() bool      { return s.nType&NTModified != 0 }
-func (s *nodeS[T]) Description() string { return s.description }
-func (s *nodeS[T]) Comment() string     { return s.comment }
-func (s *nodeS[T]) Tag() any            { return s.tag }
-func (s *nodeS[T]) Key() string         { return s.pathS }
+func (s *nodeS[T]) Modified() bool      { return s.nType&NTModified != 0 } // modification state
+func (s *nodeS[T]) Description() string { return s.description }           // description field
+func (s *nodeS[T]) Comment() string     { return s.comment }               // comment field
+func (s *nodeS[T]) Tag() any            { return s.tag }                   // tag field
+func (s *nodeS[T]) Key() string         { return s.pathS }                 // key field is the full path of this node
 
-func (s *nodeS[T]) IsLeaf() bool  { return s.nType&NTMask == NTLeaf }
-func (s *nodeS[T]) HasData() bool { return s.nType&NTData != 0 }
+func (s *nodeS[T]) IsLeaf() bool  { return s.nType&NTMask == NTLeaf } // leaf node?
+func (s *nodeS[T]) HasData() bool { return s.nType&NTData != 0 }      //nolint:revive //data field is valid?
 
-func (s *nodeS[T]) SetModified(b bool) {
+// SetModified sets the modified state to true or false.
+//
+// To clear the state, using ResetModified;
+// Or flip the state with ToggleModified.
+func (s *nodeS[T]) SetModified(b bool) { //nolint:revive
 	if b {
 		s.nType |= NTModified
 	} else {
@@ -51,14 +55,22 @@ func (s *nodeS[T]) SetModified(b bool) {
 	}
 }
 
+// ToggleModified flips the modified state.
 func (s *nodeS[T]) ToggleModified() {
-	if s.Modified() {
-		s.nType &= ^NTModified
-	} else {
-		s.nType |= NTModified
-	}
+	s.nType ^= NTModified
+	// if s.Modified() {
+	// 	s.nType &= ^NTModified
+	// } else {
+	// 	s.nType |= NTModified
+	// }
 }
 
+// ResetModified clears the modified state.
+func (s *nodeS[T]) ResetModified() {
+	s.nType &= ^NTModified
+}
+
+// Data returns the Data field of a node.
 func (s *nodeS[T]) Data() (data T) {
 	if !s.isBranch() {
 		data = s.data
@@ -66,25 +78,29 @@ func (s *nodeS[T]) Data() (data T) {
 	return
 }
 
+// SetData sets the Data field of a node.
 func (s *nodeS[T]) SetData(data T) {
 	if !s.isBranch() {
 		s.data = data
 	}
-	return
 }
 
-func (s *nodeS[T]) SetComment(desc, comment string) {
-	if !s.isBranch() {
-		s.description, s.comment = desc, comment
+// SetComment sets the Description and Comment field.
+func (s *nodeS[T]) SetComment(desc, comment string) { //nolint:revive
+	if s.isBranch() {
+		return
 	}
-	return
+	s.description, s.comment = desc, comment
 }
 
-func (s *nodeS[T]) SetTag(tag any) {
-	if !s.isBranch() {
-		s.tag = tag
+// SetTag sets the Tag field.
+//
+// You may save any value into a Tag field.
+func (s *nodeS[T]) SetTag(tag any) { //nolint:revive
+	if s.isBranch() {
+		return
 	}
-	return
+	s.tag = tag
 }
 
 func (s *nodeS[T]) endsWith(ch rune) bool { //nolint:revive
@@ -178,6 +194,7 @@ func (s *nodeS[T]) split(pos int, word []rune) (newNode *nodeS[T]) { //nolint:un
 	tip("[store/radix] [split] original path, pathS: %q, %q", string(s.path), s.pathS)
 
 	d := len(s.path) - pos
+	_ = word
 
 	newNode = &nodeS[T]{
 		path:     s.path[pos:],
@@ -333,6 +350,9 @@ func (s *nodeS[T]) dumpR(sb *strings.Builder, lvl int, noColor bool) string { //
 	return sb.String()
 }
 
+// Dup or Clone makes an exact deep copy of this node and all of its children.
+//
+// The cost of cloneing a large tree or node is expensive.
 func (s *nodeS[T]) Dup() (newNode *nodeS[T]) { //nolint:revive
 	newNode = &nodeS[T]{
 		path:  s.path,
@@ -355,7 +375,8 @@ func (s *nodeS[T]) Dup() (newNode *nodeS[T]) { //nolint:revive
 	return
 }
 
-func (s *nodeS[T]) Walk(cb func(path, fragment string, node Node[T])) {
+// Walk navigates all of chilren from this node.
+func (s *nodeS[T]) Walk(cb func(path, fragment string, node Node[T])) { //nolint:revive
 	s.walk(0, cb)
 }
 

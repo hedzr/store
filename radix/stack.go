@@ -15,7 +15,8 @@ type Source struct {
 	// File and Line are the file name and line number (1-based) of the source
 	// line. These may be the empty string and zero, respectively, if not known.
 	File string `json:"file"`
-	Line int    `json:"line"`
+	// line number
+	Line int `json:"line"`
 }
 
 // func (s Source) toGroup() (as Attr) {

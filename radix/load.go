@@ -13,10 +13,10 @@ func (s *trieS[T]) Prefix() string { return s.prefix }
 // which is the joint value with the current prefix setting
 // and the given prefix value.
 func (s *trieS[T]) WithPrefix(prefix ...string) (entry Trie[T]) {
-	return s.withPrefix(prefix...)
+	return s.withPrefixImpl(prefix...)
 }
 
-func (s *trieS[T]) withPrefix(prefix ...string) (entry *trieS[T]) {
+func (s *trieS[T]) withPrefixImpl(prefix ...string) (entry *trieS[T]) {
 	return s.dupS(s.root, s.join1(s.prefix, prefix...))
 }
 
@@ -24,10 +24,10 @@ func (s *trieS[T]) withPrefix(prefix ...string) (entry *trieS[T]) {
 // prefix with the given prefix value.
 // The current prefix setting was ignored.
 func (s *trieS[T]) WithPrefixReplaced(newPrefix ...string) (entry Trie[T]) {
-	return s.withPrefixReplaced(newPrefix...)
+	return s.withPrefixReplacedImpl(newPrefix...)
 }
 
-func (s *trieS[T]) withPrefixReplaced(newPrefix ...string) (entry *trieS[T]) {
+func (s *trieS[T]) withPrefixReplacedImpl(newPrefix ...string) (entry *trieS[T]) {
 	return s.dupS(s.root, s.join(newPrefix...))
 }
 
@@ -45,17 +45,17 @@ func (s *trieS[T]) loadMap(m map[string]any) (err error) {
 	return
 }
 
-func (s *trieS[T]) loadMapByValueType(ec errors.Error, m map[string]any, k string, v any) {
+func (s *trieS[T]) loadMapByValueType(ec errors.Error, m map[string]any, k string, v any) { //nolint:revive,unparam
 	switch vv := v.(type) {
 	case map[string]any:
-		ec.Attach(s.withPrefixReplaced(k).loadMap(vv))
+		ec.Attach(s.withPrefixReplacedImpl(k).loadMap(vv))
 	case []map[string]any:
 		buf := make([]byte, 0, len(k)+16)
 		for i, mm := range vv {
 			buf = append(buf, k...)
 			buf = append(buf, byte(s.delimiter))
 			buf = strconv.AppendInt(buf, int64(i), 10)
-			ec.Attach(s.withPrefix(string(buf)).loadMap(mm))
+			ec.Attach(s.withPrefixImpl(string(buf)).loadMap(mm))
 			buf = buf[:0]
 		}
 	case []any:

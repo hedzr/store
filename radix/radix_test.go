@@ -203,7 +203,7 @@ func TestTrieS_GetM_2(t *testing.T) {
 
 //
 
-func assertEqual(t testing.TB, expect, actual any, msg ...any) { //nolint:govet //it's a printf/println dual interface
+func assertEqual(t testing.TB, expect, actual any, msg ...any) { //nolint:govet,unparam //it's a printf/println dual interface
 	if reflect.DeepEqual(expect, actual) {
 		return
 	}

@@ -15,7 +15,7 @@ func NewTrie[T any]() *trieS[T] {
 	return &trieS[T]{root: &nodeS[T]{}, delimiter: dotChar}
 }
 
-var _ Trie[any] = (*trieS[any])(nil)
+var _ Trie[any] = (*trieS[any])(nil) // assertion helper
 
 func newTrie[T any]() *trieS[T] { //nolint:revive
 	return &trieS[T]{root: &nodeS[T]{}, delimiter: dotChar}
@@ -64,8 +64,7 @@ func (s *trieS[T]) join1(pre string, args ...string) (ret string) {
 		return s.join(args...)
 	}
 
-	switch len(args) {
-	case 0:
+	if len(args) == 0 {
 		return pre
 	}
 
@@ -116,6 +115,10 @@ func (s *trieS[T]) Insert(path string, data T) (oldData any) { //nolint:revive
 	return
 }
 
+// Set sets the Data field into a node specified by path.
+//
+// If the given path cannot be found, a new node will be created at that
+// location so that the new data value can be set into it.
 func (s *trieS[T]) Set(path string, data T) (node Node[T], oldData any) {
 	if s.prefix != "" {
 		path = s.join(s.prefix, path) //nolint:revive
@@ -123,7 +126,10 @@ func (s *trieS[T]) Set(path string, data T) (node Node[T], oldData any) {
 	return s.root.insert([]rune(path), path, data)
 }
 
-func (s *trieS[T]) SetComment(path, description, comment string) (ok bool) {
+// SetComment sets the Desc and Comment field of a node specified by path.
+//
+// Nothing happens if the given path cannot be found.
+func (s *trieS[T]) SetComment(path, description, comment string) (ok bool) { //nolint:revive
 	if s.prefix != "" {
 		path = s.join(s.prefix, path) //nolint:revive
 	}
@@ -134,7 +140,10 @@ func (s *trieS[T]) SetComment(path, description, comment string) (ok bool) {
 	return
 }
 
-func (s *trieS[T]) SetTag(path string, tag any) (ok bool) { // set extra notable data bound to a key
+// SetTag sets the Tag field of a node specified by path.
+//
+// Nothing happens if the given path cannot be found.
+func (s *trieS[T]) SetTag(path string, tag any) (ok bool) { //nolint:revive// set extra notable data bound to a key
 	if s.prefix != "" {
 		path = s.join(s.prefix, path) //nolint:revive
 	}
@@ -150,10 +159,13 @@ func (s *trieS[T]) Merge(pathAt string, data map[string]any) (err error) {
 	// if s.prefix != "" {
 	// 	pathAt = s.join(s.prefix, pathAt) //nolint:revive
 	// }
-	err = s.withPrefix(pathAt).loadMap(data)
+	err = s.withPrefixImpl(pathAt).loadMap(data)
 	return
 }
 
+// StartsWith tests if a path exists.
+//
+// Using Location to retrieve more info for seaching a path.
 func (s *trieS[T]) StartsWith(path string) (yes bool) {
 	if s.prefix != "" {
 		path = s.join(s.prefix, path) //nolint:revive
@@ -166,6 +178,15 @@ func (s *trieS[T]) StartsWith(path string) (yes bool) {
 	return
 }
 
+// Search checks the path if it exists. = StartsWith
+//
+// Only fully-matched node are considered as FOUND.
+// Which means, if a path matched partial part, suppose matching
+// `a.bcd.e` in a tree has `a.bcd.ends` node, it will be
+// matched as partial-match state. But it is non-FOUND.
+// And if a tree has 'a.bcd.e.nds' node, FOUND returns.
+//
+// Using Location to retrieve more info for seaching a path.
 func (s *trieS[T]) Search(path string) (found bool) {
 	if s.prefix != "" {
 		path = s.join(s.prefix, path) //nolint:revive
@@ -175,6 +196,7 @@ func (s *trieS[T]) Search(path string) (found bool) {
 	return
 }
 
+// Locate checks a path if it exists.
 func (s *trieS[T]) Locate(path string) (node *nodeS[T], branch, partialMatched, found bool) { //nolint:revive
 	if s.prefix != "" {
 		path = s.join(s.prefix, path) //nolint:revive
@@ -186,6 +208,21 @@ func (s *trieS[T]) Locate(path string) (node *nodeS[T], branch, partialMatched, 
 
 func safeIsBranch[T any](node *nodeS[T]) bool { return node != nil && node.isBranch() }
 
+// Has tests of a path exists.
+//
+// A path shall be fully matched by delimiter (typically is dot '.').
+// That means, for an exists tree:
+//
+//	app.lite-mode
+//	app.logging
+//	app.logging.enabled
+//	app.logging.file
+//
+// Has("app.logging") or Has("app.logging.enabled") will get a true.
+//
+// But Has("app.logging.en") returns false.
+//
+// And Has("app.l") must be false.
 func (s *trieS[T]) Has(path string) (found bool) {
 	if s.prefix != "" {
 		path = s.join(s.prefix, path) //nolint:revive
@@ -195,11 +232,16 @@ func (s *trieS[T]) Has(path string) (found bool) {
 	return
 }
 
+// Remove deletes a path from this tree.
+//
+// The return boolean represents there was a node removed.
+// If the path not exists, it will return false.
 func (s *trieS[T]) Remove(path string) (removed bool) { //nolint:revive
 	_, _, removed = s.RemoveEx(path)
 	return
 }
 
+// RemoveEx deletes a path and return more status than Remove.
 func (s *trieS[T]) RemoveEx(path string) (nodeRemoved, nodeParent Node[T], removed bool) {
 	if s.prefix != "" {
 		path = s.join(s.prefix, path) //nolint:revive
@@ -219,6 +261,9 @@ func (s *trieS[T]) RemoveEx(path string) (nodeRemoved, nodeParent Node[T], remov
 	return
 }
 
+// MustGet is a simple Get without a checked found state.
+//
+// If nothing found, a zero data returned.
 func (s *trieS[T]) MustGet(path string) (data T) {
 	var branch, found bool
 	data, branch, found, _ = s.Query(path)
@@ -228,11 +273,18 @@ func (s *trieS[T]) MustGet(path string) (data T) {
 	return
 }
 
+// Get searches the given path and return its data field if found.
 func (s *trieS[T]) Get(path string) (data T, found bool) {
 	data, _, found, _ = s.Query(path)
 	return
 }
 
+// Query searches a path and returns the located info: 'found' boolean flag
+// identify the path found or not; 'branch' flag identify the found node
+// is a branch or a leaf; for a leaf node, 'data' return its Data field.
+//
+// If something is wrong, 'err' might collect the reason for why. But,
+// it generally is errors.NotFound (errors.Code -5).
 func (s *trieS[T]) Query(path string) (data T, branch, found bool, err error) { //nolint:revive
 	if s.prefix != "" {
 		path = s.join(s.prefix, path) //nolint:revive
@@ -266,6 +318,27 @@ func (s *trieS[T]) search(word string) (found, parent *nodeS[T], partialMatched 
 	return
 }
 
+// Delemiter returns the current delimiter in using.
+//
+// trieS tree is a radix tree so child nodeS may split at any
+// posistion in characters of a full path.
+//
+// But Query or others APIs make the path is meaningful for
+// the using delimiter, like dot char ('.'). This is why
+// there is 'partialMatched' in Locate returning values.
+//
+// The delimiter can be changed at runtime. After it's changed,
+// the next Locate, Query or any others will interpret the
+// path with new delimiter.
+//
+// Since the delimiter character is part of a full path,
+// we can re-interpret its meaning dynamically without extras
+// costs.
+//
+// And the benefits are not only replaceing the delimiter
+// dynamically: splitting a path by a delimiter or joining
+// the splitted path segements are both unnecessary, in
+// a conventional designing and implementing mode.
 func (s *trieS[T]) Delimiter() rune { return s.delimiter }
 
 // SetDelimiter sets the delimiter rune.
@@ -301,14 +374,34 @@ func (s *trieS[T]) endsWith(str string, ch rune) bool { //nolint:revive
 	return false
 }
 
+// Dump collects the nodes in this tree and prints them for a
+// debugging purpose.
+// It returns the formatted string then you can print it to
+// stdout or a file.
+//
+//	println(trie.Dump())
+//
+// The dump results is decorated with ANSI escaped sequences.
+// So if you want a plain pure text, enable NoColor mode
+// defined in hedzr/is/states package:
+//
+//	import "github.com/hedzr/is/states"
+//
+//	states.Env().SetNoColorMode(true)
+//	println(trie.Dump())
+//
+// Or, [StatesEnvSetColorMode(true)] can also do that.
 func (s *trieS[T]) Dump() string             { return s.root.dump(false) }   //nolint:revive
 func (s *trieS[T]) dump(noColor bool) string { return s.root.dump(noColor) } //nolint:revive
 
+// Dup or Clone makes an exact deep copy of this tree.
 func (s *trieS[T]) Dup() (newTrie *trieS[T]) { //nolint:revive
 	return s.dupS(s.root.Dup(), s.prefix)
 }
 
-func (s *trieS[T]) Walk(path string, cb func(path, fragment string, node Node[T])) {
+// Walk navigates the whole tree (passing "" as 'path' param) or
+// a subtree from a given path.
+func (s *trieS[T]) Walk(path string, cb func(path, fragment string, node Node[T])) { //nolint:revive
 	root := s.root
 	if path != "" {
 		node, parent, partialMatched := s.search(path)

@@ -12,8 +12,7 @@ func TestNodeS_Tag(t *testing.T) {
 
 	node, branch, pm, found := trie.Locate("app.dump")
 	if !found {
-		t.Fatalf("not found")
-		_, _ = branch, pm
+		t.Fatalf("not found: partial matched = %v, found = %v, branch = %v", pm, found, branch)
 	}
 
 	t.Logf("%v | %v | %v | %v", node.Modified(),
@@ -61,4 +60,58 @@ func TestNodeS_remove(t *testing.T) {
 	t.Logf("\nPath of 'trie'\n%v\n", trie.Dump())
 
 	t.Logf("\nPath of 'conf'\n%v\n", conf.Dump())
+}
+
+func TestNodeS_SetModified(t *testing.T) {
+	for i, c := range []struct {
+		node   *nodeS[any]
+		set    bool
+		expect bool
+	}{
+		{&nodeS[any]{nType: 0}, true, true},
+		{&nodeS[any]{nType: NTModified}, true, true},
+		{&nodeS[any]{nType: 0}, false, false},
+		{&nodeS[any]{nType: NTModified}, false, false},
+	} {
+		c.node.SetModified(c.set)
+		actual := c.node.Modified()
+		if actual != c.expect {
+			t.Fatalf("%5d. expecting SetModified(%v) a node to return a %v, but got %v",
+				i, c.set, c.expect, actual)
+		}
+	}
+}
+
+func TestNodeS_ToggleModified(t *testing.T) {
+	for i, c := range []struct {
+		node   *nodeS[any]
+		expect bool
+	}{
+		{&nodeS[any]{nType: 0}, true},
+		{&nodeS[any]{nType: NTModified}, false},
+	} {
+		c.node.ToggleModified()
+		actual := c.node.Modified()
+		if actual != c.expect {
+			t.Fatalf("%5d. expecting ToggleModified a node to return a %v, but got %v",
+				i, c.expect, actual)
+		}
+	}
+}
+
+func TestNodeS_ResetModified(t *testing.T) {
+	for i, c := range []struct {
+		node   *nodeS[any]
+		expect bool
+	}{
+		{&nodeS[any]{nType: 0}, false},
+		{&nodeS[any]{nType: NTModified}, false},
+	} {
+		c.node.ResetModified()
+		actual := c.node.Modified()
+		if actual != c.expect {
+			t.Fatalf("%5d. expecting ResetModified a node to return a %v, but got %v",
+				i, c.expect, actual)
+		}
+	}
 }

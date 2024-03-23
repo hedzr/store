@@ -6,26 +6,25 @@ import (
 	"strings"
 	"time"
 
-	logz "github.com/hedzr/logg/slog"
+	"gopkg.in/yaml.v3"
 
 	"github.com/hedzr/evendeep"
-
-	"gopkg.in/yaml.v3"
+	logz "github.com/hedzr/logg/slog"
 )
 
 // TypedGetters makes a formal specification for Trie[any]
 type TypedGetters[T any] interface {
-	GetString(path string, defaultVal ...string) (ret string, err error)
-	MustString(path string, defaultVal ...string) (ret string)
-	GetStringSlice(path string, defaultVal ...string) (ret []string, err error)
-	MustStringSlice(path string, defaultVal ...string) (ret []string)
+	GetString(path string, defaultVal ...string) (ret string, err error)        // extract data field to its string representation
+	MustString(path string, defaultVal ...string) (ret string)                  // extract data field to its string representation
+	GetStringSlice(path string, defaultVal ...string) (ret []string, err error) // extract data field to its string slice representation
+	MustStringSlice(path string, defaultVal ...string) (ret []string)           // extract data field to its string slice representation
 
 	// GetStringMap locates a node and returns its data as a string map.
 	//
 	// Note that it doesn't care about the sub-nodes and these children's data.
 	// If you want to extract a nodes tree from a given node, using GetM, or GetR.
 	GetStringMap(path string, defaultVal ...map[string]string) (ret map[string]string, err error)
-	MustStringMap(path string, defaultVal ...map[string]string) (ret map[string]string)
+	MustStringMap(path string, defaultVal ...map[string]string) (ret map[string]string) // extract data field to its string map representation
 
 	TypedBooleanGetters
 	TypedIntegersGetters
@@ -148,6 +147,7 @@ type TypedGetters[T any] interface {
 	GetSectionFrom(path string, holder any, opts ...MOpt[T]) (err error)
 }
 
+// TypedBooleanGetters collects boolean extractors
 type TypedBooleanGetters interface {
 	GetBool(path string, defaultVal ...bool) (ret bool, err error)
 	MustBool(path string, defaultVal ...bool) (ret bool)
@@ -157,6 +157,7 @@ type TypedBooleanGetters interface {
 	MustBoolMap(path string, defaultVal ...map[string]bool) (ret map[string]bool)
 }
 
+// TypedIntegersGetters collects integer/unsigned integer extractors
 type TypedIntegersGetters interface {
 	GetInt64(path string, defaultVal ...int64) (ret int64, err error)
 	MustInt64(path string, defaultVal ...int64) (ret int64)
@@ -225,6 +226,7 @@ type TypedIntegersGetters interface {
 	MustUintMap(path string, defaultVal ...map[string]uint) (ret map[string]uint)
 }
 
+// MoreIntegersGetters collects the extractors for Kibi-byte and Kilo-byte representations.
 type MoreIntegersGetters interface {
 	GetKibiBytes(key string, defaultVal ...uint64) (ret uint64, err error)
 	MustKibiBytes(key string, defaultVal ...uint64) (ret uint64)
@@ -232,6 +234,7 @@ type MoreIntegersGetters interface {
 	MustKiloBytes(key string, defaultVal ...uint64) (ret uint64)
 }
 
+// TypedFloatsGetters collects the extractors for float numbers.
 type TypedFloatsGetters interface {
 	GetFloat64(path string, defaultVal ...float64) (ret float64, err error)
 	MustFloat64(path string, defaultVal ...float64) (ret float64)
@@ -247,6 +250,7 @@ type TypedFloatsGetters interface {
 	MustFloat32Map(path string, defaultVal ...map[string]float32) (ret map[string]float32)
 }
 
+// TypedComplexesGetters collects the extractors for complex numbers.
 type TypedComplexesGetters interface {
 	GetComplex128(path string, defaultVal ...complex128) (ret complex128, err error)
 	MustComplex128(path string, defaultVal ...complex128) (ret complex128)
@@ -262,6 +266,7 @@ type TypedComplexesGetters interface {
 	MustComplex64Map(path string, defaultVal ...map[string]complex64) (ret map[string]complex64)
 }
 
+// TypedTimeGetters collects the extractors for time.Time and time.Duration.
 type TypedTimeGetters interface {
 	GetDuration(path string, defaultVal ...time.Duration) (ret time.Duration, err error)
 	MustDuration(path string, defaultVal ...time.Duration) (ret time.Duration)
@@ -299,7 +304,7 @@ func (s *trieS[T]) GetR(path string, defaultVal ...map[string]any) (ret map[stri
 		// ret[node.pathS] = node.data
 
 		ret = make(map[string]any)
-		s.root.Walk(func(path, fragment string, node Node[T]) {
+		s.root.Walk(func(path, fragment string, node Node[T]) { //nolint:revive
 			if (path == "" || !s.endsWith(path, s.delimiter)) && !node.isBranch() {
 				ret[path] = node.Data()
 			}
@@ -311,7 +316,7 @@ func (s *trieS[T]) GetR(path string, defaultVal ...map[string]any) (ret map[stri
 	if found || partialMatched {
 		_, _, ret = branch, partialMatched, make(map[string]any)
 
-		node.Walk(func(path, fragment string, node Node[T]) {
+		node.Walk(func(path, fragment string, node Node[T]) { //nolint:revive
 			if !s.endsWith(path, s.delimiter) && !node.isBranch() {
 				// For a trie like:
 				//
@@ -365,7 +370,7 @@ func (s *trieS[T]) GetM(path string, opts ...MOpt[T]) (ret map[string]any, err e
 		for _, opt := range opts {
 			opt(&putter)
 		}
-		s.root.Walk(func(path, fragment string, node Node[T]) {
+		s.root.Walk(func(path, fragment string, node Node[T]) { //nolint:revive
 			if (path == "" || !s.endsWith(path, s.delimiter)) && !node.isBranch() {
 				if putter.filterFn != nil {
 					if !putter.filterFn(node) {

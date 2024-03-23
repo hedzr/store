@@ -205,7 +205,7 @@ func TestTrieS_GetStringMap(t *testing.T) {
 	t.Logf("app.map.absent: %v", ss)
 }
 
-func TestTrieS_GetInt(t *testing.T) {
+func TestTrieS_GetInt(t *testing.T) { //nolint:revive
 	trie := newTrieTree()
 	ret := trie.dump(false)
 	t.Logf("\nPath\n%v\n", ret)
@@ -221,7 +221,7 @@ func TestTrieS_GetInt(t *testing.T) {
 	t.Logf("app.int64: %v", ss64)
 
 	ss64, err = trie.GetInt64("app.int-absent", 9)
-	t.Logf("app.int64: %v", ss64)
+	t.Logf("app.int64: %v, err: %v", ss64, err)
 	ss64 = trie.MustInt64("app.int-absent", 9)
 	t.Logf("app.int64-absent: %v", ss64)
 
@@ -234,7 +234,7 @@ func TestTrieS_GetInt(t *testing.T) {
 	t.Logf("app.int32: %v", ss32)
 
 	ss32, err = trie.GetInt32("app.int-absent", 9)
-	t.Logf("app.int32: %v", ss32)
+	t.Logf("app.int32: %v, err: %v", ss32, err)
 	ss32 = trie.MustInt32("app.int-absent", 9)
 	t.Logf("app.int32-absent: %v", ss32)
 
@@ -247,7 +247,7 @@ func TestTrieS_GetInt(t *testing.T) {
 	t.Logf("app.int16: %v", ss16)
 
 	ss16, err = trie.GetInt16("app.int-absent", 9)
-	t.Logf("app.int16: %v", ss16)
+	t.Logf("app.int16: %v, err: %v", ss16, err)
 	ss16 = trie.MustInt16("app.int-absent", 9)
 	t.Logf("app.int16-absent: %v", ss16)
 
@@ -260,7 +260,7 @@ func TestTrieS_GetInt(t *testing.T) {
 	t.Logf("app.int8: %v", ss8)
 
 	ss8, err = trie.GetInt8("app.int-absent", 9)
-	t.Logf("app.int8-absent: %v", ss8)
+	t.Logf("app.int8-absent: %v, err: %v", ss8, err)
 	ss8 = trie.MustInt8("app.int-absent", 9)
 	t.Logf("app.int8-absent: %v", ss8)
 
@@ -273,12 +273,12 @@ func TestTrieS_GetInt(t *testing.T) {
 	t.Logf("app.int: %v", ss)
 
 	ss, err = trie.GetInt("app.int-absent", 9)
-	t.Logf("app.int-absent: %v", ss)
+	t.Logf("app.int-absent: %v, err: %v", ss, err)
 	ss = trie.MustInt("app.int-absent", 9)
 	t.Logf("app.int-absent: %v", ss)
 }
 
-func TestTrieS_GetUint(t *testing.T) {
+func TestTrieS_GetUint(t *testing.T) { //nolint:revive
 	trie := newTrieTree()
 	ret := trie.dump(false)
 	t.Logf("\nPath\n%v\n", ret)
@@ -294,7 +294,7 @@ func TestTrieS_GetUint(t *testing.T) {
 	t.Logf("app.uint64: %v", ss64)
 
 	ss64, err = trie.GetUint64("app.uint-absent", 9)
-	t.Logf("app.uint64-absent: %v", ss64)
+	t.Logf("app.uint64-absent: %v, err: %v", ss64, err)
 	ss64 = trie.MustUint64("app.uint-absent", 9)
 	t.Logf("app.uint64-absent: %v", ss64)
 
@@ -307,7 +307,7 @@ func TestTrieS_GetUint(t *testing.T) {
 	t.Logf("app.uint32: %v", ss32)
 
 	ss32, err = trie.GetUint32("app.uint-absent", 9)
-	t.Logf("app.uint32-absent: %v", ss32)
+	t.Logf("app.uint32-absent: %v, err: %v", ss32, err)
 	ss32 = trie.MustUint32("app.uint-absent", 9)
 	t.Logf("app.uint32-absent: %v", ss32)
 
@@ -320,7 +320,7 @@ func TestTrieS_GetUint(t *testing.T) {
 	t.Logf("app.uint16: %v", ss16)
 
 	ss16, err = trie.GetUint16("app.uint-absent", 9)
-	t.Logf("app.uint16-absent: %v", ss16)
+	t.Logf("app.uint16-absent: %v, err: %v", ss16, err)
 	ss16 = trie.MustUint16("app.uint-absent", 9)
 	t.Logf("app.uint16-absent: %v", ss16)
 
@@ -333,7 +333,7 @@ func TestTrieS_GetUint(t *testing.T) {
 	t.Logf("app.uint8: %v", ss8)
 
 	ss8, err = trie.GetUint8("app.uint-absent", 9)
-	t.Logf("app.uint8-absent: %v", ss8)
+	t.Logf("app.uint8-absent: %v, err: %v", ss8, err)
 	ss8 = trie.MustUint8("app.uint-absent", 9)
 	t.Logf("app.uint8-absent: %v", ss8)
 
@@ -346,12 +346,12 @@ func TestTrieS_GetUint(t *testing.T) {
 	t.Logf("app.uint: %v", ss)
 
 	ss, err = trie.GetUint("app.uint-absent", 9)
-	t.Logf("app.uint-absent: %v", ss)
+	t.Logf("app.uint-absent: %v, err: %v", ss, err)
 	ss = trie.MustUint("app.uint-absent", 9)
 	t.Logf("app.uint-absent: %v", ss)
 }
 
-func TestTrieS_GetIntSlice(t *testing.T) {
+func TestTrieS_GetIntSlice(t *testing.T) { //nolint:revive
 	trie := newTrieTree()
 	ret := trie.dump(false)
 	t.Logf("\nPath\n%v\n", ret)
@@ -367,7 +367,7 @@ func TestTrieS_GetIntSlice(t *testing.T) {
 	t.Logf("app.int64: %v", ss64)
 
 	ss64, err = trie.GetInt64Slice("app.int-absent", 9)
-	t.Logf("app.int64: %v", ss64)
+	t.Logf("app.int64: %v, err: %v", ss64, err)
 	ss64 = trie.MustInt64Slice("app.int-absent", 9)
 	t.Logf("app.int64-absent: %v", ss64)
 
@@ -380,7 +380,7 @@ func TestTrieS_GetIntSlice(t *testing.T) {
 	t.Logf("app.int32: %v", ss32)
 
 	ss32, err = trie.GetInt32Slice("app.int-absent", 9)
-	t.Logf("app.int32: %v", ss32)
+	t.Logf("app.int32: %v, err: %v", ss32, err)
 	ss32 = trie.MustInt32Slice("app.int-absent", 9)
 	t.Logf("app.int32-absent: %v", ss32)
 
@@ -393,7 +393,7 @@ func TestTrieS_GetIntSlice(t *testing.T) {
 	t.Logf("app.int16: %v", ss16)
 
 	ss16, err = trie.GetInt16Slice("app.int-absent", 9)
-	t.Logf("app.int16: %v", ss16)
+	t.Logf("app.int16: %v, err: %v", ss16, err)
 	ss16 = trie.MustInt16Slice("app.int-absent", 9)
 	t.Logf("app.int16-absent: %v", ss16)
 
@@ -406,7 +406,7 @@ func TestTrieS_GetIntSlice(t *testing.T) {
 	t.Logf("app.int8: %v", ss8)
 
 	ss8, err = trie.GetInt8Slice("app.int-absent", 9)
-	t.Logf("app.int8-absent: %v", ss8)
+	t.Logf("app.int8-absent: %v, err: %v", ss8, err)
 	ss8 = trie.MustInt8Slice("app.int-absent", 9)
 	t.Logf("app.int8-absent: %v", ss8)
 
@@ -419,12 +419,12 @@ func TestTrieS_GetIntSlice(t *testing.T) {
 	t.Logf("app.int: %v", ss)
 
 	ss, err = trie.GetIntSlice("app.int-absent", 9)
-	t.Logf("app.int-absent: %v", ss)
+	t.Logf("app.int-absent: %v, err: %v", ss, err)
 	ss = trie.MustIntSlice("app.int-absent", 9)
 	t.Logf("app.int-absent: %v", ss)
 }
 
-func TestTrieS_GetUintSlice(t *testing.T) {
+func TestTrieS_GetUintSlice(t *testing.T) { //nolint:revive
 	trie := newTrieTree()
 	ret := trie.dump(false)
 	t.Logf("\nPath\n%v\n", ret)
@@ -440,7 +440,7 @@ func TestTrieS_GetUintSlice(t *testing.T) {
 	t.Logf("app.uint64: %v", ss64)
 
 	ss64, err = trie.GetUint64Slice("app.uint-absent", 9)
-	t.Logf("app.uint64-absent: %v", ss64)
+	t.Logf("app.uint64-absent: %v, err: %v", ss64, err)
 	ss64 = trie.MustUint64Slice("app.uint-absent", 9)
 	t.Logf("app.uint64-absent: %v", ss64)
 
@@ -453,7 +453,7 @@ func TestTrieS_GetUintSlice(t *testing.T) {
 	t.Logf("app.uint32: %v", ss32)
 
 	ss32, err = trie.GetUint32Slice("app.uint-absent", 9)
-	t.Logf("app.uint32-absent: %v", ss32)
+	t.Logf("app.uint32-absent: %v, err: %v", ss32, err)
 	ss32 = trie.MustUint32Slice("app.uint-absent", 9)
 	t.Logf("app.uint32-absent: %v", ss32)
 
@@ -466,7 +466,7 @@ func TestTrieS_GetUintSlice(t *testing.T) {
 	t.Logf("app.uint16: %v", ss16)
 
 	ss16, err = trie.GetUint16Slice("app.uint-absent", 9)
-	t.Logf("app.uint16-absent: %v", ss16)
+	t.Logf("app.uint16-absent: %v, err: %v", ss16, err)
 	ss16 = trie.MustUint16Slice("app.uint-absent", 9)
 	t.Logf("app.uint16-absent: %v", ss16)
 
@@ -479,7 +479,7 @@ func TestTrieS_GetUintSlice(t *testing.T) {
 	t.Logf("app.uint8: %v", ss8)
 
 	ss8, err = trie.GetUint8Slice("app.uint-absent", 9)
-	t.Logf("app.uint8-absent: %v", ss8)
+	t.Logf("app.uint8-absent: %v, err: %v", ss8, err)
 	ss8 = trie.MustUint8Slice("app.uint-absent", 9)
 	t.Logf("app.uint8-absent: %v", ss8)
 
@@ -492,12 +492,12 @@ func TestTrieS_GetUintSlice(t *testing.T) {
 	t.Logf("app.uint: %v", ss)
 
 	ss, err = trie.GetUintSlice("app.uint-absent", 9)
-	t.Logf("app.uint-absent: %v", ss)
+	t.Logf("app.uint-absent: %v, err: %v", ss, err)
 	ss = trie.MustUintSlice("app.uint-absent", 9)
 	t.Logf("app.uint-absent: %v", ss)
 }
 
-func TestTrieS_GetIntMap(t *testing.T) {
+func TestTrieS_GetIntMap(t *testing.T) { //nolint:revive
 	trie := newTrieTree()
 
 	trie.Set("app.int", map[string]int64{"neg": -123, "pos": 73})
@@ -513,7 +513,7 @@ func TestTrieS_GetIntMap(t *testing.T) {
 	t.Logf("app.int64: %v", ss64)
 
 	ss64, err = trie.GetInt64Map("app.int-absent", map[string]int64{"t": 9})
-	t.Logf("app.int64: %v", ss64)
+	t.Logf("app.int64: %v, err: %v", ss64, err)
 	ss64 = trie.MustInt64Map("app.int-absent", map[string]int64{"t": 9})
 	t.Logf("app.int64-absent: %v", ss64)
 
@@ -526,7 +526,7 @@ func TestTrieS_GetIntMap(t *testing.T) {
 	t.Logf("app.int32: %v", ss32)
 
 	ss32, err = trie.GetInt32Map("app.int-absent", map[string]int32{"t": 9})
-	t.Logf("app.int32: %v", ss32)
+	t.Logf("app.int32: %v, err: %v", ss32, err)
 	ss32 = trie.MustInt32Map("app.int-absent", map[string]int32{"t": 9})
 	t.Logf("app.int32-absent: %v", ss32)
 
@@ -539,7 +539,7 @@ func TestTrieS_GetIntMap(t *testing.T) {
 	t.Logf("app.int16: %v", ss16)
 
 	ss16, err = trie.GetInt16Map("app.int-absent", map[string]int16{"t": 9})
-	t.Logf("app.int16: %v", ss16)
+	t.Logf("app.int16: %v, err: %v", ss16, err)
 	ss16 = trie.MustInt16Map("app.int-absent", map[string]int16{"t": 9})
 	t.Logf("app.int16-absent: %v", ss16)
 
@@ -552,7 +552,7 @@ func TestTrieS_GetIntMap(t *testing.T) {
 	t.Logf("app.int8: %v", ss8)
 
 	ss8, err = trie.GetInt8Map("app.int-absent", map[string]int8{"t": 9})
-	t.Logf("app.int8-absent: %v", ss8)
+	t.Logf("app.int8-absent: %v, err: %v", ss8, err)
 	ss8 = trie.MustInt8Map("app.int-absent", map[string]int8{"t": 9})
 	t.Logf("app.int8-absent: %v", ss8)
 
@@ -565,12 +565,12 @@ func TestTrieS_GetIntMap(t *testing.T) {
 	t.Logf("app.int: %v", ss)
 
 	ss, err = trie.GetIntMap("app.int-absent", map[string]int{"t": 9})
-	t.Logf("app.int-absent: %v", ss)
+	t.Logf("app.int-absent: %v, err: %v", ss, err)
 	ss = trie.MustIntMap("app.int-absent", map[string]int{"t": 9})
 	t.Logf("app.int-absent: %v", ss)
 }
 
-func TestTrieS_GetUintMap(t *testing.T) {
+func TestTrieS_GetUintMap(t *testing.T) { //nolint:revive
 	trie := newTrieTree()
 
 	trie.Set("app.uint", map[string]uint64{"non-neg": 2, "pos": 73})
@@ -586,7 +586,7 @@ func TestTrieS_GetUintMap(t *testing.T) {
 	t.Logf("app.uint64: %v", ss64)
 
 	ss64, err = trie.GetUint64Map("app.uint-absent", map[string]uint64{"t": 9})
-	t.Logf("app.uint64-absent: %v", ss64)
+	t.Logf("app.uint64-absent: %v, err: %v", ss64, err)
 	ss64 = trie.MustUint64Map("app.uint-absent", map[string]uint64{"t": 9})
 	t.Logf("app.uint64-absent: %v", ss64)
 
@@ -599,7 +599,7 @@ func TestTrieS_GetUintMap(t *testing.T) {
 	t.Logf("app.uint32: %v", ss32)
 
 	ss32, err = trie.GetUint32Map("app.uint-absent", map[string]uint32{"t": 9})
-	t.Logf("app.uint32-absent: %v", ss32)
+	t.Logf("app.uint32-absent: %v, err: %v", ss32, err)
 	ss32 = trie.MustUint32Map("app.uint-absent", map[string]uint32{"t": 9})
 	t.Logf("app.uint32-absent: %v", ss32)
 
@@ -612,7 +612,7 @@ func TestTrieS_GetUintMap(t *testing.T) {
 	t.Logf("app.uint16: %v", ss16)
 
 	ss16, err = trie.GetUint16Map("app.uint-absent", map[string]uint16{"t": 9})
-	t.Logf("app.uint16-absent: %v", ss16)
+	t.Logf("app.uint16-absent: %v, err: %v", ss16, err)
 	ss16 = trie.MustUint16Map("app.uint-absent", map[string]uint16{"t": 9})
 	t.Logf("app.uint16-absent: %v", ss16)
 
@@ -625,7 +625,7 @@ func TestTrieS_GetUintMap(t *testing.T) {
 	t.Logf("app.uint8: %v", ss8)
 
 	ss8, err = trie.GetUint8Map("app.uint-absent", map[string]uint8{"t": 9})
-	t.Logf("app.uint8-absent: %v", ss8)
+	t.Logf("app.uint8-absent: %v, err: %v", ss8, err)
 	ss8 = trie.MustUint8Map("app.uint-absent", map[string]uint8{"t": 9})
 	t.Logf("app.uint8-absent: %v", ss8)
 
@@ -638,7 +638,7 @@ func TestTrieS_GetUintMap(t *testing.T) {
 	t.Logf("app.uint: %v", ss)
 
 	ss, err = trie.GetUintMap("app.uint-absent", map[string]uint{"t": 9})
-	t.Logf("app.uint-absent: %v", ss)
+	t.Logf("app.uint-absent: %v, err: %v", ss, err)
 	ss = trie.MustUintMap("app.uint-absent", map[string]uint{"t": 9})
 	t.Logf("app.uint-absent: %v", ss)
 }
@@ -660,7 +660,7 @@ func TestTrieS_GetKibiBytes(t *testing.T) {
 	ss := trie.MustKibiBytes("app.kibi-absent", 102)
 	t.Logf("app.kibi-absent: %v", ss)
 	ss, err = trie.GetKibiBytes("app.kibi-absent", 102)
-	t.Logf("app.kibi-absent: %v", ss)
+	t.Logf("app.kibi-absent: %v, err: %v", ss, err)
 }
 
 func TestTrieS_GetKiloBytes(t *testing.T) {
@@ -680,7 +680,7 @@ func TestTrieS_GetKiloBytes(t *testing.T) {
 	ss := trie.MustKiloBytes("app.kilo-absent", 102)
 	t.Logf("app.kilo-absent: %v", ss)
 	ss, err = trie.GetKiloBytes("app.kilo-absent", 102)
-	t.Logf("app.kilo-absent: %v", ss)
+	t.Logf("app.kilo-absent: %v, err: %v", ss, err)
 }
 
 func TestTrieS_GetFloat64(t *testing.T) {
@@ -700,7 +700,7 @@ func TestTrieS_GetFloat64(t *testing.T) {
 	ss := trie.MustFloat64("app.float-absent", 102)
 	t.Logf("app.float-absent: %v", ss)
 	ss, err = trie.GetFloat64("app.float-absent", 102)
-	t.Logf("app.float-absent: %v", ss)
+	t.Logf("app.float-absent: %v, err: %v", ss, err)
 }
 
 func TestTrieS_GetFloat32(t *testing.T) {
@@ -720,7 +720,7 @@ func TestTrieS_GetFloat32(t *testing.T) {
 	ss := trie.MustFloat32("app.float-absent", 102)
 	t.Logf("app.float-absent: %v", ss)
 	ss, err = trie.GetFloat32("app.float-absent", 102)
-	t.Logf("app.float-absent: %v", ss)
+	t.Logf("app.float-absent: %v, err: %v", ss, err)
 }
 
 func TestTrieS_GetFloat64Slice(t *testing.T) {
@@ -740,7 +740,7 @@ func TestTrieS_GetFloat64Slice(t *testing.T) {
 	ss := trie.MustFloat64Slice("app.float-absent", 102)
 	t.Logf("app.float-absent: %v", ss)
 	ss, err = trie.GetFloat64Slice("app.float-absent", 102)
-	t.Logf("app.float-absent: %v", ss)
+	t.Logf("app.float-absent: %v, err: %v", ss, err)
 }
 
 func TestTrieS_GetFloat32Slice(t *testing.T) {
@@ -760,7 +760,7 @@ func TestTrieS_GetFloat32Slice(t *testing.T) {
 	ss := trie.MustFloat32Slice("app.float-absent", 102)
 	t.Logf("app.float-absent: %v", ss)
 	ss, err = trie.GetFloat32Slice("app.float-absent", 102)
-	t.Logf("app.float-absent: %v", ss)
+	t.Logf("app.float-absent: %v, err: %v", ss, err)
 }
 
 func TestTrieS_GetFloat64Map(t *testing.T) {
@@ -780,7 +780,7 @@ func TestTrieS_GetFloat64Map(t *testing.T) {
 	ss := trie.MustFloat64Map("app.float-absent", map[string]float64{"a": 102.1})
 	t.Logf("app.float-absent: %v", ss)
 	ss, err = trie.GetFloat64Map("app.float-absent", map[string]float64{"a": 102.1})
-	t.Logf("app.float-absent: %v", ss)
+	t.Logf("app.float-absent: %v, err: %v", ss, err)
 }
 
 func TestTrieS_GetFloat32Map(t *testing.T) {
@@ -800,7 +800,7 @@ func TestTrieS_GetFloat32Map(t *testing.T) {
 	ss := trie.MustFloat32Map("app.float-absent", map[string]float32{"a": 102.1})
 	t.Logf("app.float-absent: %v", ss)
 	ss, err = trie.GetFloat32Map("app.float-absent", map[string]float32{"a": 102.1})
-	t.Logf("app.float-absent: %v", ss)
+	t.Logf("app.float-absent: %v, err: %v", ss, err)
 }
 
 func TestTrieS_GetComplex128(t *testing.T) {
@@ -820,7 +820,7 @@ func TestTrieS_GetComplex128(t *testing.T) {
 	ss := trie.MustComplex128("app.float-absent", 102.1+56.35i)
 	t.Logf("app.float-absent: %v", ss)
 	ss, err = trie.GetComplex128("app.float-absent", 102.1+56.35i)
-	t.Logf("app.float-absent: %v", ss)
+	t.Logf("app.float-absent: %v, err: %v", ss, err)
 }
 
 func TestTrieS_GetComplex64(t *testing.T) {
@@ -840,7 +840,7 @@ func TestTrieS_GetComplex64(t *testing.T) {
 	ss := trie.MustComplex64("app.float-absent", 102.1+56.35i)
 	t.Logf("app.float-absent: %v", ss)
 	ss, err = trie.GetComplex64("app.float-absent", 102.1+56.35i)
-	t.Logf("app.float-absent: %v", ss)
+	t.Logf("app.float-absent: %v, err: %v", ss, err)
 }
 
 func TestTrieS_GetComplex128Slice(t *testing.T) {
@@ -860,7 +860,7 @@ func TestTrieS_GetComplex128Slice(t *testing.T) {
 	ss := trie.MustComplex128Slice("app.float-absent", 102.1+56.35i)
 	t.Logf("app.float-absent: %v", ss)
 	ss, err = trie.GetComplex128Slice("app.float-absent", 102.1+56.35i)
-	t.Logf("app.float-absent: %v", ss)
+	t.Logf("app.float-absent: %v, err: %v", ss, err)
 }
 
 func TestTrieS_GetComplex64Slice(t *testing.T) {
@@ -880,7 +880,7 @@ func TestTrieS_GetComplex64Slice(t *testing.T) {
 	ss := trie.MustComplex64Slice("app.float-absent", 102.1+56.35i)
 	t.Logf("app.float-absent: %v", ss)
 	ss, err = trie.GetComplex64Slice("app.float-absent", 102.1+56.35i)
-	t.Logf("app.float-absent: %v", ss)
+	t.Logf("app.float-absent: %v, err: %v", ss, err)
 }
 
 func TestTrieS_GetComplex128Map(t *testing.T) {
@@ -900,7 +900,7 @@ func TestTrieS_GetComplex128Map(t *testing.T) {
 	ss := trie.MustComplex128Map("app.float-absent", map[string]complex128{"a": 102.1 + 56.35i})
 	t.Logf("app.float-absent: %v", ss)
 	ss, err = trie.GetComplex128Map("app.float-absent", map[string]complex128{"a": 102.1 + 56.35i})
-	t.Logf("app.float-absent: %v", ss)
+	t.Logf("app.float-absent: %v, err: %v", ss, err)
 }
 
 func TestTrieS_GetComplex64Map(t *testing.T) {
@@ -920,7 +920,7 @@ func TestTrieS_GetComplex64Map(t *testing.T) {
 	ss := trie.MustComplex64Map("app.float-absent", map[string]complex64{"a": 102.1 + 56.35i})
 	t.Logf("app.float-absent: %v", ss)
 	ss, err = trie.GetComplex64Map("app.float-absent", map[string]complex64{"a": 102.1 + 56.35i})
-	t.Logf("app.float-absent: %v", ss)
+	t.Logf("app.float-absent: %v, err: %v", ss, err)
 }
 
 func TestTrieS_GetBool(t *testing.T) {
@@ -940,7 +940,7 @@ func TestTrieS_GetBool(t *testing.T) {
 	ss := trie.MustBool("app.bool-absent", true)
 	t.Logf("app.bool-absent: %v", ss)
 	ss, err = trie.GetBool("app.bool-absent", true)
-	t.Logf("app.bool-absent: %v", ss)
+	t.Logf("app.bool-absent: %v, err: %v", ss, err)
 }
 
 func TestTrieS_GetBoolSlice(t *testing.T) {
@@ -962,7 +962,7 @@ func TestTrieS_GetBoolSlice(t *testing.T) {
 	ss := trie.MustBoolSlice("app.bool-absent", true, false)
 	t.Logf("app.bool-absent: %v", ss)
 	ss, err = trie.GetBoolSlice("app.bool-absent", true, false)
-	t.Logf("app.bool-absent: %v", ss)
+	t.Logf("app.bool-absent: %v, err: %v", ss, err)
 }
 
 func TestTrieS_GetBoolMap(t *testing.T) {
@@ -982,7 +982,7 @@ func TestTrieS_GetBoolMap(t *testing.T) {
 	ss := trie.MustBoolMap("app.bool-absent", map[string]bool{"a": true})
 	t.Logf("app.bool-absent: %v", ss)
 	ss, err = trie.GetBoolMap("app.bool-absent", map[string]bool{"a": true})
-	t.Logf("app.bool-absent: %v", ss)
+	t.Logf("app.bool-absent: %v, err: %v", ss, err)
 }
 
 func TestTrieS_GetDuration(t *testing.T) {
@@ -1004,7 +1004,7 @@ func TestTrieS_GetDuration(t *testing.T) {
 	ss := trie.MustDuration("app.duration-absent", defval)
 	t.Logf("app.duration-absent: %v", times.SmartDurationString(ss))
 	ss, err = trie.GetDuration("app.duration-absent", defval)
-	t.Logf("app.duration-absent: %v", times.SmartDurationString(ss))
+	t.Logf("app.duration-absent: %v, err: %v", times.SmartDurationString(ss), err)
 }
 
 func TestTrieS_GetDurationSlice(t *testing.T) {
@@ -1026,7 +1026,7 @@ func TestTrieS_GetDurationSlice(t *testing.T) {
 	ss := trie.MustDurationSlice("app.duration-absent", defval, time.Microsecond)
 	t.Logf("app.duration-absent: %v", ss)
 	ss, err = trie.GetDurationSlice("app.duration-absent", defval, time.Microsecond)
-	t.Logf("app.duration-absent: %v", ss)
+	t.Logf("app.duration-absent: %v, err: %v", ss, err)
 }
 
 func TestTrieS_GetDurationMap(t *testing.T) {
@@ -1048,7 +1048,7 @@ func TestTrieS_GetDurationMap(t *testing.T) {
 	ss := trie.MustDurationMap("app.duration-absent", map[string]time.Duration{"a": defval})
 	t.Logf("app.duration-absent: %v", ss)
 	ss, err = trie.GetDurationMap("app.duration-absent", map[string]time.Duration{"a": defval})
-	t.Logf("app.duration-absent: %v", ss)
+	t.Logf("app.duration-absent: %v, err: %v", ss, err)
 }
 
 func TestTrieS_GetTime(t *testing.T) {
@@ -1070,7 +1070,7 @@ func TestTrieS_GetTime(t *testing.T) {
 	ss := trie.MustTime("app.time-absent", defval)
 	t.Logf("app.time-absent: %v", ss)
 	ss, err = trie.GetTime("app.time-absent", defval)
-	t.Logf("app.time-absent: %v", ss)
+	t.Logf("app.time-absent: %v, err: %v", ss, err)
 }
 
 func TestTrieS_GetTimeSlice(t *testing.T) {
@@ -1093,7 +1093,7 @@ func TestTrieS_GetTimeSlice(t *testing.T) {
 	ss := trie.MustTimeSlice("app.time-absent", defval, defval2)
 	t.Logf("app.time-absent: %v", ss)
 	ss, err = trie.GetTimeSlice("app.time-absent", defval, defval2)
-	t.Logf("app.time-absent: %v", ss)
+	t.Logf("app.time-absent: %v, err: %v", ss, err)
 }
 
 func TestTrieS_GetTimeMap(t *testing.T) {
@@ -1117,5 +1117,5 @@ func TestTrieS_GetTimeMap(t *testing.T) {
 	ss := trie.MustTimeMap("app.time-absent", mdef)
 	t.Logf("app.time-absent: %v", ss)
 	ss, err = trie.GetTimeMap("app.time-absent", mdef)
-	t.Logf("app.time-absent: %v", ss)
+	t.Logf("app.time-absent: %v, err: %v", ss, err)
 }
