@@ -51,8 +51,8 @@ func NewStoreT[T any]() MinimalStoreT[T] {
 // 	items map[string]*itemS
 // }
 
-// StoreT holds a minimal typed Store interface.
-type StoreT[T any] interface {
+// MinimalStoreT holds a minimal typed Store interface.
+type MinimalStoreT[T any] interface {
 	MustGet(path string) (data T)
 	Get(path string) (data T, found bool)
 	Set(path string, data T) (node radix.Node[T], oldData any)

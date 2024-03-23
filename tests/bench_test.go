@@ -103,7 +103,7 @@ func newStoreGo() store.Store {
 	return conf
 }
 
-func newStoreT() store.StoreT[any] {
+func newStoreT() store.MinimalStoreT[any] {
 	trie := store.NewStoreT[any]()
 	trie.Set("app.debug", 1)
 	// t.Logf("\nPath\n%v\n", trie.dump())
