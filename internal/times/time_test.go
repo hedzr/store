@@ -37,10 +37,13 @@ func TestAddKnownTimeFormats(t *testing.T) {
 		{"11", 0},
 		{"0000-01-01 11:00:00 +0000", 0},
 	} {
-		tm, err = time.Parse("2006-1-2 15:4:5.999999999", c.src)
-		tm1, err = SmartParseTime(c.src)
+		tm, err = time.Parse("2006-1-2 15:4:5.999999999", c.src) //nolint:staticcheck
 		if err != nil {
 			t.Fatalf("%5d. time.Parse(%q) failed, err: %v.", i, c.src, err)
+		}
+		tm1, err = SmartParseTime(c.src)
+		if err != nil {
+			t.Fatalf("%5d. SmartParseTime(%q) failed, err: %v.", i, c.src, err)
 		}
 		t.Logf("%5d. time: %v, smart: %v", i, tm, tm1)
 	}
