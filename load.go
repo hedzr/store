@@ -8,16 +8,18 @@ import (
 	"sync/atomic"
 	"time"
 
-	logz "github.com/hedzr/logg/slog"
 	"gopkg.in/hedzr/errors.v3"
 
 	"github.com/hedzr/evendeep"
-
+	logz "github.com/hedzr/logg/slog"
 	"github.com/hedzr/store/radix"
 )
 
 func (s *storeS) inLoading() bool { return atomic.LoadInt32(&s.loading) == 1 }
 
+// WithinLoading is a helper to 'load' a 'fn'. The 'fn' will be
+// run as is, and the internal flag 's.loading' will be set at
+// beginning of fn executing, and reset at ending of fn.
 func (s *storeS) WithinLoading(fn func()) {
 	if atomic.CompareAndSwapInt32(&s.loading, 0, 1) {
 		defer func() { atomic.CompareAndSwapInt32(&s.loading, 1, 0) }()
@@ -25,7 +27,23 @@ func (s *storeS) WithinLoading(fn func()) {
 	}
 }
 
-func (s *storeS) Load(ctx context.Context, opts ...LoadOpt) (wr Writeable, err error) {
+// Load loads an external data source by the specified Provider,
+// a Codec parser is optional.
+//
+// WithProvider and WithCodec are useful. The sample code is:
+//
+//	s := newBasicStore()
+//	if _, err := s.Load(
+//	   context.TODO(),
+//	   store.WithStorePrefix("app.json"),
+//	   store.WithCodec(json.New()),
+//	   store.WithProvider(file.New("../testdata/4.json")),
+//
+//	   store.WithStoreFlattenSlice(true),
+//	); err != nil {
+//	   t.Fatalf("failed: %v", err)
+//	}
+func (s *storeS) Load(ctx context.Context, opts ...LoadOpt) (wr Writeable, err error) { //nolint:revive
 	if atomic.CompareAndSwapInt32(&s.loading, 0, 1) {
 		defer func() { atomic.CompareAndSwapInt32(&s.loading, 1, 0) }()
 
@@ -106,7 +124,7 @@ func (s *storeS) loadMap(m map[string]any, position string, creating bool, onSet
 	return
 }
 
-func (s *storeS) loadMapByValueType(ec errors.Error, position, k string, v any, creating bool, onSet lmOnSet) {
+func (s *storeS) loadMapByValueType(ec errors.Error, position, k string, v any, creating bool, onSet lmOnSet) { //nolint:revive
 	switch vv := v.(type) {
 	case ValPkg:
 		s.loadMapByValueType(ec, position, k, vv.Value, creating, onSet)
@@ -160,10 +178,18 @@ func (s *storeS) loadMapByValueType(ec errors.Error, position, k string, v any, 
 	default:
 		s.WithPrefixReplaced(position).setKV(k, v, creating, onSet)
 	}
-	return
 }
 
+// Watchable tips that a Provider can watch its external data source
 type Watchable interface {
+	// Watch accepts user's func and callback it when the external
+	// data source is changing, creating or deleting.
+	//
+	// The supported oprations are specified in Op.
+	//
+	// Tne user's func checks 'event' for which operation was occurring.
+	// For more info, see also storeS.Load, storeS.applyExternalChanges,
+	// and loader.startWatch.
 	Watch(ctx context.Context, cb func(event any, err error)) error
 
 	// Close provides a closer to cleanup the peripheral gracefully
@@ -171,6 +197,7 @@ type Watchable interface {
 	// basics.Peripheral
 }
 
+// Change is an abstract interface for Watchable object.
 type Change interface {
 	// Key() string
 	// Val() any
@@ -210,7 +237,7 @@ func (s *storeS) applyExternalChanges(event any, err error) {
 	}
 }
 
-func (s *storeS) applyChanges(ev Change) {
+func (s *storeS) applyChanges(ev Change) { //nolint:revive
 	// if err := s.Load(WithProvider(ev.Provider())); err != nil {
 	// 	logz.Error("[Watcher.applyChanges]", "err", err)
 	// }
@@ -254,7 +281,7 @@ func (s *storeS) applyChanges(ev Change) {
 //
 
 func newLoader(st *storeS, opts ...LoadOpt) *loadS {
-	var loader = &loadS{
+	loader := &loadS{
 		storeS:   st,
 		codec:    nil,
 		provider: nil,
@@ -289,28 +316,32 @@ type loadS struct {
 	provider Provider
 }
 
-type LoadOpt func(*loadS)
+type LoadOpt func(*loadS) // options for loadS
 
+// WithProvider is commonly required. It specify what Provider
+// will be [storeS.Load].
 func WithProvider(provider Provider) LoadOpt {
 	return func(s *loadS) {
 		s.provider = provider
 	}
 }
 
+// WithCodec specify the decoder to decode the loaded data.
 func WithCodec(codec Codec) LoadOpt {
 	return func(s *loadS) {
 		s.codec = codec
 	}
 }
 
-// WithStorePrefix gives a prefix position, which the external settings
-// will be merged at.
+// WithStorePrefix gives a prefix position, which is the store
+// location that the external settings will be merged at.
 func WithStorePrefix(prefix string) LoadOpt {
 	return func(s *loadS) {
 		s.storeS = s.storeS.WithPrefixReplaced(prefix)
 	}
 }
 
+// WithPosition sets the
 func WithPosition(position string) LoadOpt {
 	return func(s *loadS) {
 		s.position = position
@@ -365,10 +396,12 @@ func WithoutFlattenKeys[T any](b bool) radix.MOpt[T] {
 // tryLoad inspect the provider's api, try reading settings in the best way.
 //
 // See also [storeS.Load].
-func (s *loadS) tryLoad(ctx context.Context) (data map[string]ValPkg, bin map[string]any, err error) {
+func (s *loadS) tryLoad(ctx context.Context) (data map[string]ValPkg, bin map[string]any, err error) { //nolint:revive
 	if s.provider == nil {
 		return
 	}
+
+	_ = ctx
 
 	// try Read() at first
 	data, err = s.provider.Read()
@@ -410,7 +443,8 @@ func (s *loadS) tryLoad(ctx context.Context) (data map[string]ValPkg, bin map[st
 }
 
 func (s *loadS) Save(ctx context.Context) (err error) { return s.trySave(ctx) }
-func (s *loadS) trySave(ctx context.Context) (err error) {
+func (s *loadS) trySave(ctx context.Context) (err error) { //nolint:revive
+	_ = ctx
 	if s.codec != nil && s.provider != nil {
 		var m map[string]any
 		if m, err = s.GetM("", WithFilter[any](func(node radix.Node[any]) bool {

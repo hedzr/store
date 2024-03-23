@@ -17,10 +17,10 @@ import (
 // path
 func New(opts ...Opt) Store { return newStore(opts...) }
 
-// NewStoreT allows reimplementing your own Store if necessary.
+// NewStoreT allows reimplementing your own Store.
 //
-// Any suggestions welcome, please notify me, issue me.
-func NewStoreT[T any]() StoreT[T] {
+// Any suggestions are welcome, please issue me.
+func NewStoreT[T any]() MinimalStoreT[T] {
 	return radix.NewTrie[T]()
 }
 
@@ -178,10 +178,12 @@ type Store interface {
 	WithinLoading(fn func())
 }
 
+// Dumpable interface identify an object can be represented as a string for debugging.
 type Dumpable interface {
 	Dump() string
 }
 
+// ErrNotImplemented is used to identify unimplemented API.
 var ErrNotImplemented = stderr.New("not implemented")
 
 // The Provider gives a minimal set of interface to identify a data source.
@@ -221,11 +223,13 @@ type Provider interface {
 	ProviderSupports
 }
 
+// ValPkg is a value pack, It will be inserted into trie-tree as a data field.
+// A node is commentable by Desc and Comment field.
 type ValPkg struct {
-	Value   any
-	Desc    string
-	Comment string
-	Tag     any
+	Value   any    // node's value
+	Desc    string // description of a node
+	Comment string // comment of a node
+	Tag     any    // any extra data of a node
 }
 
 // OnceProvider is fit for a small-scale provider.
@@ -257,6 +261,7 @@ type FallbackProvider interface {
 	ProviderSupports
 }
 
+// ProviderSupports means which ability is supported by a Provider.
 type ProviderSupports interface {
 	GetCodec() (codec Codec)   // return the bound codec decoder
 	GetPosition() (pos string) // return a position pointed to a Trie-node path

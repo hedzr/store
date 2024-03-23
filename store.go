@@ -34,30 +34,44 @@ func WithPrefix(prefix string) Opt {
 	}
 }
 
+// WithOnChangeHandlers allows user's handlers can be callback once a node changed.
 func WithOnChangeHandlers(handlers ...OnChangeHandler) Opt {
 	return func(s *storeS) {
 		s.onChangeHandlers = append(s.onChangeHandlers, handlers...)
 	}
 }
 
+// WithOnNewHandlers allows user's handlers can be callback if a new node has been creating.
 func WithOnNewHandlers(handlers ...OnNewHandler) Opt {
 	return func(s *storeS) {
 		s.onNewHandlers = append(s.onNewHandlers, handlers...)
 	}
 }
 
+// WithOnDeleteHandlers allows user's handlers can be callback once a node removed.
 func WithOnDeleteHandlers(handlers ...OnDeleteHandler) Opt {
 	return func(s *storeS) {
 		s.OnDeleteHandlers = append(s.OnDeleteHandlers, handlers...)
 	}
 }
 
+// WithFlattenSlice sets a bool flag to tell Store the slice value should be
+// treated as node leaf. The index of the slice would be part of node path.
+// For example, you're loading a slice []string{"A","B"} into node path
+// "app.slice", the WithFlattenSlice(true) causes the following structure:
+//
+//	app.slice.0 => "A"
+//	app.slice.1 => "B"
+//
+// Also, WithFlattenSlice makes the map values to be flattened into a tree.
 func WithFlattenSlice(b bool) Opt {
 	return func(s *storeS) {
 		s.flattenSlice = b
 	}
 }
 
+// WithWatchEnable allows watching the external source if its provider
+// supports Watchable ability.
 func WithWatchEnable(b bool) Opt {
 	return func(s *storeS) {
 		s.allowWatch = b
@@ -66,14 +80,16 @@ func WithWatchEnable(b bool) Opt {
 
 type Opt func(s *storeS) // Opt(ions) for New Store
 
+// Peripheral is closeable.
 type Peripheral interface {
 	Close()
 }
 
-// storeS is an in-memory key-value container with tree structure.
+// storeS is an in-memory key-value container with tree structure supporting.
 // The keys are typically dotted to represent the tree position.
 type storeS struct {
 	radix.Trie[any]
+
 	loading          int32
 	saving           int32
 	closers          []Peripheral
@@ -85,7 +101,8 @@ type storeS struct {
 	// WithPrefixReplaced.
 	// See dupS()
 
-	parent       *storeS
+	parent *storeS
+
 	flattenSlice bool
 	allowWatch   bool
 }
@@ -110,7 +127,7 @@ var _ radix.TypedGetters[any] = (*storeS)(nil) // assertion helper
 
 var _ Store = (*dummyS)(nil) // assertion helper
 
-var _ StoreT[any] = (*dummyS)(nil) // assertion helper
+var _ MinimalStoreT[any] = (*dummyS)(nil) // assertion helper
 
 // OnChangeHandler is called back when user setting key & value.
 //
@@ -118,8 +135,8 @@ var _ StoreT[any] = (*dummyS)(nil) // assertion helper
 // recursively with a map (via [Store.Merge]), or a loader
 // (re-)loading its source.
 type OnChangeHandler func(path string, value, oldValue any, mergingMapOrLoading bool)
-type OnNewHandler func(path string, value any, mergingMapOrLoading bool)
-type OnDeleteHandler func(path string, value any, mergingMapOrLoading bool)
+type OnNewHandler func(path string, value any, mergingMapOrLoading bool)    // when user setting a new key
+type OnDeleteHandler func(path string, value any, mergingMapOrLoading bool) // when user deleting a key
 
 const initialPrefixBufferSize = 64
 
@@ -326,7 +343,7 @@ func (s *storeS) RemoveEx(path string) (nodeRemoved, nodeParent radix.Node[any],
 	return
 }
 
-// Has tests if the given path exists
+// Has tests if the given path exists.
 func (s *storeS) Has(path string) (found bool) {
 	return s.Trie.Search(path)
 }
