@@ -2,12 +2,14 @@ package store
 
 import (
 	"bytes"
+	"os"
 	"sync"
 
 	"github.com/hedzr/store/radix"
 )
 
 func newStore(opts ...Opt) *storeS {
+	_ = os.Setenv("STORE_VERSION", Version)
 	s := &storeS{
 		Trie: radix.NewTrie[any](),
 	}
