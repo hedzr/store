@@ -23,7 +23,7 @@ func TestCtxS_Next_Simple(t *testing.T) {
 }
 
 func TestCtxS_NamesCount(t *testing.T) {
-	ctx := WithValues(nil, "k1", 1, "k2", 2, "k3", time.Now(), time.Now(), "now").(*ctxS)
+	ctx := WithValues(nil, "k1", 1, "k2", 2, "k3", time.Now(), time.Now(), "now").(*ctxS) //nolint:revive
 	if ctx.NamesCount() != 4 {
 		t.Fail()
 	}
@@ -43,14 +43,14 @@ func TestCtxS_NamesCount(t *testing.T) {
 		t.Log(ctx.Entry())
 	}
 
-	ctx = WithValue(nil, "k1", 1).(*ctxS)
+	ctx = WithValue(nil, "k1", 1).(*ctxS) //nolint:revive
 	if ctx.NamesCount() != 1 {
 		t.Fail()
 	}
 }
 
 func TestCtxS_Next(t *testing.T) {
-	ctx := WithValues(TODO(), "k1", 1, "k2", 2, "k3", 3).(*ctxS)
+	ctx := WithValues(TODO(), "k1", 1, "k2", 2, "k3", 3).(*ctxS) //nolint:revive
 	for ctx.Next() {
 		t.Log(ctx.Key(), ctx.Value())
 	}
@@ -62,7 +62,7 @@ func TestCtxS_Next(t *testing.T) {
 }
 
 func TestCtxS_ValueBy(t *testing.T) {
-	ctx := WithValue(TODO(), "k1", 1).(*ctxS)
+	ctx := WithValue(TODO(), "k1", 1).(*ctxS) //nolint:revive
 	v := ctx.ValueBy("k1")
 	if v != 1 {
 		t.Fatalf("want 1 but got %v", v)
@@ -80,13 +80,13 @@ func TestCtxS_ValueBy(t *testing.T) {
 	}
 }
 
-func ExampleCtxS_Next() {
-	ctx := WithValue(TODO(), "k1", 1).(*ctxS)
+func ExamplectxS_Next() {
+	ctx := WithValue(TODO(), "k1", 1).(*ctxS) //nolint:revive
 	ctx.add("k2", 2)
 	ctx.add("k3", 3)
 
 	for ctx.Next() {
-		fmt.Println(ctx.Key())
+		_, _ = fmt.Println(ctx.Key())
 	}
 
 	// Output:
@@ -98,7 +98,7 @@ func ExampleCtxS_Next() {
 func ExampleWithValues() {
 	ctx := WithValues(TODO(), "k1", 1, "k2", 2, "k3", 3)
 	for ctx.Next() {
-		fmt.Println(ctx.Key())
+		_, _ = fmt.Println(ctx.Key())
 	}
 
 	// Output:

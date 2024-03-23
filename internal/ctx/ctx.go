@@ -29,7 +29,7 @@ type Ctx interface {
 func TODO() Ctx { return &ctxS{} }
 
 func WithValue(parent Ctx, name string, value Val) Ctx {
-	var c = parent
+	c := parent
 	if c == nil {
 		c = &ctxS{}
 	}
@@ -43,7 +43,7 @@ func WithValue(parent Ctx, name string, value Val) Ctx {
 }
 
 func WithValues(parent Ctx, args ...any) Ctx {
-	var c = parent
+	c := parent
 	if c == nil {
 		c = &ctxS{}
 	}
