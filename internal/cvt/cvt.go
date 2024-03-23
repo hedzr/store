@@ -22,7 +22,7 @@ func Normalize(m map[string]any, worker func(k string, v any)) map[string]any {
 	return m
 }
 
-func normalize(m map[string]any, key string, val any, worker func(k string, v any)) {
+func normalize(m map[string]any, key string, val any, worker func(k string, v any)) { //nolint:revive
 	switch z := val.(type) {
 	case map[any]any:
 		x := make(map[string]any)
