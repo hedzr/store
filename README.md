@@ -7,8 +7,8 @@
 [![Go Dev](https://img.shields.io/badge/go-dev-green)](https://pkg.go.dev/github.com/hedzr/store)
 [![deps.dev](https://img.shields.io/badge/deps-dev-green)](https://deps.dev/go/github.com%2Fhedzr%2Fstore)
 
-> [beta]  
-> Ready for v2 release of [hedzr/cmdr], testing.
+> [RC] v1.0.0  
+> Ready for v2 release of [hedzr/cmdr].
 
 `hedzr/store` provides an extensible, high-performancce  configuration management library. It optimized for accessing hierarchical data.
 

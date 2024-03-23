@@ -1,5 +1,12 @@
 # CHANGELOG
 
+- v1.0.0
+  - ready for cmdr.v2
+  - added/improved go docs
+  - lint/nolint the whole project
+  - added envvar `STORE_VERSION`
+  - added examples/simple as a cli-app
+
 - v0.5.3 - upgraded deps
 
 - v0.5.1 - uses the newest online version for the codecs, and providers
