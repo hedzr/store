@@ -14,13 +14,13 @@ go 1.21
 
 // replace github.com/hedzr/logg => ../../../libs.logg
 
-replace github.com/hedzr/store => ../..
+//replace github.com/hedzr/store => ../..
 
 // replace github.com/hedzr/store/providers/file => ../../providers/file
 
 require (
 	github.com/hashicorp/hcl v1.0.0
-	github.com/hedzr/store v0.5.1
+	github.com/hedzr/store v1.0.0
 )
 
 require (
