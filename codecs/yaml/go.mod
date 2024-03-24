@@ -14,12 +14,12 @@ go 1.21
 
 // replace github.com/hedzr/logg => ../../../libs.logg
 
-replace github.com/hedzr/store => ../..
+//replace github.com/hedzr/store => ../..
 
 //replace github.com/hedzr/store/providers/file => ../../providers/file
 
 require (
-	github.com/hedzr/store v0.5.1
+	github.com/hedzr/store v1.0.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
