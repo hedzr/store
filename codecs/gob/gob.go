@@ -27,7 +27,7 @@ func (p *ldr) Unmarshal(b []byte) (data map[string]any, err error) {
 		r := bytes.NewReader(b)
 		p.dec = gob.NewDecoder(r)
 	}
-	err = p.dec.Decode(data)
+	err = p.dec.Decode(&data)
 	return
 }
 
