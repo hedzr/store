@@ -14,14 +14,14 @@ go 1.21
 
 // replace github.com/hedzr/logg => ../../../libs.logg
 
-replace github.com/hedzr/store => ../..
+//replace github.com/hedzr/store => ../..
 
 // replace github.com/hedzr/store/codecs/json => ../../codecs/json
 
 // replace github.com/hedzr/store/codecs/yaml => ../../codecs/yaml
 
 require (
-	github.com/hedzr/store v0.5.1
+	github.com/hedzr/store v1.0.0
 	go.etcd.io/etcd/client/v3 v3.5.12
 )
 
