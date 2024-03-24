@@ -14,7 +14,7 @@ go 1.21
 
 // replace github.com/hedzr/logg => ../../../libs.logg
 
-replace github.com/hedzr/store => ../..
+//replace github.com/hedzr/store => ../..
 
 // replace github.com/hedzr/store/provider/consul => ../../providers/consul
 
@@ -25,7 +25,7 @@ replace github.com/hedzr/store => ../..
 require (
 	github.com/hashicorp/consul/api v1.28.2
 	github.com/hedzr/logg v0.5.13
-	github.com/hedzr/store v0.5.1
+	github.com/hedzr/store v1.0.0
 )
 
 require (
