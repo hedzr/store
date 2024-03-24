@@ -1,7 +1,9 @@
 # Store
 
 ![Go](https://github.com/hedzr/store/workflows/Go/badge.svg)
-[![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/hedzr/store.svg?label=release)](https://github.com/hedzr/store/releases)
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/hedzr/store)
+[![GitHub Release](https://img.shields.io/github/v/release/hedzr/store)](https://github.com/hedzr/store/releases)<!--
+[![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/hedzr/store.svg?label=release)](https://github.com/hedzr/store/releases) -->
 [![Go Report Card](https://goreportcard.com/badge/github.com/hedzr/store)](https://goreportcard.com/report/github.com/hedzr/store)
 [![Coverage Status](https://coveralls.io/repos/github/hedzr/store/badge.svg?branch=master&.9)](https://coveralls.io/github/hedzr/store?branch=master)
 [![Go Dev](https://img.shields.io/badge/go-dev-green)](https://pkg.go.dev/github.com/hedzr/store)
@@ -16,7 +18,7 @@ The special is `put any data and extract typed it`. Which means, the `store` wil
 
 Another feature is the `store` traces config items' modification states. So you can extract the changed subset. See also [Modified State](#modified-state).
 
-The `store` is designed to provide the basic skeleton for [hedzr/cmdr v2 (stay in progress)](https://github.com/hedzr/cmdr). It also could be used as a standalone config manager. We split the original config (called as option-store at cmdr v1) and rewrote it. In the refactoring phrase, some excellent config-mgmt/centers get many tips to us, such as [koanf](https://github.com/knadh/koanf) and [viper](https://github.com/spf13/viper). The best respect.
+The `store` is designed to provide the basic skeleton for [hedzr/cmdr v2 (RC1 released)](https://github.com/hedzr/cmdr). It also could be used as a standalone config manager. We split the original config (called as option-store at cmdr v1) and rewrote it. In the refactoring phrase, some excellent config-mgmt/centers get many tips to us, such as [koanf](https://github.com/knadh/koanf) and [viper](https://github.com/spf13/viper). Many respects.
 
 The `store` accesses tree data with a dotted key path, that means you may point to a specified tree node and access it, modify it, monitor it or remove it. You can use a different delimiter char like `/` or `\`.
 
