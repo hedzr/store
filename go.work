@@ -6,6 +6,7 @@ use (
 	.
 
 	./codecs/gob
+	./codecs/gob/test
 	./codecs/hcl
 	./codecs/hcl/test
 	./codecs/hjson
