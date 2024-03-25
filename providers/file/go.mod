@@ -22,7 +22,7 @@ go 1.21
 
 require (
 	github.com/fsnotify/fsnotify v1.7.0
-	github.com/hedzr/store v1.0.0
+	github.com/hedzr/store v1.0.1
 )
 
 require (
