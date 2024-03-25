@@ -45,7 +45,7 @@ fmt.Println(conf.Dump())
 
 It dumps as (internal data structure):
 
-```
+```text
   app.                          <B>
     d                           <B>
       ebug                      <L> app.debug => false
@@ -91,8 +91,8 @@ t.Logf("%v | %s | %v |     | %v, %v, found", node.Data(), node.Comment(), node.T
 
 For more information, browse these public sites:
 
-- https://pkg.go.dev/github.com/hedzr/store
-- https://github.com/hedzr/store
+- <https://pkg.go.dev/github.com/hedzr/store>
+- <https://github.com/hedzr/store>
 - Check out the codes in test source files
 
 ## More Features
@@ -134,8 +134,6 @@ func newBasicStore(opts ...Opt) *storeS {
     return conf
 }
 ```
-
-
 
 ### Extract A Subset
 
