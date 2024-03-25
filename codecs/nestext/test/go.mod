@@ -2,16 +2,16 @@ module github.com/hedzr/store/codecs/nestext/test
 
 go 1.21
 
-replace github.com/hedzr/store => ../../..
+// replace github.com/hedzr/store => ../../..
 
-replace github.com/hedzr/store/providers/file => ../../../providers/file
+// replace github.com/hedzr/store/providers/file => ../../../providers/file
 
-replace github.com/hedzr/store/codecs/nestext => ../
+// replace github.com/hedzr/store/codecs/nestext => ../
 
 require (
-	github.com/hedzr/store v1.0.0
+	github.com/hedzr/store v1.0.1
 	github.com/hedzr/store/codecs/nestext v1.0.0
-	github.com/hedzr/store/providers/file v1.0.0
+	github.com/hedzr/store/providers/file v1.0.1
 	github.com/stretchr/testify v1.9.0
 )
 
