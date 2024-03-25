@@ -140,6 +140,13 @@ type OnChangeHandler func(path string, value, oldValue any, mergingMapOrLoading 
 type OnNewHandler func(path string, value any, mergingMapOrLoading bool)    // when user setting a new key
 type OnDeleteHandler func(path string, value any, mergingMapOrLoading bool) // when user deleting a key
 
+func (*OnChangeHandler) GobDecode([]byte) error    { return nil }
+func (OnChangeHandler) GobEncode() ([]byte, error) { return nil, nil }
+func (*OnNewHandler) GobDecode([]byte) error       { return nil }
+func (OnNewHandler) GobEncode() ([]byte, error)    { return nil, nil }
+func (*OnDeleteHandler) GobDecode([]byte) error    { return nil }
+func (OnDeleteHandler) GobEncode() ([]byte, error) { return nil, nil }
+
 const initialPrefixBufferSize = 64
 
 var prefixJointPool = sync.Pool{New: func() any {
