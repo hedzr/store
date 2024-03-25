@@ -36,8 +36,8 @@ go 1.22
 
 require (
 	github.com/hedzr/logg v0.5.13
-	github.com/hedzr/store v1.0.0
-	github.com/hedzr/store/providers/flags v1.0.0
+	github.com/hedzr/store v1.0.1
+	github.com/hedzr/store/providers/flags v1.0.1
 )
 
 require (

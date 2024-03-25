@@ -35,8 +35,8 @@ go 1.21
 require (
 	github.com/hashicorp/consul/api v1.28.2
 	github.com/hedzr/logg v0.5.13
-	github.com/hedzr/store v1.0.0
-	github.com/hedzr/store/providers/consul v1.0.0
+	github.com/hedzr/store v1.0.1
+	github.com/hedzr/store/providers/consul v1.0.1
 )
 
 require (
@@ -57,7 +57,7 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	golang.org/x/crypto v0.21.0 // indirect
-	golang.org/x/exp v0.0.0-20240222234643-814bf88cf225 // indirect
+	golang.org/x/exp v0.0.0-20240318143956-a85f2c67cd81 // indirect
 	golang.org/x/net v0.22.0 // indirect
 	golang.org/x/sys v0.18.0 // indirect
 	golang.org/x/term v0.18.0 // indirect
