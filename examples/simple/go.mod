@@ -41,7 +41,7 @@ require (
 )
 
 require (
-	github.com/gorilla/websocket v1.5.0 // indirect
+	github.com/gorilla/websocket v1.5.1 // indirect
 	github.com/hedzr/evendeep v1.1.6 // indirect
 	github.com/hedzr/logg v0.5.13 // indirect
 	golang.org/x/crypto v0.21.0 // indirect
