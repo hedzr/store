@@ -1,5 +1,10 @@
 # CHANGELOG
 
+- v1.0.1
+  - updated submodules (codecs, providers), and publish them
+  - fixed codecs/gob decoder
+  - upgrade deps
+
 - v1.0.0
   - ready for cmdr.v2
   - added/improved go docs
