@@ -10,9 +10,9 @@ replace github.com/hedzr/store/codecs/hjson => ../
 
 require (
 	github.com/davecgh/go-spew v1.1.1
-	github.com/hedzr/store v0.5.1
-	github.com/hedzr/store/codecs/hjson v0.0.0-20240309055652-9bfe2570640d
-	github.com/hedzr/store/providers/file v0.0.0-20240309055652-9bfe2570640d
+	github.com/hedzr/store v1.0.0
+	github.com/hedzr/store/codecs/hjson v1.0.0
+	github.com/hedzr/store/providers/file v1.0.0
 	github.com/hjson/hjson-go/v4 v4.4.0
 	github.com/stretchr/testify v1.9.0
 )

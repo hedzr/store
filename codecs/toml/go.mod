@@ -20,7 +20,7 @@ go 1.21
 
 require (
 	github.com/hedzr/store v1.0.0
-	github.com/pelletier/go-toml/v2 v2.1.1
+	github.com/pelletier/go-toml/v2 v2.2.0
 )
 
 require (

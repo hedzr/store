@@ -9,9 +9,9 @@ replace github.com/hedzr/store/providers/file => ../../../providers/file
 replace github.com/hedzr/store/codecs/yaml => ../
 
 require (
-	github.com/hedzr/store v0.5.1
-	github.com/hedzr/store/codecs/yaml v0.0.0-20240309055652-9bfe2570640d
-	github.com/hedzr/store/providers/file v0.0.0-20240309055652-9bfe2570640d
+	github.com/hedzr/store v1.0.0
+	github.com/hedzr/store/codecs/yaml v1.0.0
+	github.com/hedzr/store/providers/file v1.0.0
 	github.com/stretchr/testify v1.9.0
 )
 
