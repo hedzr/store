@@ -9,7 +9,7 @@
 [![Go Dev](https://img.shields.io/badge/go-dev-green)](https://pkg.go.dev/github.com/hedzr/store)
 [![deps.dev](https://img.shields.io/badge/deps-dev-green)](https://deps.dev/go/github.com%2Fhedzr%2Fstore)
 
-`hedzr/store` provides an extensible, high-performancce  configuration management library. It optimized for accessing hierarchical data.
+`hedzr/store` provides an extensible, high-performance configuration management library. It is optimized for accessing hierarchical data.
 
 The special is `put any data and extract typed it`. Which means, the `store` will try to convert the source data within underlying.
 
@@ -519,7 +519,7 @@ The `store` is designed to reduce the allocations much better, and up the perfor
 
 Our benchmark testing (`test/bench_test.go`) shows:
 
-```
+```bash
 goos: darwin
 goarch: amd64
 pkg: github.com/hedzr/store/tests
@@ -532,9 +532,9 @@ BenchmarkTrieSearch/hedzr/store-16                   60454639            19.43 n
 PASS
 ```
 
-Some control group with a same executive environment produced:
+Some control groups with the same executive environment produced:
 
-```
+```bash
 ...
 BenchmarkTrieSearch/kzzzz
 BenchmarkTrieSearch/kzzzz-16                         46264582            28.88 ns/op          16 B/op           1 allocs/op
@@ -545,13 +545,42 @@ BenchmarkTrieSearch/vzzzz-16                         22824562            51.21 n
 
 > 1. To avoid controversy, pkg-name masked.
 >
-> 2. Both of these testing data sets have the same scale basically. Also, the querying words are same.
+> 2. Both of these testing data sets have the same scale basically (lower than 20 keys). Also, the querying words are same.
 >
 >    ![Screenshot 2024-02-22 at 10.55.13](https://cdn.jsdelivr.net/gh/hzimg/blog-pics@master/uPic/Screenshot%202024-02-22%20at%2010.55.13.png)
 >
 > 3. No Warrenties.
 
 The performance benefits mainly from the refresh implemented about our internal Trie-tree (radix-tree).
+
+As an addition, here are huger/larger benches:
+
+```bash
+    bench_test.go:82: kxxxx/Large keys: 40 keys
+    bench_test.go:52: store/Large keys: 48 keys
+    bench_test.go:24: kxxxx/Huge keys: 318 keys
+    bench_test.go:26: store/Huge keys: 422 keys
+
+BenchmarkTrieSearch/hedzr/store
+BenchmarkTrieSearch/hedzr/store-16               	57905116	        20.23 ns/op	       0 B/op	       0 allocs/op
+BenchmarkTrieSearch/hedzr/store/Large
+BenchmarkTrieSearch/hedzr/store/Large-16         	12816524	        82.66 ns/op	     240 B/op	       0 allocs/op
+BenchmarkTrieSearch/hedzr/store/Huge
+BenchmarkTrieSearch/hedzr/store/Huge-16          	12987994	        89.08 ns/op	     224 B/op	       0 allocs/op
+BenchmarkTrieSearch/kxxxx
+BenchmarkTrieSearch/kxxxx-16                     	64279840	        19.54 ns/op	       7 B/op	       0 allocs/op
+BenchmarkTrieSearch/kxxxx/Large
+BenchmarkTrieSearch/kxxxx/Large-16               	 1476079	       838.0 ns/op	     710 B/op	      18 allocs/op
+BenchmarkTrieSearch/kxxxx/Huge
+BenchmarkTrieSearch/kxxxx/Huge-16                	 1678077	       739.9 ns/op	     441 B/op	      12 allocs/op
+```
+
+You can find out that our Store has a better score while working on a large configuration set,
+although it might take more latency than on a tiny set.
+
+> the datasource of huge test is a pet-store openapi swagger doc, coming from <https://editor.swagger.io/>
+
+So that's it.
 
 ## LICENSE
 
