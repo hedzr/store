@@ -7,8 +7,14 @@ import (
 	"testing"
 	"time"
 
+	"github.com/davecgh/go-spew/spew"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/hedzr/store"
+	"github.com/hedzr/store/codecs/yaml"
 	"github.com/hedzr/store/providers/env"
+	"github.com/hedzr/store/providers/file"
+	"github.com/hedzr/store/radix"
 )
 
 func BenchmarkTrieSingleGetForProfiling(b *testing.B) { //nolint:revive
@@ -48,12 +54,109 @@ func BenchmarkTrieGet(b *testing.B) { //nolint:revive
 	})
 }
 
-func TestStoreDump(t *testing.T) {
-	conf := newStore()
-	t.Log("\n", conf.Dump())
+func BenchmarkTrieGetLong(b *testing.B) { //nolint:revive
+	if testing.Short() {
+		return // using `-test.short` to ignore this long test
+	}
+
+	b.Logf("Logging at a disabled level without any structured context.")
+	elapsedTimes := make(map[string]time.Duration)
+
+	trie := newStoreLarge(true)
+
+	b.Run("hedzr/store/Large", func(b *testing.B) {
+		// conf := newStoreLarge()
+		b.ResetTimer()
+		b.RunParallel(func(pb *testing.PB) {
+			for pb.Next() {
+				_, _ = trie.Get(getWord(-1))
+			}
+		})
+		elapsedTimes[b.Name()] = b.Elapsed()
+	})
+	b.Run("hedzr/store", func(b *testing.B) {
+		conf := newStoreGo(true)
+		b.ResetTimer()
+		b.RunParallel(func(pb *testing.PB) {
+			for pb.Next() {
+				_, _ = conf.Get(getWord(-1))
+			}
+		})
+		elapsedTimes[b.Name()] = b.Elapsed()
+	})
+	// b.Run("hedzr/storeT[any]", func(b *testing.B) {
+	// 	b.ResetTimer()
+	// 	b.RunParallel(func(pb *testing.PB) {
+	// 		for pb.Next() {
+	// 			trie.Get(getWord(-1))
+	// 		}
+	// 	})
+	// 	elapsedTimes[b.Name()] = b.Elapsed()
+	// })
 }
 
-func newStoreGo() store.Store {
+func TestStoreDump(t *testing.T) {
+	conf := newStore()
+	t.Logf("\nPath:\n%v\n\n", conf.Dump())
+}
+
+func TestStoreDumpLarge(t *testing.T) {
+	if testing.Short() {
+		return // using `-test.short` to ignore this long test
+	}
+
+	conf := newStoreLarge(true)
+	t.Logf("\nPath:\n%v\n\n", conf.Dump())
+
+	assert.Equal(t, `-s`, conf.MustGet("app.yaml.app.bgo.build.projects.000-default-group.items.001-bgo.ldflags.0"))
+	assert.Equal(t, `-w`, conf.MustGet("app.yaml.app.bgo.build.projects.000-default-group.items.001-bgo.ldflags.1"))
+
+	t.Logf("\nThe keys are:\n%v\n", spew.Sdump(words))
+}
+
+func newStoreLarge(resetWords ...bool) store.Store {
+	conf := store.New()
+	if _, err := conf.Load(context.TODO(),
+		store.WithStorePrefix("app.yaml"),
+		store.WithCodec(yaml.New()),
+		store.WithProvider(file.New("../testdata/2.yaml")),
+
+		store.WithStoreFlattenSlice(true),
+	); err != nil {
+		// t.Fatalf("failed: %v", err)
+		return nil
+	}
+
+	// ret := conf.Dump()
+	// t.Logf("\nPath\n%v\n", ret)
+	// assert.Equal(t, `-s`, s.MustGet("app.yaml.app.bgo.build.projects.000-default-group.items.001-bgo.ldflags.0"))
+	// assert.Equal(t, `-w`, s.MustGet("app.yaml.app.bgo.build.projects.000-default-group.items.001-bgo.ldflags.1"))
+
+	// rebuild keys array for iterating
+	for _, reset := range resetWords {
+		if reset {
+			words = nil
+			break
+		}
+	}
+	if len(words) < 16 {
+		conf.Walk("", func(path, fragment string, node radix.Node[any]) {
+			if node.IsLeaf() { //  strings.HasPrefix(path, "env.")
+				words = append(words, path)
+			}
+			_, _ = node, fragment
+		})
+
+		// words = []string{
+		// 	"env.gomodcache",
+		// 	"env.gopath",
+		// 	"env.goproxy",
+		// }
+	}
+	return conf
+}
+
+func newStoreGo(resetWords ...bool) store.Store {
 	conf := store.New()
 
 	// conf.Set("app.debug", false)
@@ -83,6 +186,12 @@ func newStoreGo() store.Store {
 	)
 
 	// collect and update all the validate keys
+	for _, reset := range resetWords {
+		if reset {
+			words = nil
+			break
+		}
+	}
 	if len(words) < 16 {
 		// conf.Walk("", func(path, fragment string, node radix.Node[any]) {
 		// 	if strings.HasPrefix(path, "env.") && node.IsLeaf() {
