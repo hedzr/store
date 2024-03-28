@@ -462,11 +462,11 @@ We assume the user calling `Set(k, v)` will cause modified state was set to true
 
 ### Provider for External Source
 
-`Provider`s could be used to describe an external source, such as file, env, or consul and others.
+`Provider`s could be used to describe an external source, such as file, env, or consul and vice versa.
 
-`Codec`s are used to describe how to decode a streaming format, such as yaml, toml, json, or hcl and others.
+`Codec`s are used to describe how to decode a streaming input loaded by Provider, such as yaml, toml, json, hcl, etc.
 
-A typical loading logic is:
+A loading logic typically is:
 
 ```go
 func TestTOML(t *testing.T) {
@@ -575,12 +575,42 @@ BenchmarkTrieSearch/kxxxx/Huge
 BenchmarkTrieSearch/kxxxx/Huge-16                	 1678077	       739.9 ns/op	     441 B/op	      12 allocs/op
 ```
 
-You can find out that our Store has a better score while working on a large configuration set,
+You can find out that our `store` has a better score while working on a large configuration set,
 although it might take more latency than on a tiny set.
 
-> the datasource of huge test is a pet-store openapi swagger doc, coming from <https://editor.swagger.io/>
+> The datasource of huge test is a pet-store openapi swagger doc, coming from <https://editor.swagger.io/>.
+> With a same input like a YAML file, the `store` could get more key-value pairs because `store.WithStoreFlattenSlice(true)` applied, which will expand slices and maps in a value as nested key-value pairs.
 
 So that's it.
+
+## Dependencies
+
+The `store`[^1] imports some modules of mine:
+
+1. [`hedzr/evendeep`[^2]]
+2. [`hedzr/logg/slog`[^3]]
+3. [`hedzr/errors.v3`[^4]]
+4. [`hedzr/is`[^5]]
+
+The dependency graph is:
+
+```mermaid
+graph BT
+  hzis(hedzr/is)-->hzlogg(hedzr/logg/slog)
+  hzis-->hzdiff(hedzr/evendeep)
+  hzlogg-->hzdiff
+  hzerrors(gopkg.in/hedzr/errors.v3)-->hzdiff
+  hzerrors-->hzstore(hedzr/store)
+  hzis-->hzstore(hedzr/store)
+  hzlogg-->hzstore(hedzr/store)
+  hzdiff-->hzstore(hedzr/store)
+```
+
+[^1]: `hedzr/store` is a high-performance configure management library
+[^2]: `hedzr/evendeep` offers a customizable deepcopy tool to you. There are also deepequal, deepdiff tools in it.
+[^3]: `hedzr/logg` provides a slog like and colorful logging library
+[^4]: `hedzr/errors.v3` provides some extensions and compatible layer over go1.11 ~ nowadays.
+[^5]: `hedzr/is` is a basic environ detectors library
 
 ## LICENSE
 

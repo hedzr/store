@@ -1,5 +1,10 @@
 # CHANGELOG
 
+- v1.0.3
+  - improved map -> struct and `GetSectionFrom`
+  - fix `insert()` when tags=delve (insert_dbg.go)
+  - upgrade deps
+
 - v1.0.1
   - updated submodules (codecs, providers), and publish them
   - fixed codecs/gob decoder
