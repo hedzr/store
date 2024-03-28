@@ -149,6 +149,19 @@ func TestTrieS_GetSectionFrom(t *testing.T) {
 	// m1 := trie.splitCompactKeys(m)
 	// t.Logf("MustM('') returns m1: \n%v", spew.Sdump(m1)) // github.com/davecgh/go-spew/spew
 
+	// app.                          <B>
+	//   d                           <B>
+	//     ebug                      <L> app.debug => 1
+	//     ump                       <L> app.dump => 3
+	//   verbose                     <L> app.verbose => 2
+	//   logging.                    <B>
+	//     file                      <L> app.logging.file => 4
+	//     rotate                    <L> app.logging.rotate => 6
+	//     words                     <L> app.logging.words => [a 1 false]
+	//   server.s                    <B>
+	//     tart                      <L> app.server.start => 5
+	//     ites                      <L> app.server.sites => 1
+
 	var ss cfgS
 	err := trie.GetSectionFrom("", &ss)
 	t.Logf("cfgS: %v | err: %v", ss, err)

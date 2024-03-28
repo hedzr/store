@@ -6,10 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"gopkg.in/yaml.v3"
+	logz "github.com/hedzr/logg/slog"
 
 	"github.com/hedzr/evendeep"
-	logz "github.com/hedzr/logg/slog"
 )
 
 // TypedGetters makes a formal specification for Trie[any]
@@ -451,6 +450,27 @@ func (s *trieS[T]) submap(src map[string]any, keys []string, v any) {
 
 // func runeToString(runes ...rune) string { return string(runes) }
 
+// func reloadIntoStruct(m map[string]any, holder any) (err error) {
+// 	var b []byte
+// 	defer handleSerializeError(&err)
+// 	b, err = yaml.Marshal(m)
+// 	if err == nil {
+// 		err = yaml.Unmarshal(b, holder)
+// 		// if err == nil {
+// 		// 	logrus.Debugf("configuration section got: %v", configHolder)
+// 		// }
+// 	}
+// 	return
+// }
+
+// reloadIntoStruct reimplement map to struct with a new strategy:
+// removed yaml.v3, instead with evendeep.
+func reloadIntoStruct(m map[string]any, holder any) (err error) {
+	evendeep.Copy(m, holder) // evendeep.WithAutoExpandStructOpt,
+	// evendeep.WithSyncAdvancingOpt,
+	return
+}
+
 func (s *trieS[T]) GetSectionFrom(path string, holder any, opts ...MOpt[T]) (err error) {
 	if holder == nil {
 		return
@@ -459,26 +479,13 @@ func (s *trieS[T]) GetSectionFrom(path string, holder any, opts ...MOpt[T]) (err
 	var ret map[string]any
 	ret, err = s.GetM(path, opts...)
 	if err == nil && ret != nil {
-		defer handleSerializeError(&err)
 		m := s.splitCompactKeys(ret)
-		var b []byte
-		b, err = yaml.Marshal(m)
-		if err == nil {
-			err = yaml.Unmarshal(b, holder)
-			// if err == nil {
-			// 	logrus.Debugf("configuration section got: %v", configHolder)
-			// }
-		}
+		err = reloadIntoStruct(m, holder)
 	} else {
 		ret, err = s.GetR(path)
 		if err == nil && ret != nil {
-			defer handleSerializeError(&err)
 			m := s.splitCompactKeys(ret)
-			var b []byte
-			b, err = yaml.Marshal(m)
-			if err == nil {
-				err = yaml.Unmarshal(b, holder)
-			}
+			err = reloadIntoStruct(m, holder)
 		}
 	}
 	return
