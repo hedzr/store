@@ -146,9 +146,9 @@ func TestStore_GetSectionFrom(t *testing.T) {
 	}
 
 	type appS struct {
-		Debug   int
+		Debug   bool
 		Dump    int
-		Verbose int64
+		Verbose bool
 		Logging loggingS
 		Server  serverS
 	}
