@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/hedzr/evendeep"
+
 	"github.com/hedzr/store"
 	"github.com/hedzr/store/codecs/hcl"
 	"github.com/hedzr/store/codecs/toml"
@@ -127,7 +128,7 @@ func TestStoreS_Get(t *testing.T) {
 	// println(data)
 	// fmt.Println(conf.MustInt("app.dump"))
 	// fmt.Println(conf.MustString("app.dump"))
-	// fmt.Println(conf.MustBool("app.dump")) // convert 3 to bool will get true since hedzr/evendeep v1.1.0
+	// fmt.Println(conf.MustBool("app.dump")) // convert 3 to bool will get true since evendeep v1.1.0
 
 	data, found := conf.Get("app.logging.rotate")
 	assert.Equal(t, 6, data)
