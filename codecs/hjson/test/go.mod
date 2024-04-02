@@ -10,9 +10,9 @@ go 1.21
 
 require (
 	github.com/davecgh/go-spew v1.1.1
-	github.com/hedzr/store v1.0.3
-	github.com/hedzr/store/codecs/hjson v1.0.3
-	github.com/hedzr/store/providers/file v1.0.3
+	github.com/hedzr/store v1.0.5
+	github.com/hedzr/store/codecs/hjson v1.0.5
+	github.com/hedzr/store/providers/file v1.0.5
 	github.com/hjson/hjson-go/v4 v4.4.0
 	github.com/stretchr/testify v1.9.0
 )
