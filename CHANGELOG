@@ -1,5 +1,9 @@
 # CHANGELOG
 
+- v1.0.5
+  - improved errors.v3
+  - upgrade deps
+
 - v1.0.3
   - improved map -> struct and `GetSectionFrom`
   - fix `insert()` when tags=delve (insert_dbg.go)
