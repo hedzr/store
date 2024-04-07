@@ -290,6 +290,13 @@ const (
 	leafTitle   = "<L>"
 )
 
+func iif[T any](cond bool, tv, fv T) (rv T) {
+	if cond {
+		return tv
+	}
+	return fv
+}
+
 func (s *nodeS[T]) dumpR(sb *strings.Builder, lvl int, noColor bool) string { //nolint:revive
 	_, _ = sb.WriteString(strings.Repeat("  ", lvl))
 	if len(s.path) == 0 {
@@ -298,24 +305,28 @@ func (s *nodeS[T]) dumpR(sb *strings.Builder, lvl int, noColor bool) string { //
 		}
 	} else {
 		_, _ = sb.WriteString(string(s.path))
-		if col1Width-lvl*2-len(s.path) > 0 {
-			_, _ = sb.WriteString(strings.Repeat(" ", col1Width-lvl*2-len(s.path)))
+		if width := col1Width - lvl*2 - len(s.path); width > 0 {
+			_, _ = sb.WriteString(strings.Repeat(" ", width))
 		} else {
 			_ = sb.WriteByte(' ')
 		}
 
+		isbr := s.isBranch()
+
 		if noColor {
-			if s.isBranch() {
-				_, _ = sb.WriteString(branchTitle)
-			} else {
-				_, _ = sb.WriteString(leafTitle)
-			}
+			_, _ = sb.WriteString(iif(isbr, branchTitle, leafTitle))
+			// if s.isBranch() {
+			// 	_, _ = sb.WriteString(branchTitle)
+			// } else {
+			// 	_, _ = sb.WriteString(leafTitle)
+			// }
 		} else {
-			if s.isBranch() {
-				_, _ = sb.WriteString(ColorToDim(branchTitle))
-			} else {
-				_, _ = sb.WriteString(ColorToDim(leafTitle))
-			}
+			_, _ = sb.WriteString(ColorToDim(iif(isbr, branchTitle, leafTitle)))
+			// if s.isBranch() {
+			// 	_, _ = sb.WriteString(ColorToDim(branchTitle))
+			// } else {
+			// 	_, _ = sb.WriteString(ColorToDim(leafTitle))
+			// }
 		}
 
 		if s.hasData() {
