@@ -59,6 +59,13 @@ func (s *trieS[T]) deferPoolGet(bb *bytes.Buffer) {
 	}
 }
 
+func (s *trieS[T]) UsePool(fn func(bb *bytes.Buffer, bytes int)) string {
+	i, bb := 0, s.poolGet()
+	defer s.deferPoolGet(bb)
+	fn(bb, i)
+	return bb.String()
+}
+
 func (s *trieS[T]) join1(pre string, args ...string) (ret string) {
 	if pre == "" {
 		return s.join(args...)
