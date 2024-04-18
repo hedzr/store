@@ -1,6 +1,6 @@
 module github.com/hedzr/store/providers/vault
 
-go 1.22
+go 1.21
 
 replace github.com/hedzr/store => ../..
 
