@@ -5,18 +5,18 @@ import (
 	"testing"
 )
 
-func TestStoreS_join(t *testing.T) {
+func TestStoreS_Join(t *testing.T) {
 	// join ...
 
 	conf := newTrieTree()
-	assertEqual(t, "", conf.join())
-	assertEqual(t, "", conf.join(""))
-	assertEqual(t, "x", conf.join("x", ""))
-	assertEqual(t, "x.y", conf.join("x", "y"))
-	assertEqual(t, "x.y", conf.join("x", "y", ""))
-	assertEqual(t, "x.y.z", conf.join("x", "y", "z"))
-	assertEqual(t, "x.y.z", conf.join("x", "y", "z", ""))
-	assertEqual(t, "x.y.z", conf.join("", "x", "y", "z", ""))
+	assertEqual(t, "", conf.Join())
+	assertEqual(t, "", conf.Join(""))
+	assertEqual(t, "x", conf.Join("x", ""))
+	assertEqual(t, "x.y", conf.Join("x", "y"))
+	assertEqual(t, "x.y", conf.Join("x", "y", ""))
+	assertEqual(t, "x.y.z", conf.Join("x", "y", "z"))
+	assertEqual(t, "x.y.z", conf.Join("x", "y", "z", ""))
+	assertEqual(t, "x.y.z", conf.Join("", "x", "y", "z", ""))
 }
 
 func TestStoreS_join1(t *testing.T) {
@@ -25,14 +25,14 @@ func TestStoreS_join1(t *testing.T) {
 	trie := newTrieTree()
 
 	conf := trie.withPrefixImpl("")
-	assertEqual(t, "", conf.join())
-	assertEqual(t, "", conf.join(""))
-	assertEqual(t, "x", conf.join("x", ""))
-	assertEqual(t, "x.y", conf.join("x", "y"))
-	assertEqual(t, "x.y", conf.join("x", "y", ""))
-	assertEqual(t, "x.y.z", conf.join("x", "y", "z"))
-	assertEqual(t, "x.y.z", conf.join("x", "y", "z", ""))
-	assertEqual(t, "x.y.z", conf.join("", "x", "y", "z", ""))
+	assertEqual(t, "", conf.Join())
+	assertEqual(t, "", conf.Join(""))
+	assertEqual(t, "x", conf.Join("x", ""))
+	assertEqual(t, "x.y", conf.Join("x", "y"))
+	assertEqual(t, "x.y", conf.Join("x", "y", ""))
+	assertEqual(t, "x.y.z", conf.Join("x", "y", "z"))
+	assertEqual(t, "x.y.z", conf.Join("x", "y", "z", ""))
+	assertEqual(t, "x.y.z", conf.Join("", "x", "y", "z", ""))
 
 	conf = trie.withPrefixImpl("A")
 	assertEqual(t, "A", conf.join1("A"))

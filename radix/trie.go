@@ -68,7 +68,7 @@ func (s *trieS[T]) UsePool(fn func(bb *bytes.Buffer, bytes int)) string {
 
 func (s *trieS[T]) join1(pre string, args ...string) (ret string) {
 	if pre == "" {
-		return s.join(args...)
+		return s.Join(args...)
 	}
 
 	if len(args) == 0 {
@@ -90,7 +90,7 @@ func (s *trieS[T]) join1(pre string, args ...string) (ret string) {
 	return bb.String()
 }
 
-func (s *trieS[T]) join(args ...string) (ret string) {
+func (s *trieS[T]) Join(args ...string) (ret string) {
 	switch len(args) {
 	case 0:
 		return
@@ -99,22 +99,34 @@ func (s *trieS[T]) join(args ...string) (ret string) {
 	}
 
 	if args[0] == "" {
-		return s.join(args[1:]...)
+		return s.Join(args[1:]...)
 	}
 
-	i, bb := 0, s.poolGet()
-	defer s.deferPoolGet(bb)
-
-	for _, it := range args {
-		if it != "" {
-			if i > 0 {
-				_ = bb.WriteByte(byte(s.delimiter))
+	return s.UsePool(func(bb *bytes.Buffer, bytes int) {
+		for _, it := range args {
+			if it != "" {
+				if bytes > 0 {
+					_ = bb.WriteByte(byte(s.delimiter))
+				}
+				_, _ = bb.WriteString(it)
+				bytes++ //nolint:revive
 			}
-			_, _ = bb.WriteString(it)
-			i++
 		}
-	}
-	return bb.String()
+	})
+
+	// i, bb := 0, s.poolGet()
+	// defer s.deferPoolGet(bb)
+	//
+	// for _, it := range args {
+	// 	if it != "" {
+	// 		if i > 0 {
+	// 			_ = bb.WriteByte(byte(s.delimiter))
+	// 		}
+	// 		_, _ = bb.WriteString(it)
+	// 		i++
+	// 	}
+	// }
+	// return bb.String()
 }
 
 func (s *trieS[T]) Insert(path string, data T) (oldData any) { //nolint:revive
@@ -128,7 +140,7 @@ func (s *trieS[T]) Insert(path string, data T) (oldData any) { //nolint:revive
 // location so that the new data value can be set into it.
 func (s *trieS[T]) Set(path string, data T) (node Node[T], oldData any) {
 	if s.prefix != "" {
-		path = s.join(s.prefix, path) //nolint:revive
+		path = s.Join(s.prefix, path) //nolint:revive
 	}
 	return s.root.insert([]rune(path), path, data)
 }
@@ -138,7 +150,7 @@ func (s *trieS[T]) Set(path string, data T) (node Node[T], oldData any) {
 // Nothing happens if the given path cannot be found.
 func (s *trieS[T]) SetComment(path, description, comment string) (ok bool) { //nolint:revive
 	if s.prefix != "" {
-		path = s.join(s.prefix, path) //nolint:revive
+		path = s.Join(s.prefix, path) //nolint:revive
 	}
 	node, _, partialMatched := s.search(path)
 	if ok = node != nil || partialMatched; ok {
@@ -152,7 +164,7 @@ func (s *trieS[T]) SetComment(path, description, comment string) (ok bool) { //n
 // Nothing happens if the given path cannot be found.
 func (s *trieS[T]) SetTag(path string, tag any) (ok bool) { //nolint:revive// set extra notable data bound to a key
 	if s.prefix != "" {
-		path = s.join(s.prefix, path) //nolint:revive
+		path = s.Join(s.prefix, path) //nolint:revive
 	}
 	node, _, partialMatched := s.search(path)
 	if ok = node != nil || partialMatched; ok {
@@ -164,7 +176,7 @@ func (s *trieS[T]) SetTag(path string, tag any) (ok bool) { //nolint:revive// se
 // Merge a map at path point 'pathAt'
 func (s *trieS[T]) Merge(pathAt string, data map[string]any) (err error) {
 	// if s.prefix != "" {
-	// 	pathAt = s.join(s.prefix, pathAt) //nolint:revive
+	// 	pathAt = s.Join(s.prefix, pathAt) //nolint:revive
 	// }
 	err = s.withPrefixImpl(pathAt).loadMap(data)
 	return
@@ -175,7 +187,7 @@ func (s *trieS[T]) Merge(pathAt string, data map[string]any) (err error) {
 // Using Location to retrieve more info for seaching a path.
 func (s *trieS[T]) StartsWith(path string) (yes bool) {
 	if s.prefix != "" {
-		path = s.join(s.prefix, path) //nolint:revive
+		path = s.Join(s.prefix, path) //nolint:revive
 	}
 	node, _, partialMatched := s.search(path)
 	yes = node != nil || partialMatched
@@ -196,7 +208,7 @@ func (s *trieS[T]) StartsWith(path string) (yes bool) {
 // Using Location to retrieve more info for seaching a path.
 func (s *trieS[T]) Search(path string) (found bool) {
 	if s.prefix != "" {
-		path = s.join(s.prefix, path) //nolint:revive
+		path = s.Join(s.prefix, path) //nolint:revive
 	}
 	node, _, partialMatched := s.search(path)
 	found = node != nil && !partialMatched // && !node.isBranch()
@@ -206,7 +218,7 @@ func (s *trieS[T]) Search(path string) (found bool) {
 // Locate checks a path if it exists.
 func (s *trieS[T]) Locate(path string) (node *nodeS[T], branch, partialMatched, found bool) { //nolint:revive
 	if s.prefix != "" {
-		path = s.join(s.prefix, path) //nolint:revive
+		path = s.Join(s.prefix, path) //nolint:revive
 	}
 	node, _, partialMatched = s.search(path)
 	found, branch = node != nil && !partialMatched, safeIsBranch(node)
@@ -217,8 +229,8 @@ func safeIsBranch[T any](node *nodeS[T]) bool { return node != nil && node.isBra
 
 // Has tests of a path exists.
 //
-// A path shall be fully matched by delimiter (typically is dot '.').
-// That means, for an exists tree:
+// Delimiter shall fully match a path (typically is dot '.').
+// That means, for an existed tree:
 //
 //	app.lite-mode
 //	app.logging
@@ -232,26 +244,26 @@ func safeIsBranch[T any](node *nodeS[T]) bool { return node != nil && node.isBra
 // And Has("app.l") must be false.
 func (s *trieS[T]) Has(path string) (found bool) {
 	if s.prefix != "" {
-		path = s.join(s.prefix, path) //nolint:revive
+		path = s.Join(s.prefix, path) //nolint:revive
 	}
 	node, _, partialMatched := s.search(path)
 	found = node != nil && !partialMatched // && !node.isBranch()
 	return
 }
 
-// Remove deletes a path from this tree.
+// Remove deleting a path from this tree.
 //
 // The return boolean represents there was a node removed.
-// If the path not exists, it will return false.
+// If the path does not exist, it will return false.
 func (s *trieS[T]) Remove(path string) (removed bool) { //nolint:revive
 	_, _, removed = s.RemoveEx(path)
 	return
 }
 
-// RemoveEx deletes a path and return more status than Remove.
+// RemoveEx deleting a path and return more status than Remove.
 func (s *trieS[T]) RemoveEx(path string) (nodeRemoved, nodeParent Node[T], removed bool) {
 	if s.prefix != "" {
-		path = s.join(s.prefix, path) //nolint:revive
+		path = s.Join(s.prefix, path) //nolint:revive
 	}
 	node, parent, partialMatched := s.search(path)
 	found := node != nil && !partialMatched // && !node.isBranch()
@@ -270,7 +282,7 @@ func (s *trieS[T]) RemoveEx(path string) (nodeRemoved, nodeParent Node[T], remov
 
 // MustGet is a simple Get without a checked found state.
 //
-// If nothing found, a zero data returned.
+// If nothing is found, zero data returned.
 func (s *trieS[T]) MustGet(path string) (data T) {
 	var branch, found bool
 	data, branch, found, _ = s.Query(path)
@@ -294,7 +306,7 @@ func (s *trieS[T]) Get(path string) (data T, found bool) {
 // it generally is errors.NotFound (errors.Code -5).
 func (s *trieS[T]) Query(path string) (data T, branch, found bool, err error) { //nolint:revive
 	if s.prefix != "" {
-		path = s.join(s.prefix, path) //nolint:revive
+		path = s.Join(s.prefix, path) //nolint:revive
 	}
 	node, _, partialMatched := s.search(path)
 	found = node != nil && !partialMatched
@@ -309,9 +321,10 @@ func (s *trieS[T]) Query(path string) (data T, branch, found bool, err error) { 
 			data = node.data
 		}
 	}
-	if !found {
-		err = errors.NotFound
-	}
+	// if !found {
+	// 	err = errors.NotFound
+	// }
+	err = iif(found, error(nil), error(errors.NotFound))
 	return
 }
 
@@ -325,9 +338,9 @@ func (s *trieS[T]) search(word string) (found, parent *nodeS[T], partialMatched 
 	return
 }
 
-// Delemiter returns the current delimiter in using.
+// Delimiter returns the current delimiter in using.
 //
-// trieS tree is a radix tree so child nodeS may split at any
+// A trieS-tree is a radix-tree, so child nodeS may split at any
 // posistion in characters of a full path.
 //
 // But Query or others APIs make the path is meaningful for
@@ -344,7 +357,7 @@ func (s *trieS[T]) search(word string) (found, parent *nodeS[T], partialMatched 
 //
 // And the benefits are not only replaceing the delimiter
 // dynamically: splitting a path by a delimiter or joining
-// the splitted path segements are both unnecessary, in
+// the segements splitted into from path are both unnecessary, in
 // a conventional designing and implementing mode.
 func (s *trieS[T]) Delimiter() rune { return s.delimiter }
 

@@ -388,7 +388,7 @@ func (s *trieS[T]) GetM(path string, opts ...MOpt[T]) (ret map[string]any, err e
 	node, branch, partialMatched, found = s.Locate(path)
 	if found || partialMatched {
 		_, _, ret = branch, partialMatched, make(map[string]any)
-		putter := prefixPutter[T]{prefix: strings.Split(s.join(s.prefix, path), string(s.delimiter))}
+		putter := prefixPutter[T]{prefix: strings.Split(s.Join(s.prefix, path), string(s.delimiter))}
 		for _, opt := range opts {
 			opt(&putter)
 		}

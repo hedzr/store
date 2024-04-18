@@ -28,12 +28,12 @@ func (s *trieS[T]) WithPrefixReplaced(newPrefix ...string) (entry Trie[T]) {
 }
 
 func (s *trieS[T]) withPrefixReplacedImpl(newPrefix ...string) (entry *trieS[T]) {
-	return s.dupS(s.root, s.join(newPrefix...))
+	return s.dupS(s.root, s.Join(newPrefix...))
 }
 
 // SetPrefix replaces the current prefix setting with the given new value.
 func (s *trieS[T]) SetPrefix(newPrefix ...string) {
-	s.prefix = s.join(newPrefix...)
+	s.prefix = s.Join(newPrefix...)
 }
 
 func (s *trieS[T]) loadMap(m map[string]any) (err error) {
