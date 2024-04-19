@@ -21,7 +21,7 @@ go 1.21
 // replace github.com/hedzr/store/codecs/yaml => ../../codecs/yaml
 
 require (
-	github.com/hedzr/store v1.0.5
+	github.com/hedzr/store v1.0.7
 	go.etcd.io/etcd/client/v3 v3.5.13
 )
 
