@@ -1,5 +1,11 @@
 # CHANGELOG
 
+- v1.0.7
+  - export `trieS.Join`
+  - add `trieS.UsePool` helper
+  - security patch
+  - upgrade deps
+
 - v1.0.5
   - improved errors.v3
   - upgrade deps
