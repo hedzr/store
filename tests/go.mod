@@ -49,7 +49,7 @@ toolchain go1.21.9
 require (
 	github.com/davecgh/go-spew v1.1.1
 	github.com/hedzr/evendeep v1.1.10
-	github.com/hedzr/store v1.0.5
+	github.com/hedzr/store v1.0.7
 	github.com/hedzr/store/codecs/hcl v1.0.5
 	github.com/hedzr/store/codecs/hjson v1.0.5
 	github.com/hedzr/store/codecs/json v1.0.5
