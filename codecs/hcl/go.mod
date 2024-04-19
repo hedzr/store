@@ -20,7 +20,7 @@ go 1.21
 
 require (
 	github.com/hashicorp/hcl v1.0.0
-	github.com/hedzr/store v1.0.5
+	github.com/hedzr/store v1.0.7
 )
 
 require (
