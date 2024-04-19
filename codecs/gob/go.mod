@@ -20,7 +20,7 @@ go 1.21
 
 // replace github.com/hedzr/store/codecs/yaml => ../../codecs/yaml
 
-require github.com/hedzr/store v1.0.5
+require github.com/hedzr/store v1.0.7
 
 require (
 	github.com/hedzr/evendeep v1.1.10 // indirect
