@@ -37,7 +37,7 @@ go 1.21
 require (
 	github.com/arl/statsviz v0.6.0
 	github.com/hedzr/is v0.5.19
-	github.com/hedzr/store v1.0.5
+	github.com/hedzr/store v1.0.7
 )
 
 require (
