@@ -19,7 +19,7 @@ go 1.21
 //replace github.com/hedzr/store/providers/file => ../../providers/file
 
 require (
-	github.com/hedzr/store v1.0.5
+	github.com/hedzr/store v1.0.7
 	gopkg.in/yaml.v3 v3.0.1
 )
 
