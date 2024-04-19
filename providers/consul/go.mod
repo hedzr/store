@@ -25,7 +25,7 @@ go 1.21
 require (
 	github.com/hashicorp/consul/api v1.28.2
 	github.com/hedzr/logg v0.5.20
-	github.com/hedzr/store v1.0.5
+	github.com/hedzr/store v1.0.7
 )
 
 require (
