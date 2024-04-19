@@ -9,7 +9,7 @@ go 1.21
 // replace github.com/hedzr/store/codecs/toml => ../
 
 require (
-	github.com/hedzr/store v1.0.5
+	github.com/hedzr/store v1.0.7
 	github.com/hedzr/store/codecs/toml v1.0.5
 	github.com/hedzr/store/providers/file v1.0.5
 	github.com/stretchr/testify v1.9.0
