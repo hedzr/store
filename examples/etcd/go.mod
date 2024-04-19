@@ -34,8 +34,8 @@ go 1.21
 
 require (
 	github.com/hedzr/logg v0.5.20
-	github.com/hedzr/store v1.0.5
-	github.com/hedzr/store/providers/etcd v1.0.5
+	github.com/hedzr/store v1.0.7
+	github.com/hedzr/store/providers/etcd v1.0.7
 )
 
 require (
