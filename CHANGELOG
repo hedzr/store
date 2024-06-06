@@ -1,5 +1,9 @@
 # CHANGELOG
 
+- v1.0.8
+  - security patch
+  - upgrade deps
+
 - v1.0.7
   - export `trieS.Join`
   - add `trieS.UsePool` helper
