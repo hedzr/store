@@ -1,8 +1,8 @@
 module github.com/hedzr/store/examples/testflags
 
-go 1.21
+go 1.22
 
-toolchain go1.21.9
+toolchain go1.22.3
 
 // toolchain go1.22.0
 
@@ -39,17 +39,17 @@ toolchain go1.21.9
 //replace github.com/hedzr/store/providers/maps => ../../providers/maps
 
 require (
-	github.com/hedzr/logg v0.5.20
+	github.com/hedzr/logg v0.5.21
 	github.com/hedzr/store v1.0.7
-	github.com/hedzr/store/providers/flags v1.0.5
+	github.com/hedzr/store/providers/flags v1.0.7
 )
 
 require (
 	github.com/hedzr/evendeep v1.1.10 // indirect
-	github.com/hedzr/is v0.5.19 // indirect
-	golang.org/x/crypto v0.22.0 // indirect
-	golang.org/x/net v0.24.0 // indirect
-	golang.org/x/sys v0.19.0 // indirect
-	golang.org/x/term v0.19.0 // indirect
+	github.com/hedzr/is v0.5.20 // indirect
+	golang.org/x/crypto v0.23.0 // indirect
+	golang.org/x/net v0.25.0 // indirect
+	golang.org/x/sys v0.20.0 // indirect
+	golang.org/x/term v0.20.0 // indirect
 	gopkg.in/hedzr/errors.v3 v3.3.2 // indirect
 )
