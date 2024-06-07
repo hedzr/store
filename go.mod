@@ -17,15 +17,15 @@ go 1.21
 // replace github.com/hedzr/go-utils/v2 => ./
 
 require (
-	github.com/hedzr/evendeep v1.1.10
+	github.com/hedzr/evendeep v1.1.11
 	github.com/hedzr/is v0.5.20
 	github.com/hedzr/logg v0.5.21
 	gopkg.in/hedzr/errors.v3 v3.3.2
 )
 
 require (
-	golang.org/x/crypto v0.23.0 // indirect
-	golang.org/x/net v0.25.0 // indirect
-	golang.org/x/sys v0.20.0 // indirect
-	golang.org/x/term v0.20.0 // indirect
+	golang.org/x/crypto v0.24.0 // indirect
+	golang.org/x/net v0.26.0 // indirect
+	golang.org/x/sys v0.21.0 // indirect
+	golang.org/x/term v0.21.0 // indirect
 )
