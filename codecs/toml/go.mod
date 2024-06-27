@@ -14,12 +14,12 @@ go 1.21
 
 // replace github.com/hedzr/logg => ../../../libs.logg
 
-// replace github.com/hedzr/store => ../..
+replace github.com/hedzr/store => ../..
 
 //replace github.com/hedzr/store/providers/file => ../../providers/file
 
 require (
-	github.com/hedzr/store v1.0.7
+	github.com/hedzr/store v1.0.8
 	github.com/pelletier/go-toml/v2 v2.2.2
 )
 

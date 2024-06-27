@@ -18,49 +18,49 @@ toolchain go1.22.3
 
 // replace github.com/hedzr/logg => ../../libs.logg
 
-//replace github.com/hedzr/store => ../
-//
-//replace github.com/hedzr/store/codecs/hcl => ../codecs/hcl
-//
-//replace github.com/hedzr/store/codecs/hjson => ../codecs/hjson
-//
-//replace github.com/hedzr/store/codecs/json => ../codecs/json
-//
-//replace github.com/hedzr/store/codecs/nestext => ../codecs/nestext
-//
-//replace github.com/hedzr/store/codecs/toml => ../codecs/toml
-//
-//replace github.com/hedzr/store/codecs/yaml => ../codecs/yaml
-//
-//replace github.com/hedzr/store/providers/consul => ../providers/consul
-//
-//replace github.com/hedzr/store/providers/env => ../providers/env
-//
-//replace github.com/hedzr/store/providers/etcd => ../providers/etcd
-//
-//replace github.com/hedzr/store/providers/file => ../providers/file
-//
-//replace github.com/hedzr/store/providers/flags => ../providers/flags
-//
-//replace github.com/hedzr/store/providers/fs => ../providers/fs
-//
-//replace github.com/hedzr/store/providers/maps => ../providers/maps
+replace github.com/hedzr/store => ../
+
+replace github.com/hedzr/store/codecs/hcl => ../codecs/hcl
+
+replace github.com/hedzr/store/codecs/hjson => ../codecs/hjson
+
+replace github.com/hedzr/store/codecs/json => ../codecs/json
+
+replace github.com/hedzr/store/codecs/nestext => ../codecs/nestext
+
+replace github.com/hedzr/store/codecs/toml => ../codecs/toml
+
+replace github.com/hedzr/store/codecs/yaml => ../codecs/yaml
+
+replace github.com/hedzr/store/providers/consul => ../providers/consul
+
+replace github.com/hedzr/store/providers/env => ../providers/env
+
+replace github.com/hedzr/store/providers/etcd => ../providers/etcd
+
+replace github.com/hedzr/store/providers/file => ../providers/file
+
+replace github.com/hedzr/store/providers/flags => ../providers/flags
+
+replace github.com/hedzr/store/providers/fs => ../providers/fs
+
+replace github.com/hedzr/store/providers/maps => ../providers/maps
 
 require (
 	github.com/davecgh/go-spew v1.1.1
 	github.com/hedzr/evendeep v1.1.11
-	github.com/hedzr/store v1.0.7
-	github.com/hedzr/store/codecs/hcl v1.0.7
-	github.com/hedzr/store/codecs/hjson v1.0.7
-	github.com/hedzr/store/codecs/json v1.0.7
-	github.com/hedzr/store/codecs/nestext v1.0.7
-	github.com/hedzr/store/codecs/toml v1.0.7
-	github.com/hedzr/store/codecs/yaml v1.0.7
+	github.com/hedzr/store v1.0.8
+	github.com/hedzr/store/codecs/hcl v1.0.8
+	github.com/hedzr/store/codecs/hjson v1.0.8
+	github.com/hedzr/store/codecs/json v1.0.8
+	github.com/hedzr/store/codecs/nestext v1.0.8
+	github.com/hedzr/store/codecs/toml v1.0.8
+	github.com/hedzr/store/codecs/yaml v1.0.8
 	github.com/hedzr/store/providers/env v1.0.8
-	github.com/hedzr/store/providers/file v1.0.7
-	github.com/hedzr/store/providers/flags v1.0.7
-	github.com/hedzr/store/providers/fs v1.0.7
-	github.com/hedzr/store/providers/maps v1.0.7
+	github.com/hedzr/store/providers/file v1.0.8
+	github.com/hedzr/store/providers/flags v1.0.8
+	github.com/hedzr/store/providers/fs v1.0.8
+	github.com/hedzr/store/providers/maps v1.0.8
 	github.com/stretchr/testify v1.9.0
 )
 

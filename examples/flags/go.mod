@@ -18,30 +18,30 @@ toolchain go1.22.3
 
 // replace github.com/hedzr/logg => ../../../libs.logg
 
-//replace github.com/hedzr/store => ../../
-//
-//replace github.com/hedzr/store/codecs/json => ../../codecs/json
-//
-//replace github.com/hedzr/store/codecs/yaml => ../../codecs/yaml
-//
-//replace github.com/hedzr/store/providers/consul => ../../providers/consul
-//
-//replace github.com/hedzr/store/providers/env => ../../providers/env
-//
-//replace github.com/hedzr/store/providers/etcd => ../../providers/etcd
-//
-//replace github.com/hedzr/store/providers/file => ../../providers/file
-//
-//replace github.com/hedzr/store/providers/flags => ../../providers/flags
-//
-//replace github.com/hedzr/store/providers/fs => ../../providers/fs
-//
-//replace github.com/hedzr/store/providers/maps => ../../providers/maps
+replace github.com/hedzr/store => ../../
+
+replace github.com/hedzr/store/codecs/json => ../../codecs/json
+
+replace github.com/hedzr/store/codecs/yaml => ../../codecs/yaml
+
+replace github.com/hedzr/store/providers/consul => ../../providers/consul
+
+replace github.com/hedzr/store/providers/env => ../../providers/env
+
+replace github.com/hedzr/store/providers/etcd => ../../providers/etcd
+
+replace github.com/hedzr/store/providers/file => ../../providers/file
+
+replace github.com/hedzr/store/providers/flags => ../../providers/flags
+
+replace github.com/hedzr/store/providers/fs => ../../providers/fs
+
+replace github.com/hedzr/store/providers/maps => ../../providers/maps
 
 require (
 	github.com/hedzr/logg v0.5.21
-	github.com/hedzr/store v1.0.7
-	github.com/hedzr/store/providers/flags v1.0.7
+	github.com/hedzr/store v1.0.8
+	github.com/hedzr/store/providers/flags v1.0.8
 )
 
 require (

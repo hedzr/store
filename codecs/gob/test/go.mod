@@ -2,17 +2,17 @@ module github.com/hedzr/store/codecs/gob/test
 
 go 1.21
 
-// replace github.com/hedzr/store => ../../..
+replace github.com/hedzr/store => ../../..
 
-// replace github.com/hedzr/store/providers/file => ../../../providers/file
+replace github.com/hedzr/store/providers/file => ../../../providers/file
 
-// replace github.com/hedzr/store/codecs/gob => ../
+replace github.com/hedzr/store/codecs/gob => ../
 
 require (
 	github.com/davecgh/go-spew v1.1.1
-	github.com/hedzr/store v1.0.7
-	github.com/hedzr/store/codecs/gob v1.0.7
-	github.com/hedzr/store/providers/file v1.0.7
+	github.com/hedzr/store v1.0.8
+	github.com/hedzr/store/codecs/gob v1.0.8
+	github.com/hedzr/store/providers/file v1.0.8
 	github.com/stretchr/testify v1.9.0
 )
 

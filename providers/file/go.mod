@@ -14,7 +14,7 @@ go 1.21
 
 // replace github.com/hedzr/logg => ../../../libs.logg
 
-// replace github.com/hedzr/store => ../..
+replace github.com/hedzr/store => ../..
 
 // replace github.com/hedzr/store/codecs/json => ../../codecs/json
 
@@ -22,7 +22,7 @@ go 1.21
 
 require (
 	github.com/fsnotify/fsnotify v1.7.0
-	github.com/hedzr/store v1.0.7
+	github.com/hedzr/store v1.0.8
 )
 
 require (

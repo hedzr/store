@@ -2,16 +2,16 @@ module github.com/hedzr/store/codecs/json/test
 
 go 1.21
 
-// replace github.com/hedzr/store => ../../..
+replace github.com/hedzr/store => ../../..
 
-// replace github.com/hedzr/store/providers/file => ../../../providers/file
+replace github.com/hedzr/store/providers/file => ../../../providers/file
 
-// replace github.com/hedzr/store/codecs/json => ../
+replace github.com/hedzr/store/codecs/json => ../
 
 require (
-	github.com/hedzr/store v1.0.7
-	github.com/hedzr/store/codecs/json v1.0.7
-	github.com/hedzr/store/providers/file v1.0.7
+	github.com/hedzr/store v1.0.8
+	github.com/hedzr/store/codecs/json v1.0.8
+	github.com/hedzr/store/providers/file v1.0.8
 	github.com/stretchr/testify v1.9.0
 )
 

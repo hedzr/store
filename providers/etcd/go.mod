@@ -14,14 +14,14 @@ go 1.21
 
 // replace github.com/hedzr/logg => ../../../libs.logg
 
-// replace github.com/hedzr/store => ../..
+replace github.com/hedzr/store => ../..
 
 // replace github.com/hedzr/store/codecs/json => ../../codecs/json
 
 // replace github.com/hedzr/store/codecs/yaml => ../../codecs/yaml
 
 require (
-	github.com/hedzr/store v1.0.7
+	github.com/hedzr/store v1.0.8
 	go.etcd.io/etcd/client/v3 v3.5.14
 )
 
@@ -44,9 +44,9 @@ require (
 	golang.org/x/sys v0.21.0 // indirect
 	golang.org/x/term v0.21.0 // indirect
 	golang.org/x/text v0.16.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20240604185151-ef581f913117 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240604185151-ef581f913117 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20240624140628-dc46fd24d27d // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240624140628-dc46fd24d27d // indirect
 	google.golang.org/grpc v1.64.0 // indirect
-	google.golang.org/protobuf v1.34.1 // indirect
+	google.golang.org/protobuf v1.34.2 // indirect
 	gopkg.in/hedzr/errors.v3 v3.3.2 // indirect
 )
