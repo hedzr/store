@@ -92,6 +92,8 @@ For more information, browse these public sites:
 - <https://github.com/hedzr/store>
 - Check out the codes in test source files
 
+To see the recently changes at [CHANGELOG](https://github.com/hedzr/store/blob/master/CHANGELOG).
+
 ## More Features
 
 The `store` gives many advanced features from out of the box, but the relative documents are not enough. We will try our best to fill more documentation at a certain point in the future.
