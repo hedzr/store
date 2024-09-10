@@ -11,8 +11,8 @@ replace github.com/hedzr/store/codecs/gob => ../
 require (
 	github.com/davecgh/go-spew v1.1.1
 	github.com/hedzr/store v1.0.15
-	github.com/hedzr/store/codecs/gob v1.0.11
-	github.com/hedzr/store/providers/file v1.0.11
+	github.com/hedzr/store/codecs/gob v1.0.15
+	github.com/hedzr/store/providers/file v1.0.15
 	github.com/stretchr/testify v1.9.0
 )
 
