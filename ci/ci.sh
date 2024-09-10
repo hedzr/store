@@ -30,6 +30,10 @@
 #     $0 commit-examples
 #  7. push all of them
 #
+# Using ci.sh to upgrade go modules in current directory, try this:
+#
+#     $0 update
+#
 # All folks.
 #
 
@@ -58,6 +62,10 @@ alias cmake="cmake -Werror=dev --warn-uninitialized"
 #
 
 #
+
+build-test() {
+	go test
+}
 
 build-push() {
 	git push origin master && git push --tags origin master
@@ -98,6 +106,39 @@ build-publish-children() {
 					commit-submodule "$d"
 				fi
 			fi
+		done
+	done
+}
+build-setver() { build-setver-children "$@"; }
+build-setver-codecs() { build-setver-children codecs; }
+build-setver-providers() { build-setver-children providers; }
+build-setver-tests() { build-setver-children tests; }
+build-setver-examples() { build-setver-children examples; }
+build-setver-children() {
+	local sm d f dirty=0
+	local which="$1" && shift
+	for sm in "$which"; do
+		for f in $(find ./$sm -type f -iname 'go.mod' -print); do
+			d="$(dirname $f)"
+			# if [[ ! "$d" == */test ]]; then
+			if [ -d "$d" ]; then
+				echo "  looking for ${d/\.\//}"
+				update-submodule "${d/\.\//}" "$VER" "$d" || dirty=1
+			fi
+			# fi
+		done
+		if ((dirty)); then
+			echo "  erase go.mod.bak and git commit $sm"
+			find ./$sm -type f -iname 'go.mod.bak' -delete
+			git commit -m "update $sm and publish them"
+		fi
+		for f in $(find ./$sm -type f -iname 'go.mod' -print); do
+			d="$(dirname $f)"
+			# if [[ ! "$d" == */test ]]; then
+			if [ -d "$d" ]; then
+				setver-submodule "${d/\.\//}" "$VER" "$d" "$@"
+			fi
+			# fi
 		done
 	done
 }
@@ -152,6 +193,36 @@ commit-submodule() {
 	bump-and-tag "$pre" "$VER" "$d"
 	# 	# drop-tag "$pre/$VER"
 	# 	git tag --delete "$pre/$VER"
+}
+
+update-submodule() {
+	local tag="$1/$2"
+	local d="$3" ret=0
+	if [[ "$d" == */test* ]]; then
+		pushd "$d" >/dev/null
+		echo "    entering $d and sed $(ls -b go.mod) for tagged version $2 ..."
+		sed -i.bak -E "s,(/store/)(codecs|providers)(/.*)v[0-9]+\.[0-9]+\.[0-9]+,\1\2\3$2," go.mod
+		ret=$(diff go.mod go.mod.bak | wc -l)
+		((ret)) && echo "      go mod tidy..." &&
+			go get -v -t -u && go mod tidy && git add go.mod go.sum &&
+			ret=1
+		popd >/dev/null
+		# git tag "$tag"
+	else
+		echo "    git tag $tag"
+		# git tag "$tag"
+	fi
+	return $ret
+}
+
+setver-submodule() {
+	local tag="$1/$2"
+	local d="$3"
+	shift
+	shift
+	shift
+	echo "    [setver] git tag $tag"
+	git tag $* "$tag"
 }
 
 bump-and-tag() {
