@@ -1,6 +1,6 @@
-go 1.22
+go 1.22.0
 
-toolchain go1.22.0
+toolchain go1.23.1
 
 use (
 	.
@@ -20,21 +20,21 @@ use (
 	./codecs/yaml
 	./codecs/yaml/test
 
+	./examples/consul
+
+	./examples/etcd
+
+	./examples/flags
+	./examples/simple
+	./providers/consul
+
 	./providers/env
+	./providers/etcd
 	./providers/file
 	./providers/flags
 	./providers/fs
 	./providers/maps
 	./providers/vault
-
-	./examples/consul
-	./providers/consul
-
-	./examples/etcd
-	./providers/etcd
-
-	./examples/flags
-	./examples/simple
 
 	./tests
 
