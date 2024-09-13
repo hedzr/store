@@ -1,10 +1,6 @@
 module github.com/hedzr/store/tests
 
-go 1.21
-
-toolchain go1.22.7
-
-//toolchain go1.22.0
+go 1.22.7
 
 // replace gopkg.in/hedzr/errors.v3 => ../../../24/libs.errors
 
