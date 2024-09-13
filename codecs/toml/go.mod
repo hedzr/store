@@ -2,7 +2,7 @@ module github.com/hedzr/store/codecs/toml
 
 go 1.21.0
 
-toolchain go1.23.1
+toolchain go1.22.7
 
 // replace gopkg.in/hedzr/errors.v3 => ../../../../24/libs.errors
 
