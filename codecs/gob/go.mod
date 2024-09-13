@@ -1,6 +1,6 @@
 module github.com/hedzr/store/codecs/gob
 
-go 1.21
+go 1.22.7
 
 // replace gopkg.in/hedzr/errors.v3 => ../../../../24/libs.errors
 
@@ -20,7 +20,7 @@ replace github.com/hedzr/store => ./../..
 
 // replace github.com/hedzr/store/codecs/yaml => ../../codecs/yaml
 
-require github.com/hedzr/store v1.0.11
+require github.com/hedzr/store v1.0.15
 
 require (
 	github.com/hedzr/evendeep v1.1.15 // indirect

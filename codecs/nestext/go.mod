@@ -1,6 +1,6 @@
 module github.com/hedzr/store/codecs/nestext
 
-go 1.21
+go 1.22.7
 
 // replace gopkg.in/hedzr/errors.v3 => ../../../../24/libs.errors
 

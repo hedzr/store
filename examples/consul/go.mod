@@ -1,8 +1,6 @@
 module github.com/hedzr/store/examples/testconsul
 
-go 1.21.0
-
-toolchain go1.22.7
+go 1.22.7
 
 // replace gopkg.in/hedzr/errors.v3 => ../../../../24/libs.errors
 
