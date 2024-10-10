@@ -2,7 +2,7 @@
 
 # -------- ci tool for hedzr/store -------------------------------------
 #
-# After main module of hedzr/store published, do these
+# [deprecated] After main module of hedzr/store published, do these
 # works step by step:
 #
 #  0. release the main branch to new version
@@ -97,17 +97,25 @@ build-publish-examples() { build-publish-children examples; }
 build-publish-children() {
 	local sm d f
 	local which="$1"
-	for sm in "$which"; do
-		for f in $(find ./$sm -type f -iname 'go.mod' -print); do
-			d="$(dirname $f)"
-			if [[ ! "$d" == */test ]]; then
-				if [ -d "$d" ]; then
-					do-update-dep "$d"
-					commit-submodule "$d"
+	if [ "$which" = "all" ]; then
+		pub-main
+		pub-child codecs
+		pub-child providers
+		pub-child tests
+		pub-child examples
+	else
+		for sm in $which; do
+			for f in $(find ./$sm -type f -iname 'go.mod' -print); do
+				d="$(dirname "$f")"
+				if [[ ! "$d" == */test ]]; then
+					if [ -d "$d" ]; then
+						do-update-dep "$d"
+						commit-submodule "$d"
+					fi
 				fi
-			fi
+			done
 		done
-	done
+	fi
 }
 build-setver() { build-setver-children "$@"; }
 build-setver-codecs() { build-setver-children codecs; }
@@ -223,6 +231,66 @@ setver-submodule() {
 	shift
 	echo "    [setver] git tag $tag"
 	git tag $* "$tag"
+}
+
+pub-main() {
+	local ver=""
+	if [ -f slog/doc.go ]; then
+		ver="$(grep -Eio 'Version += +\"(v?[0-9]+\.[0-9]+\.[0-9]+)\"' slog/doc.go|awk '{print $3}')"
+	elif [ -f doc.go ]; then
+		ver="$(grep -Eio 'Version += +\"(v?[0-9]+\.[0-9]+\.[0-9]+)\"' doc.go|awk -F$' ' '{print $3}')"
+	fi
+	
+	if [ "$ver" = "" ]; then
+		echo "version tag not found, add doc.go and Version=\"1.0.0\" and retry."
+	else
+		ver="$(eval echo $ver)"
+		echo "ver=$ver found"
+		if is_git_dirty; then
+			echo "repo is dirty, nothing to do before the changes are reviewed."
+		else
+			$ECHO git tag "$ver"
+			$ECHO
+		fi
+	fi
+}
+
+pub-child() {
+	local which="$1"
+	if [ -d "$which" ]; then
+		local ver=""
+		if [ -f slog/doc.go ]; then
+			ver="$(grep -Eio 'Version += +\"(v?[0-9]+\.[0-9]+\.[0-9]+)\"' slog/doc.go|awk '{print $3}')"
+		elif [ -f doc.go ]; then
+			ver="$(grep -Eio 'Version += +\"(v?[0-9]+\.[0-9]+\.[0-9]+)\"' doc.go|awk -F$' ' '{print $3}')"
+		fi
+		
+		if [ "$ver" = "" ]; then
+			echo "version tag not found, add doc.go and Version=\"1.0.0\" and retry."
+		else
+			ver="$(eval echo $ver)"
+			echo "ver=$ver found"
+			for sm in $which; do
+				for f in $(find ./$sm -type f -iname 'go.mod' -print); do
+					d="$(dirname "$f")"
+					if [ -d "$d" ]; then
+						# do-update-dep "$d"
+						# commit-submodule "$d"
+						echo "  - publishing $d "
+						local pre="${d/.\//}"
+						pushd "$d" >/dev/null
+						if is_git_dirty; then
+							echo "repo is dirty, nothing to do before the changes are reviewed."
+						else
+							$ECHO git tag "$pre/$ver"
+							$ECHO
+						fi
+						popd >/dev/null
+					fi
+				done
+			done
+		fi
+	fi
 }
 
 bump-and-tag() {
@@ -353,8 +421,14 @@ fn_exists() { LC_ALL=C type $1 2>/dev/null | grep -qE '(shell function)|(a funct
 fn_builtin_exists() { LC_ALL=C type $1 2>/dev/null | grep -q 'shell builtin'; }
 fn_aliased_exists() { LC_ALL=C type $1 2>/dev/null | grep -qE '(alias for)|(aliased to)'; }
 
-is_git_clean() { git diff-index --quiet $* HEAD -- 2>/dev/null; }
-is_git_dirty() { is_git_clean && return -1 || return 0; }
+is_git_clean() { git diff-index --quiet "$@" HEAD -- 2>/dev/null; }
+is_git_dirty() {
+	if is_git_clean "$@"; then
+		false
+	else
+		true
+	fi
+}
 
 headline() { printf "\e[0;1m$@\e[0m:\n"; }
 headline_begin() { printf "\e[0;1m"; } # for more color, see: shttps://stackoverflow.com/questions/5947742/how-to-change-the-output-color-of-echo-in-linux

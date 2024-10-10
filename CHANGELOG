@@ -1,5 +1,9 @@
 # CHANGELOG
 
+- v1.0.17
+  - security patch
+  - better logging support, [48a7601](https://github.com/hedzr/store/commit/48a7601f7b0a616f6d8da06a4f9c4c92a3bd42b7)
+
 - v1.0.15
   - security patch
   - upgrade deps
