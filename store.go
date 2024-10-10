@@ -3,6 +3,7 @@ package store
 import (
 	"bytes"
 	"os"
+	"strings"
 	"sync"
 
 	"github.com/hedzr/store/radix"
@@ -107,6 +108,26 @@ type storeS struct {
 
 	flattenSlice bool
 	allowWatch   bool
+}
+
+func (s *storeS) String() string {
+	var sb strings.Builder
+	_, _ = sb.WriteString("Store{")
+	_, _ = sb.WriteString(s.Trie.String())
+	_, _ = sb.WriteString("}")
+	return sb.String()
+}
+
+func (s *storeS) MarshalJSON() ([]byte, error) {
+	var sb strings.Builder
+	_, _ = sb.WriteString("{")
+	if b, err := s.Trie.MarshalJSON(); err != nil {
+		return nil, err
+	} else {
+		_, _ = sb.Write(b)
+	}
+	_, _ = sb.WriteString("}")
+	return []byte(sb.String()), nil
 }
 
 func (s *storeS) dupS(trie radix.Trie[any]) (newStore *storeS) {

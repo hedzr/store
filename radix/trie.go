@@ -2,6 +2,7 @@ package radix
 
 import (
 	"bytes"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -25,6 +26,26 @@ type trieS[T any] struct {
 	root      *nodeS[T]
 	prefix    string
 	delimiter rune
+}
+
+func (s *trieS[T]) String() string {
+	var sb strings.Builder
+	_, _ = sb.WriteString("Trie{\"")
+	_, _ = sb.WriteString(s.prefix)
+	_, _ = sb.WriteString("\", delimiter:'")
+	_, _ = sb.WriteRune(s.delimiter)
+	_, _ = sb.WriteString("'}")
+	return sb.String()
+}
+
+func (s *trieS[T]) MarshalJSON() ([]byte, error) {
+	var sb strings.Builder
+	_, _ = sb.WriteString("\"trie\":{\"prefix\":")
+	_, _ = sb.WriteString(strconv.Quote(s.prefix))
+	_, _ = sb.WriteString(",\"delimiter\":\"")
+	_, _ = sb.WriteRune(s.delimiter)
+	_, _ = sb.WriteString("\"}")
+	return []byte(sb.String()), nil
 }
 
 func (s *trieS[T]) dupS(root *nodeS[T], prefix string) (newTrie *trieS[T]) { //nolint:revive

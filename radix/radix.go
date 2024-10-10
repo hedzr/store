@@ -42,6 +42,9 @@ type Trie[T any] interface {
 
 	// Walk iterators the whole tree for each node.
 	Walk(path string, cb func(path, fragment string, node Node[T]))
+
+	String() string               // for log/slog text mode
+	MarshalJSON() ([]byte, error) // for log/slog json mode
 }
 
 // Node is a Trie-tree node.

@@ -16,7 +16,6 @@ func TestRandomStringPure(t *testing.T) {
 
 func TestWithinLoading(t *testing.T) {
 	conf := newBasicStore()
-
 	defer conf.Close()
 
 	t.Logf("\nPath of 'conf' (delimeter=%v, prefix=%v)\n%v\n",
