@@ -10,8 +10,8 @@ replace github.com/hedzr/store/codecs/nestext => ../
 
 require (
 	github.com/hedzr/store v1.0.17
-	github.com/hedzr/store/codecs/nestext v1.0.15
-	github.com/hedzr/store/providers/file v1.0.15
+	github.com/hedzr/store/codecs/nestext v1.0.17
+	github.com/hedzr/store/providers/file v1.0.17
 	github.com/stretchr/testify v1.9.0
 )
 

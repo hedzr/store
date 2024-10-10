@@ -35,7 +35,7 @@ replace github.com/hedzr/store/providers/maps => ../../providers/maps
 require (
 	github.com/hedzr/logg v0.6.0
 	github.com/hedzr/store v1.0.17
-	github.com/hedzr/store/providers/etcd v1.0.15
+	github.com/hedzr/store/providers/etcd v1.0.17
 )
 
 require (
