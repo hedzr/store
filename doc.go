@@ -109,4 +109,4 @@
 // - https://github.com/hedzr/store
 package store
 
-const Version = "v1.0.17" // Version of libs.store
+const Version = "v1.0.18" // Version of libs.store
