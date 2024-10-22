@@ -20,7 +20,7 @@ require (
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/hedzr/evendeep v1.1.18 // indirect
 	github.com/hedzr/is v0.5.27 // indirect
-	github.com/hedzr/logg v0.6.0 // indirect
+	github.com/hedzr/logg v0.7.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.3 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	golang.org/x/crypto v0.28.0 // indirect

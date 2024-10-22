@@ -6,8 +6,8 @@ github.com/hedzr/evendeep v1.1.18 h1:mhPKqBwcH6V8CKusOZ6d7ViYCF+fdjTOR9f+/99yaCE
 github.com/hedzr/evendeep v1.1.18/go.mod h1:tcXASsJ4Ll3BZuBG+eXO0SA4fgLngyv2iEPXUPrqykU=
 github.com/hedzr/is v0.5.27 h1:I2bm/jDDUTU4cRYpf8tNdhBcopr0GWBfS6g/9j50EYg=
 github.com/hedzr/is v0.5.27/go.mod h1:WPdrinHKBspd2KoCCdkFDuErxWIhTk38/lYP77ju/GE=
-github.com/hedzr/logg v0.6.0 h1:6NNUIy/Z7LLmq9aErEgJPu1MNjOxHc4ilBi38ImM0p4=
-github.com/hedzr/logg v0.6.0/go.mod h1:HQlgSCUtvKwdDRP61cIDKfCIQpvL7Kmf6B/lZRxrz+Q=
+github.com/hedzr/logg v0.7.0 h1:p0Ui1f9R1KWiMwXXhuWOrCvXkX0lSenymqcdtt0238E=
+github.com/hedzr/logg v0.7.0/go.mod h1:HQlgSCUtvKwdDRP61cIDKfCIQpvL7Kmf6B/lZRxrz+Q=
 github.com/pelletier/go-toml/v2 v2.2.3 h1:YmeHyLY8mFWbdkNWwpr+qIL2bEqT0o95WSdkNHvL12M=
 github.com/pelletier/go-toml/v2 v2.2.3/go.mod h1:MfCQTFTvCcUyyvvwm1+G6H/jORL20Xlb6rzQu9GuUkc=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=

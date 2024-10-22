@@ -64,7 +64,7 @@ require (
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hedzr/is v0.5.27 // indirect
-	github.com/hedzr/logg v0.6.0 // indirect
+	github.com/hedzr/logg v0.7.0 // indirect
 	github.com/hjson/hjson-go/v4 v4.4.0 // indirect
 	github.com/npillmayer/nestext v0.1.3 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.3 // indirect
