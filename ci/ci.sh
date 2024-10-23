@@ -212,7 +212,7 @@ update-submodule() {
 		sed -i.bak -E "s,(/store/)(codecs|providers)(/.*)v[0-9]+\.[0-9]+\.[0-9]+,\1\2\3$2," go.mod
 		ret=$(diff go.mod go.mod.bak | wc -l)
 		((ret)) && echo "      go mod tidy..." &&
-			go get -v -t -u && go mod tidy && git add go.mod go.sum &&
+			go get -v -t -u ./... && go mod tidy && git add go.mod go.sum &&
 			ret=1
 		popd >/dev/null
 		# git tag "$tag"
@@ -394,7 +394,7 @@ do-update-dep() {
 	pushd "$d" >/dev/null
 	echo
 	echo "==== go mod tidy, dir='$d' =========="
-	go get -v -t -u && go mod tidy
+	go get -v -t -u ./... && go mod tidy
 	popd >/dev/null
 }
 
