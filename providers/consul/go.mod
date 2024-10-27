@@ -24,13 +24,13 @@ replace github.com/hedzr/store => ../..
 
 require (
 	github.com/hashicorp/consul/api v1.30.0
-	github.com/hedzr/logg v0.7.0
-	github.com/hedzr/store v1.0.17
+	github.com/hedzr/logg v0.7.1
+	github.com/hedzr/store v1.0.18
 )
 
 require (
 	github.com/armon/go-metrics v0.4.1 // indirect
-	github.com/fatih/color v1.17.0 // indirect
+	github.com/fatih/color v1.18.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-hclog v1.6.3 // indirect
@@ -39,8 +39,8 @@ require (
 	github.com/hashicorp/go-rootcerts v1.0.2 // indirect
 	github.com/hashicorp/golang-lru v1.0.2 // indirect
 	github.com/hashicorp/serf v0.10.1 // indirect
-	github.com/hedzr/evendeep v1.1.18 // indirect
-	github.com/hedzr/is v0.5.27 // indirect
+	github.com/hedzr/evendeep v1.2.1 // indirect
+	github.com/hedzr/is v0.5.29 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
