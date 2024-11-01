@@ -9,9 +9,9 @@ replace github.com/hedzr/store/providers/file => ../../../providers/file
 replace github.com/hedzr/store/codecs/hcl => ../
 
 require (
-	github.com/hedzr/store v1.0.19
-	github.com/hedzr/store/codecs/hcl v1.0.19
-	github.com/hedzr/store/providers/file v1.0.19
+	github.com/hedzr/store v1.1.0
+	github.com/hedzr/store/codecs/hcl v1.1.0
+	github.com/hedzr/store/providers/file v1.1.0
 	github.com/stretchr/testify v1.9.0
 )
 
@@ -19,7 +19,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fsnotify/fsnotify v1.8.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/hedzr/evendeep v1.2.1 // indirect
+	github.com/hedzr/evendeep v1.2.3 // indirect
 	github.com/hedzr/is v0.6.0 // indirect
 	github.com/hedzr/logg v0.7.3 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect

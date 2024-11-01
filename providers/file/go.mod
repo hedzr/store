@@ -22,11 +22,11 @@ replace github.com/hedzr/store => ../..
 
 require (
 	github.com/fsnotify/fsnotify v1.8.0
-	github.com/hedzr/store v1.0.19
+	github.com/hedzr/store v1.1.0
 )
 
 require (
-	github.com/hedzr/evendeep v1.2.1 // indirect
+	github.com/hedzr/evendeep v1.2.3 // indirect
 	github.com/hedzr/is v0.6.0 // indirect
 	github.com/hedzr/logg v0.7.3 // indirect
 	golang.org/x/crypto v0.28.0 // indirect

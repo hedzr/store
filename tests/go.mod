@@ -45,18 +45,18 @@ replace github.com/hedzr/store/providers/maps => ../providers/maps
 require (
 	github.com/davecgh/go-spew v1.1.1
 	github.com/hedzr/evendeep v1.2.3
-	github.com/hedzr/store v1.0.19
-	github.com/hedzr/store/codecs/hcl v1.0.19
-	github.com/hedzr/store/codecs/hjson v1.0.19
-	github.com/hedzr/store/codecs/json v1.0.19
-	github.com/hedzr/store/codecs/nestext v1.0.19
-	github.com/hedzr/store/codecs/toml v1.0.19
-	github.com/hedzr/store/codecs/yaml v1.0.19
-	github.com/hedzr/store/providers/env v1.0.19
-	github.com/hedzr/store/providers/file v1.0.19
-	github.com/hedzr/store/providers/flags v1.0.19
-	github.com/hedzr/store/providers/fs v1.0.19
-	github.com/hedzr/store/providers/maps v1.0.19
+	github.com/hedzr/store v1.1.0
+	github.com/hedzr/store/codecs/hcl v1.1.0
+	github.com/hedzr/store/codecs/hjson v1.1.0
+	github.com/hedzr/store/codecs/json v1.1.0
+	github.com/hedzr/store/codecs/nestext v1.1.0
+	github.com/hedzr/store/codecs/toml v1.1.0
+	github.com/hedzr/store/codecs/yaml v1.1.0
+	github.com/hedzr/store/providers/env v1.1.0
+	github.com/hedzr/store/providers/file v1.1.0
+	github.com/hedzr/store/providers/flags v1.1.0
+	github.com/hedzr/store/providers/fs v1.1.0
+	github.com/hedzr/store/providers/maps v1.1.0
 	github.com/stretchr/testify v1.9.0
 )
 

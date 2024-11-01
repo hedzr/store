@@ -1,7 +1,7 @@
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/hedzr/evendeep v1.2.1 h1:+AnKLkAArTjur2KLnqjPkqgmeqRkL33YfIrLfow++vQ=
-github.com/hedzr/evendeep v1.2.1/go.mod h1:V2f6uREJtlD/foDnoYcIkuKTg2gaWWoTG5pJHKL86FM=
+github.com/hedzr/evendeep v1.2.3 h1:YlLyj9z/+uH3KwX4iwk43b5FIYOcINxg0WslKw3e7oE=
+github.com/hedzr/evendeep v1.2.3/go.mod h1:mGopKmlgm6v7pmRRXvV6XHJcjtqgLCwHuNREqPWNfeg=
 github.com/hedzr/is v0.6.0 h1:iMq3aprzzXXOeEk8SOk+sfFrvVn1BwLncAXBH5YhjXo=
 github.com/hedzr/is v0.6.0/go.mod h1:WPdrinHKBspd2KoCCdkFDuErxWIhTk38/lYP77ju/GE=
 github.com/hedzr/logg v0.7.3 h1:t/qYVgSHF2YumvCtm68liSoURcvpIfAYA0ZsI8Rzw+4=
