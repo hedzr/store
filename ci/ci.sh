@@ -236,11 +236,11 @@ setver-submodule() {
 pub-main() {
 	local ver=""
 	if [ -f slog/doc.go ]; then
-		ver="$(grep -Eio 'Version += +\"(v?[0-9]+\.[0-9]+\.[0-9]+)\"' slog/doc.go|awk '{print $3}')"
+		ver="$(grep -Eio 'Version += +\"(v?[0-9]+\.[0-9]+\.[0-9]+)\"' slog/doc.go | awk '{print $3}')"
 	elif [ -f doc.go ]; then
-		ver="$(grep -Eio 'Version += +\"(v?[0-9]+\.[0-9]+\.[0-9]+)\"' doc.go|awk -F$' ' '{print $3}')"
+		ver="$(grep -Eio 'Version += +\"(v?[0-9]+\.[0-9]+\.[0-9]+)\"' doc.go | awk -F$' ' '{print $3}')"
 	fi
-	
+
 	if [ "$ver" = "" ]; then
 		echo "version tag not found, add doc.go and Version=\"1.0.0\" and retry."
 	else
@@ -260,11 +260,11 @@ pub-child() {
 	if [ -d "$which" ]; then
 		local ver=""
 		if [ -f slog/doc.go ]; then
-			ver="$(grep -Eio 'Version += +\"(v?[0-9]+\.[0-9]+\.[0-9]+)\"' slog/doc.go|awk '{print $3}')"
+			ver="$(grep -Eio 'Version += +\"(v?[0-9]+\.[0-9]+\.[0-9]+)\"' slog/doc.go | awk '{print $3}')"
 		elif [ -f doc.go ]; then
-			ver="$(grep -Eio 'Version += +\"(v?[0-9]+\.[0-9]+\.[0-9]+)\"' doc.go|awk -F$' ' '{print $3}')"
+			ver="$(grep -Eio 'Version += +\"(v?[0-9]+\.[0-9]+\.[0-9]+)\"' doc.go | awk -F$' ' '{print $3}')"
 		fi
-		
+
 		if [ "$ver" = "" ]; then
 			echo "version tag not found, add doc.go and Version=\"1.0.0\" and retry."
 		else
@@ -337,6 +337,24 @@ drop-tag() {
 #
 # upgrade go.mod dependencies
 #
+
+# update all go modules in .. [ cmdr.v2/ ]
+build-update-all() {
+	for d in ../*; do
+		if [ -d "./$d" ]; then
+			if [ -f "./$d/go.mod" ]; then
+				pushd "./$d" >/dev/null
+				# if [ -x ../libs.store/ci/ci.sh ]; then
+				# 	../libs.store/ci/ci.sh update
+				# elif [ -x ./ci/ci.sh ]; then
+				# 	./ci/ci.sh update
+				# fi
+				build-update
+				popd >/dev/null
+			fi
+		fi
+	done
+}
 
 build-update() {
 	for sm in "${1:-.}"; do
