@@ -12,6 +12,7 @@ import (
 
 	"github.com/hedzr/evendeep"
 	logz "github.com/hedzr/logg/slog"
+
 	"github.com/hedzr/store/radix"
 )
 
@@ -144,7 +145,11 @@ func (s *storeS) loadMapByValueType(ec errors.Error, position, k string, v any, 
 			}
 			break
 		}
-		s.WithPrefixReplaced(position).setKV(k, v, creating, onSet)
+		if cc, ok := s.WithPrefixReplaced(position).(interface {
+			setKV(path string, data any, createOrModify bool, onSet lmOnSet) (node radix.Node[any], oldData any)
+		}); ok {
+			cc.setKV(k, v, creating, onSet)
+		}
 	case []map[any]any:
 		if s.flattenSlice {
 			buf := make([]byte, 0, len(k)+16)
@@ -157,7 +162,11 @@ func (s *storeS) loadMapByValueType(ec errors.Error, position, k string, v any, 
 			}
 			break
 		}
-		s.WithPrefixReplaced(position).setKV(k, v, creating, onSet)
+		if cc, ok := s.WithPrefixReplaced(position).(interface {
+			setKV(path string, data any, createOrModify bool, onSet lmOnSet) (node radix.Node[any], oldData any)
+		}); ok {
+			cc.setKV(k, v, creating, onSet)
+		}
 	case []any:
 		if s.flattenSlice {
 			buf := make([]byte, 0, len(k)+16)
@@ -174,9 +183,17 @@ func (s *storeS) loadMapByValueType(ec errors.Error, position, k string, v any, 
 			}
 			break
 		}
-		s.WithPrefixReplaced(position).setKV(k, v, creating, onSet)
+		if cc, ok := s.WithPrefixReplaced(position).(interface {
+			setKV(path string, data any, createOrModify bool, onSet lmOnSet) (node radix.Node[any], oldData any)
+		}); ok {
+			cc.setKV(k, v, creating, onSet)
+		}
 	default:
-		s.WithPrefixReplaced(position).setKV(k, v, creating, onSet)
+		if cc, ok := s.WithPrefixReplaced(position).(interface {
+			setKV(path string, data any, createOrModify bool, onSet lmOnSet) (node radix.Node[any], oldData any)
+		}); ok {
+			cc.setKV(k, v, creating, onSet)
+		}
 	}
 }
 
@@ -337,7 +354,7 @@ func WithCodec(codec Codec) LoadOpt {
 // location that the external settings will be merged at.
 func WithStorePrefix(prefix string) LoadOpt {
 	return func(s *loadS) {
-		s.storeS = s.storeS.WithPrefixReplaced(prefix)
+		s.storeS = s.storeS.WithPrefixReplaced(prefix).(*storeS)
 	}
 }
 

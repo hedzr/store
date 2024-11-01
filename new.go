@@ -85,6 +85,23 @@ type Store interface {
 	Has(path string) (found bool)
 
 	// Locate provides an advanced interface for locating a path.
+	//
+	// RETURNs:
+	//   node: the matched node for retrieving node data later
+	//   branch: true means a branch node matched (generally partialMatched is true)
+	//   patialMatched: true means only a part of the node key was matched.
+	//   found: any (fully or partially) found.
+	//
+	// When querying "app.logging.f" on a tree holding "app.logging.file",
+	// Locate will return
+	//   found = true, partialMatched = true,
+	//   branch = false, and
+	//   node is pointed to "app.logging.file".
+	//
+	// These high order apis (Has, Get(Xxx), Set(Xxx), Must(Xxx)) covers the
+	// Locate's results and provides a dotted-key-path-based behaviors.
+	// Which means, Has("app.logging.f") gets false and
+	// Has("app.logging.file") is true.
 	Locate(path string) (node radix.Node[any], branch, partialMatched, found bool)
 
 	radix.TypedGetters[any] // getters
@@ -96,7 +113,7 @@ type Store interface {
 	Dump() (text string)
 
 	// Clone makes a clone copy for this store
-	Clone() (newStore *storeS)
+	Clone() (newStore Store)
 
 	// Dup is a native Clone tool.
 	//
@@ -107,7 +124,7 @@ type Store interface {
 	// remote connection such as what want to do by consul provider.
 	//
 	// At this scene, the parent store still holds the cleanup closers.
-	Dup() (newStore *storeS)
+	Dup() (newStore Store)
 
 	// Walk does iterate the whole Store.
 	//
@@ -136,9 +153,9 @@ type Store interface {
 	//
 	// It simplify biz-logic codes sometimes.
 	//
-	// A [Delimiter] will be inserted at jointing prefix and key. Also at
-	// jointing old and new prefix.
-	WithPrefix(prefix ...string) (newStore *storeS) // todo need a balance on returning *storeS or Store, for WithPrefix
+	// The arg 'prefix' can be an array, which will be joint
+	// with the [Delimiter].
+	WithPrefix(prefix ...string) (newStore Store)
 
 	// WithPrefixReplaced is similar with WithPrefix, but it replaces old
 	// prefix with new one instead of appending it.
@@ -148,17 +165,21 @@ type Store interface {
 	//	ns := s1.WithPrefixReplaced("app.server")
 	//	println(ns.MustGet("type"))     # print conf["app.server.type"]
 	//
-	// A [Delimiter] will be inserted at jointing prefix and key.
+	// The arg 'prefix' can be an array, which will be joint
+	// with the [Delimiter].
 	//
 	// todo need a balance on returning *storeS or Store, for WithPrefixReplaced.
-	WithPrefixReplaced(newPrefix ...string) (newStore *storeS)
+	WithPrefixReplaced(newPrefix ...string) (newStore Store)
 
 	// SetPrefix updates the prefix in current storeS.
+	//
+	// The arg 'prefix' can be an array, which will be joint
+	// with the [Delimiter].
 	SetPrefix(newPrefix ...string)
 
 	Prefix() string              // return current prefix string
 	Delimiter() rune             // return current delimiter, generally it's dot ('.')
-	SetDelimiter(delimiter rune) // setter. Change it in runtime doesn't update old delimiter inside tree nodes.
+	SetDelimiter(delimiter rune) // setter. Change it at runtime doesn't update old delimiter inside tree nodes.
 
 	// Load loads k-v pairs from external provider(s) with specified codec decoder(s).
 	//

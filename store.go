@@ -388,7 +388,7 @@ func (s *storeS) Dump() (text string) {
 	return s.Trie.Dump()
 }
 
-func (s *storeS) Clone() (newStore *storeS) { return s.Dup() } // make a clone for this store
+func (s *storeS) Clone() (newStore Store) { return s.Dup() } // make a clone for this store
 
 // Dup is a native Clone tool.
 //
@@ -399,7 +399,7 @@ func (s *storeS) Clone() (newStore *storeS) { return s.Dup() } // make a clone f
 // remote connection such as what want to do by consul provider.
 //
 // At this scene, the parent store still holds the cleanup closers.
-func (s *storeS) Dup() (newStore *storeS) {
+func (s *storeS) Dup() (newStore Store) {
 	return s.dupS(s.Trie.Dup())
 }
 
@@ -423,7 +423,7 @@ func (s *storeS) Dup() (newStore *storeS) {
 //
 // A [Delimiter] will be inserted at jointing prefix and key. Also at
 // jointing old and new prefix.
-func (s *storeS) WithPrefix(prefix ...string) (newStore *storeS) {
+func (s *storeS) WithPrefix(prefix ...string) (newStore Store) {
 	return s.dupS(s.Trie.WithPrefix(prefix...))
 }
 
@@ -436,7 +436,7 @@ func (s *storeS) WithPrefix(prefix ...string) (newStore *storeS) {
 //	println(ns.MustGet("type"))     # print conf["app.server.type"]
 //
 // A [Delimiter] will be inserted at jointing prefix and key.
-func (s *storeS) WithPrefixReplaced(newPrefix ...string) (newStore *storeS) {
+func (s *storeS) WithPrefixReplaced(newPrefix ...string) (newStore Store) {
 	return s.dupS(s.Trie.WithPrefixReplaced(newPrefix...))
 }
 

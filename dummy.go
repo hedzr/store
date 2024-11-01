@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"github.com/hedzr/store/radix"
@@ -10,7 +11,7 @@ import (
 // NewDummyStore returns an empty store with dummy abilities implemented.
 func NewDummyStore() *dummyS { return &dummyS{} }
 
-type dummyS struct{}
+type dummyS struct{ p string }
 
 var _ radix.TypedGetters[any] = (*dummyS)(nil) // assertion helper
 
@@ -311,15 +312,15 @@ func (s *dummyS) GetM(path string, opt ...radix.MOpt[any]) (ret map[string]any, 
 func (s *dummyS) MustM(path string, opt ...radix.MOpt[any]) (ret map[string]any)              { return } //nolint:revive
 func (s *dummyS) GetSectionFrom(path string, holder any, opts ...radix.MOpt[any]) (err error) { return } //nolint:revive
 
-func (s *dummyS) Dump() (text string)                                                    { return }    //nolint:revive
-func (s *dummyS) Clone() (newStore *storeS)                                              { return }    //nolint:revive
-func (s *dummyS) Dup() (newStore *storeS)                                                { return }    //nolint:revive
-func (s *dummyS) Walk(path string, cb func(path, fragment string, node radix.Node[any])) {}            //nolint:revive
-func (s *dummyS) WithPrefix(prefix ...string) (newStore *storeS)                         { return }    //nolint:revive
-func (s *dummyS) WithPrefixReplaced(prefix ...string) (newStore *storeS)                 { return }    //nolint:revive
-func (s *dummyS) SetPrefix(prefix ...string)                                             {}            //nolint:revive
-func (s *dummyS) Prefix() string                                                         { return "" } //nolint:revive
-func (s *dummyS) Delimiter() rune                                                        { return 0 }  //nolint:revive
-func (s *dummyS) SetDelimiter(delimiter rune)                                            {}            //nolint:revive
-func (s *dummyS) Load(ctx context.Context, opts ...LoadOpt) (wr Writeable, err error)    { return }    //nolint:revive
-func (s *dummyS) WithinLoading(fn func())                                                { fn() }      //nolint:revive
+func (s *dummyS) Dump() (text string)                                                    { return }                          //nolint:revive
+func (s *dummyS) Clone() (newStore Store)                                                { return }                          //nolint:revive
+func (s *dummyS) Dup() (newStore Store)                                                  { return }                          //nolint:revive
+func (s *dummyS) Walk(path string, cb func(path, fragment string, node radix.Node[any])) {}                                  //nolint:revive
+func (s *dummyS) WithPrefix(prefix ...string) (newStore Store)                           { return s }                        //nolint:revive
+func (s *dummyS) WithPrefixReplaced(prefix ...string) (newStore Store)                   { return s }                        //nolint:revive
+func (s *dummyS) SetPrefix(prefix ...string)                                             { s.p = strings.Join(prefix, ".") } //nolint:revive
+func (s *dummyS) Prefix() string                                                         { return s.p }                      //nolint:revive
+func (s *dummyS) Delimiter() rune                                                        { return '.' }                      //nolint:revive
+func (s *dummyS) SetDelimiter(delimiter rune)                                            {}                                  //nolint:revive
+func (s *dummyS) Load(ctx context.Context, opts ...LoadOpt) (wr Writeable, err error)    { return }                          //nolint:revive
+func (s *dummyS) WithinLoading(fn func())                                                { fn() }                            //nolint:revive
