@@ -1,8 +1,11 @@
 # CHANGELOG
 
+- v1.1.1
+  - upgrade deps
+
 - v1.1.0
   - [BREAK] in Store API, unexport struct ptr removed, instead of `Store` interface.
-    These apis changed to:
+    These apis changed to,
     - `Clone() (newStore Store)`
     - `Dup() (newStore Store)`
     - `WithPrefix(prefix ...string) (newStore Store)`
