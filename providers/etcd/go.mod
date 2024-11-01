@@ -21,7 +21,7 @@ replace github.com/hedzr/store => ../..
 // replace github.com/hedzr/store/codecs/yaml => ../../codecs/yaml
 
 require (
-	github.com/hedzr/store v1.0.18
+	github.com/hedzr/store v1.0.19
 	go.etcd.io/etcd/client/v3 v3.5.16
 )
 
@@ -32,8 +32,8 @@ require (
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/hedzr/evendeep v1.2.1 // indirect
-	github.com/hedzr/is v0.5.29 // indirect
-	github.com/hedzr/logg v0.7.1 // indirect
+	github.com/hedzr/is v0.6.0 // indirect
+	github.com/hedzr/logg v0.7.3 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	go.etcd.io/etcd/api/v3 v3.5.16 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.5.16 // indirect
@@ -48,5 +48,5 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20241021214115-324edc3d5d38 // indirect
 	google.golang.org/grpc v1.67.1 // indirect
 	google.golang.org/protobuf v1.35.1 // indirect
-	gopkg.in/hedzr/errors.v3 v3.3.3 // indirect
+	gopkg.in/hedzr/errors.v3 v3.3.5 // indirect
 )

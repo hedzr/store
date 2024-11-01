@@ -18,9 +18,9 @@ go 1.22.7
 
 require (
 	github.com/hedzr/evendeep v1.2.1
-	github.com/hedzr/is v0.5.29
-	github.com/hedzr/logg v0.7.1
-	gopkg.in/hedzr/errors.v3 v3.3.3
+	github.com/hedzr/is v0.6.0
+	github.com/hedzr/logg v0.7.3
+	gopkg.in/hedzr/errors.v3 v3.3.5
 )
 
 require (
