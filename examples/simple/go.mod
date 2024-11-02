@@ -37,7 +37,7 @@ replace github.com/hedzr/store/providers/maps => ../../providers/maps
 require (
 	github.com/arl/statsviz v0.6.0
 	github.com/hedzr/is v0.6.0
-	github.com/hedzr/store v1.1.0
+	github.com/hedzr/store v1.1.1
 )
 
 require (
