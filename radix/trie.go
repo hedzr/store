@@ -166,6 +166,26 @@ func (s *trieS[T]) Set(path string, data T) (node Node[T], oldData any) {
 	return s.root.insert([]rune(path), path, data)
 }
 
+// SetNode sets the all node fields at once.
+func (s *trieS[T]) SetNode(path string, data T, tag any, descriptionAndComments ...string) (ret Node[T], oldData any) { //nolint:revive
+	if s.prefix != "" {
+		path = s.Join(s.prefix, path) //nolint:revive
+	}
+	node, old := s.root.insertInternal([]rune(path), path, data)
+	switch len(descriptionAndComments) {
+	case 0:
+	case 1:
+		node.description = descriptionAndComments[0]
+	case 2:
+		node.description, node.comment = descriptionAndComments[0], descriptionAndComments[1]
+	default:
+		node.description = descriptionAndComments[0]
+		node.comment = strings.Join(descriptionAndComments[1:], "\n")
+	}
+	ret, oldData = node, old
+	return
+}
+
 // SetComment sets the Desc and Comment field of a node specified by path.
 //
 // Nothing happens if the given path cannot be found.

@@ -28,6 +28,9 @@ type Trie[T any] interface {
 	Get(path string) (data T, found bool)                // shortcut to Query
 	MustGet(path string) (data T)                        // shortcut to Get
 
+	// SetNode at once, advanced api here.
+	SetNode(path string, data T, tag any, descriptionAndComments ...string) (ret Node[T], oldData any)
+
 	TypedGetters[T] // getters
 
 	WithPrefix(prefix ...string) (entry Trie[T])            // appends prefix string and make a new instance of Trie[T]
