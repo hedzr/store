@@ -16,6 +16,11 @@ func NewTrie[T any]() *trieS[T] {
 	return &trieS[T]{root: &nodeS[T]{}, delimiter: dotChar}
 }
 
+// NewTrieBy returns a Trie-tree instance.
+func NewTrieBy[T any](delimiter rune) *trieS[T] {
+	return &trieS[T]{root: &nodeS[T]{}, delimiter: delimiter}
+}
+
 var _ Trie[any] = (*trieS[any])(nil) // assertion helper
 
 func newTrie[T any]() *trieS[T] { //nolint:revive
