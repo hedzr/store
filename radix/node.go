@@ -82,14 +82,22 @@ func (s *nodeS[T]) Data() (data T) {
 func (s *nodeS[T]) SetData(data T) {
 	if !s.isBranch() {
 		s.data = data
+		s.nType |= NTData
+	}
+}
+
+// SetEmpty clear the Data field.
+func (s *nodeS[T]) SetEmpty() {
+	if !s.isBranch() {
+		s.nType &= ^NTData
 	}
 }
 
 // SetComment sets the Description and Comment field.
 func (s *nodeS[T]) SetComment(desc, comment string) { //nolint:revive
-	if s.isBranch() {
-		return
-	}
+	// if s.isBranch() {
+	// 	return
+	// }
 	s.description, s.comment = desc, comment
 }
 
@@ -97,9 +105,9 @@ func (s *nodeS[T]) SetComment(desc, comment string) { //nolint:revive
 //
 // You may save any value into a Tag field.
 func (s *nodeS[T]) SetTag(tag any) { //nolint:revive
-	if s.isBranch() {
-		return
-	}
+	// if s.isBranch() {
+	// 	return
+	// }
 	s.tag = tag
 }
 
@@ -118,6 +126,7 @@ func (s *nodeS[T]) remove(item *nodeS[T]) (removed bool) { //nolint:revive
 	if item == nil {
 		return
 	}
+	// remove a child
 	for i, c := range s.children {
 		if c == item {
 			removed, s.children = true, append(s.children[:i], s.children[i+1:]...)
@@ -184,14 +193,14 @@ func (s *nodeS[T]) insertInternal(word []rune, fullPath string, data T) (node *n
 }
 
 func (s *nodeS[T]) split(pos int, word []rune) (newNode *nodeS[T]) { //nolint:unparam,revive
+	tip("[store/radix] [split] original path, pathS: %q, %q", string(s.path), s.pathS)
+
 	// origPath, origPathS := s.path, s.pathS
 	// if assertEnabled {
 	// 	defer func() {
 	// 		origPath, origPathS = []rune(origPathS), string(origPath)
 	// 	}()
 	// }
-
-	tip("[store/radix] [split] original path, pathS: %q, %q", string(s.path), s.pathS)
 
 	d := len(s.path) - pos
 	_ = word

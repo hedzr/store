@@ -30,6 +30,10 @@ type Trie[T any] interface {
 
 	// SetNode at once, advanced api here.
 	SetNode(path string, data T, tag any, descriptionAndComments ...string) (ret Node[T], oldData any)
+	// SetEmpty clear the Data field.
+	SetEmpty(path string) (oldData any)
+	// Update a node whether it existed or not.
+	Update(path string, cb func(node Node[T], old any))
 
 	TypedGetters[T] // getters
 
@@ -68,21 +72,22 @@ type Node[T any] interface {
 	Dup() (newNode *nodeS[T])
 
 	Data() T             // retrieve the data value, just valid for leaf node
-	Key() string         // retrieve the key field, just valid for leaf node
+	Key() string         // retrieve the key field (full path of the node), just valid for leaf node
 	Description() string // retrieve the description field, just valid for leaf node
 	Comment() string     // retrieve the remarks field, just valid for leaf node
 	Tag() any            // retrieve the tag field, just valid for leaf node
 
-	SetData(data T)                  // setter for data field
-	SetComment(desc, comment string) // setter for desc and comment field
-	SetTag(tag any)                  // setter for tag field
+	SetData(data T)                  // setter for Data field
+	SetEmpty()                       // SetEmpty clear the Data field. An empty node is same with node.Empty() or ! HasData()
+	SetComment(desc, comment string) // setter for Description and Comment field
+	SetTag(tag any)                  // setter for Tag field
 
 	Modified() bool     // node data changed by user?
 	SetModified(b bool) // set modified state
 	ToggleModified()    // toggle modified state
 
 	IsLeaf() bool  // check if a node type is leaf
-	HasData() bool // check if a node has data. only leaf node can contain data field
+	HasData() bool // check if a node has data. only leaf node can contain data field. = ! Empty() bool
 }
 
 const NoDelimiter rune = 0 // reserved for an internal special tree

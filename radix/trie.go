@@ -191,6 +191,27 @@ func (s *trieS[T]) SetNode(path string, data T, tag any, descriptionAndComments 
 	return
 }
 
+// SetEmpty clear the Data field.
+func (s *trieS[T]) SetEmpty(path string) (oldData any) { //nolint:revive
+	if s.prefix != "" {
+		path = s.Join(s.prefix, path) //nolint:revive
+	}
+	var v T
+	node, old := s.root.insertInternal([]rune(path), path, v)
+	node.SetEmpty()
+	return old
+}
+
+func (s *trieS[T]) Update(path string, cb func(node Node[T], old any)) {
+	if s.prefix != "" {
+		path = s.Join(s.prefix, path) //nolint:revive
+	}
+	var v T
+	node, old := s.root.insertInternal([]rune(path), path, v)
+	cb(node, old)
+	return
+}
+
 // SetComment sets the Desc and Comment field of a node specified by path.
 //
 // Nothing happens if the given path cannot be found.
