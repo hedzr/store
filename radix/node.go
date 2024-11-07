@@ -32,16 +32,17 @@ var _ Node[any] = (*nodeS[any])(nil) // assertion helper
 
 type Extractor func(outputPtr any, defaultValue ...any) (err error) // data field extractor
 
-func (s *nodeS[T]) isBranch() bool      { return s.nType&NTMask == NTBranch }
-func (s *nodeS[T]) hasData() bool       { return s.nType&NTData != 0 }
-func (s *nodeS[T]) Modified() bool      { return s.nType&NTModified != 0 } // modification state
-func (s *nodeS[T]) Description() string { return s.description }           // description field
-func (s *nodeS[T]) Comment() string     { return s.comment }               // comment field
-func (s *nodeS[T]) Tag() any            { return s.tag }                   // tag field
-func (s *nodeS[T]) Key() string         { return s.pathS }                 // key field is the full path of this node
-
-func (s *nodeS[T]) IsLeaf() bool  { return s.nType&NTMask == NTLeaf } // leaf node?
-func (s *nodeS[T]) HasData() bool { return s.nType&NTData != 0 }      //nolint:revive //data field is valid?
+func (s *nodeS[T]) isBranch() bool      { return s.nType&NTMask == NTBranch } // branch node, not leaf node
+func (s *nodeS[T]) hasData() bool       { return s.nType&NTData != 0 }        // has data?
+func (s *nodeS[T]) isEmpty() bool       { return s.nType&NTData == 0 }        // no data?
+func (s *nodeS[T]) Modified() bool      { return s.nType&NTModified != 0 }    // modification state
+func (s *nodeS[T]) Description() string { return s.description }              // description field
+func (s *nodeS[T]) Comment() string     { return s.comment }                  // comment field
+func (s *nodeS[T]) Tag() any            { return s.tag }                      // tag field
+func (s *nodeS[T]) Key() string         { return s.pathS }                    // key field is the full path of this node
+func (s *nodeS[T]) keyPiece() string    { return string(s.path) }             // key piece field for this node
+func (s *nodeS[T]) IsLeaf() bool        { return s.nType&NTMask == NTLeaf }   // leaf node?
+func (s *nodeS[T]) HasData() bool       { return s.nType&NTData != 0 }        //nolint:revive //data field is valid?
 
 // SetModified sets the modified state to true or false.
 //
