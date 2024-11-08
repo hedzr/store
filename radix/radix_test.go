@@ -46,9 +46,11 @@ func TestTrieS_General(t *testing.T) {
 	trie := newTrie[any]()
 	trie.Insert("apple", 1)
 	t.Logf("\nPath    Data\n%v\n", trie.dump(true))
-	assertTrue(t, trie.Search("apple"), `expecting trie.Search("apple") return true`)     // 返回 True
-	assertFalse(t, trie.Search("app"), `expecting trie.Search("app") return false`)       // 返回 False
-	assertTrue(t, trie.StartsWith("app"), `expecting trie.StartsWith("app") return true`) // 返回 True
+	assertTrue(t, trie.Search("apple"), `expecting trie.Search("apple") return true`) // 返回 True
+	assertFalse(t, trie.Search("app"), `expecting trie.Search("app") return false`)   // 返回 False
+	assertFalse(t, trie.Has("app"), `expecting trie.Search("app") return false`)      // 返回 False
+	assertTrue(t, trie.HasPart("app"), `expecting trie.Search("app") return true`)    // 返回 False
+	// assertTrue(t, trie.StartsWith("app", 'a'), `expecting trie.StartsWith("app",'a') return true`) // 返回 True
 	trie.Insert("app", 2)
 	t.Logf("\nPath    Data\n%v\n", trie.dump(true))
 	assertTrue(t, trie.Search("app"), `expecting trie.Search("app") again return true`) // 返回 True

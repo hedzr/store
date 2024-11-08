@@ -288,10 +288,26 @@ var _ Trie[any] = (*trieS[any])(nil) // assertion helper
 
 var converter = evendeep.Cvt{}
 
+func (s *trieS[T]) StartsWith(path string, r rune) bool {
+	node, _, _, found := s.Locate(path)
+	if !found {
+		return false
+	}
+	return node.StartsWith(r)
+}
+
+func (s *trieS[T]) EndsWith(path string, r rune) bool {
+	node, _, _, found := s.Locate(path)
+	if !found {
+		return false
+	}
+	return node.EndsWith(r)
+}
+
 func (s *trieS[T]) GetR(path string, defaultVal ...map[string]any) (ret map[string]any, err error) { //nolint:revive
 	var (
 		found, partialMatched, branch bool
-		node                          *nodeS[T]
+		nodeX                         *nodeS[T]
 	)
 
 	if path == "" || path == "." || path == "(root)" {
@@ -304,19 +320,19 @@ func (s *trieS[T]) GetR(path string, defaultVal ...map[string]any) (ret map[stri
 
 		ret = make(map[string]any)
 		s.root.Walk(func(path, fragment string, node Node[T]) { //nolint:revive
-			if (path == "" || !s.endsWith(path, s.delimiter)) && !node.isBranch() {
+			if (path == "" || !s.simpleEndsWith(path, s.delimiter)) && !node.IsBranch() {
 				ret[path] = node.Data()
 			}
 		})
 		return
 	}
 
-	node, branch, partialMatched, found = s.Locate(path)
+	nodeX, branch, partialMatched, found = s.Locate(path)
 	if found || partialMatched {
 		_, _, ret = branch, partialMatched, make(map[string]any)
 
-		node.Walk(func(path, fragment string, node Node[T]) { //nolint:revive
-			if !s.endsWith(path, s.delimiter) && !node.isBranch() {
+		nodeX.Walk(func(path, fragment string, node Node[T]) { //nolint:revive
+			if !s.simpleEndsWith(path, s.delimiter) && !node.IsBranch() {
 				// For a trie like:
 				//
 				//     app.                          <B>
@@ -360,7 +376,7 @@ func (s *trieS[T]) MustR(path string, defaultVal ...map[string]any) (ret map[str
 func (s *trieS[T]) GetM(path string, opts ...MOpt[T]) (ret map[string]any, err error) { //nolint:revive
 	var (
 		found, partialMatched, branch bool
-		node                          *nodeS[T]
+		nodeX                         *nodeS[T]
 	)
 
 	if path == "" || path == "." || path == "(root)" {
@@ -370,7 +386,7 @@ func (s *trieS[T]) GetM(path string, opts ...MOpt[T]) (ret map[string]any, err e
 			opt(&putter)
 		}
 		s.root.Walk(func(path, fragment string, node Node[T]) { //nolint:revive
-			if (path == "" || !s.endsWith(path, s.delimiter)) && !node.isBranch() {
+			if (path == "" || !s.simpleEndsWith(path, s.delimiter)) && !node.IsBranch() {
 				if putter.filterFn != nil {
 					if !putter.filterFn(node) {
 						return
@@ -385,7 +401,7 @@ func (s *trieS[T]) GetM(path string, opts ...MOpt[T]) (ret map[string]any, err e
 		return
 	}
 
-	node, branch, partialMatched, found = s.Locate(path)
+	nodeX, branch, partialMatched, found = s.Locate(path)
 	if found || partialMatched {
 		_, _, ret = branch, partialMatched, make(map[string]any)
 		putter := prefixPutter[T]{prefix: strings.Split(s.Join(s.prefix, path), string(s.delimiter))}
@@ -393,8 +409,8 @@ func (s *trieS[T]) GetM(path string, opts ...MOpt[T]) (ret map[string]any, err e
 			opt(&putter)
 		}
 		logz.Verbose("[GetM] loop subtree and return as a map", "path", putter.prefix)
-		node.Walk(func(path, fragment string, node Node[T]) {
-			if !s.endsWith(path, s.delimiter) && !node.isBranch() {
+		nodeX.Walk(func(path, fragment string, node Node[T]) {
+			if !s.simpleEndsWith(path, s.delimiter) && !node.IsBranch() {
 				logz.Verbose("  - put into map", "path", path, "fragment", fragment)
 				putter.put(ret, path, string(s.delimiter), node.Data())
 			}

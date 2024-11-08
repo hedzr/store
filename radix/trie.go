@@ -249,21 +249,6 @@ func (s *trieS[T]) Merge(pathAt string, data map[string]any) (err error) {
 	return
 }
 
-// StartsWith tests if a path exists.
-//
-// Using Location to retrieve more info for seaching a path.
-func (s *trieS[T]) StartsWith(path string) (yes bool) {
-	if s.prefix != "" {
-		path = s.Join(s.prefix, path) //nolint:revive
-	}
-	node, _, partialMatched := s.search(path)
-	yes = node != nil || partialMatched
-	if partialMatched {
-		yes = strings.HasPrefix(node.pathS, path)
-	}
-	return
-}
-
 // Search checks the path if it exists. = StartsWith
 //
 // Only fully-matched node are considered as FOUND.
@@ -315,6 +300,21 @@ func (s *trieS[T]) Has(path string) (found bool) {
 	}
 	node, _, partialMatched := s.search(path)
 	found = node != nil && !partialMatched // && !node.isBranch()
+	return
+}
+
+// HasPart tests if a path exists even if partial matched.
+//
+// Using Location to retrieve more info for searching a path.
+func (s *trieS[T]) HasPart(path string) (yes bool) {
+	if s.prefix != "" {
+		path = s.Join(s.prefix, path) //nolint:revive
+	}
+	node, _, partialMatched := s.search(path)
+	yes = node != nil || partialMatched
+	if partialMatched {
+		yes = strings.HasPrefix(node.pathS, path)
+	}
 	return
 }
 
@@ -453,7 +453,7 @@ func (s *trieS[T]) Delimiter() rune { return s.delimiter }
 // See also TestTrieS_Delimiter(),
 func (s *trieS[T]) SetDelimiter(delimiter rune) { s.delimiter = delimiter }
 
-func (s *trieS[T]) endsWith(str string, ch rune) bool { //nolint:revive
+func (s *trieS[T]) simpleEndsWith(str string, ch rune) bool { //nolint:revive
 	if str != "" {
 		runes := []rune(str)
 		return runes[len(runes)-1] == ch

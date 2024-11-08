@@ -94,10 +94,10 @@ func TestTrieS_Delimiter(t *testing.T) { //nolint:revive
 		t.Fail()
 	}
 
-	assertEqual(t, true, trie.StartsWith("/"))
-	assertEqual(t, true, trie.StartsWith("/sup"))
-	assertEqual(t, true, trie.StartsWith("/support"))
-	assertEqual(t, false, trie.StartsWith("/suspend"))
+	assertEqual(t, true, trie.Has("/"))
+	assertEqual(t, true, trie.HasPart("/sup"))
+	assertEqual(t, true, trie.Has("/support"))
+	assertEqual(t, false, trie.Has("/suspend"))
 
 	conf := trie.WithPrefix("/about-us")
 	conf.SetComment("team", "desc1", "comment1")
@@ -113,9 +113,9 @@ func TestTrieS_Delimiter(t *testing.T) { //nolint:revive
 		trie.Delimiter(),
 		trie.Dump())
 
-	assertEqual(t, true, conf.StartsWith("y"))
-	assertEqual(t, true, conf.StartsWith("y/tr"))
-	assertEqual(t, false, conf.StartsWith("y/tr/1"))
+	assertEqual(t, true, conf.HasPart("y"))
+	assertEqual(t, true, conf.HasPart("y/tr"))
+	assertEqual(t, false, conf.HasPart("y/tr/1"))
 
 	d := conf.MustGet("x")
 	assertEqual(t, nil, d)

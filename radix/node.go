@@ -42,7 +42,9 @@ func (s *nodeS[T]) Tag() any            { return s.tag }                      //
 func (s *nodeS[T]) Key() string         { return s.pathS }                    // key field is the full path of this node
 func (s *nodeS[T]) keyPiece() string    { return string(s.path) }             // key piece field for this node
 func (s *nodeS[T]) IsLeaf() bool        { return s.nType&NTMask == NTLeaf }   // leaf node?
+func (s *nodeS[T]) IsBranch() bool      { return s.nType&NTMask == NTBranch } // branch node?
 func (s *nodeS[T]) HasData() bool       { return s.nType&NTData != 0 }        //nolint:revive //data field is valid?
+func (s *nodeS[T]) Empty() bool         { return s.nType&NTData == 0 }        //nolint:revive //data field is empty?
 
 // SetModified sets the modified state to true or false.
 //
@@ -110,6 +112,20 @@ func (s *nodeS[T]) SetTag(tag any) { //nolint:revive
 	// 	return
 	// }
 	s.tag = tag
+}
+
+func (s *nodeS[T]) StartsWith(ch rune) bool { //nolint:revive
+	if len(s.path) == 0 {
+		return false
+	}
+	return s.path[0] == ch
+}
+
+func (s *nodeS[T]) EndsWith(ch rune) bool { //nolint:revive
+	if len(s.path) == 0 {
+		return false
+	}
+	return s.path[len(s.path)-1] == ch
 }
 
 func (s *nodeS[T]) endsWith(ch rune) bool { //nolint:revive

@@ -5,7 +5,6 @@ type Trie[T any] interface {
 	// Insert and Search, more Basic Trie Operations
 
 	Insert(path string, data T) (oldData any)                                // Insert data (T) to path
-	StartsWith(word string) (yes bool)                                       // tests if word exists, even if a partial matching.
 	Search(word string) (found bool)                                         // tests if word exists (= Has)
 	Query(path string) (data T, branch, found bool, err error)               // full ability word searching (=enhanced Has)
 	Locate(path string) (node *nodeS[T], branch, partialMatched, found bool) // Locate is an enhanced Has and returns more internal information (=enhanced Has)
@@ -20,11 +19,15 @@ type Trie[T any] interface {
 
 	Merge(pathAt string, data map[string]any) (err error) // advanced operation to Merge hierarchical data
 
+	StartsWith(path string, r rune) (yes bool) // tests the last path fragment by delimiter
+	EndsWith(path string, r rune) (yes bool)   // tests the last path fragment by delimiter
+
 	// Set and Get and MustGet and Has, for Store interface
 
 	// Set = Insert
 	Set(path string, data T) (node Node[T], oldData any) // = Insert
 	Has(path string) (found bool)                        // = Search
+	HasPart(path string) (found bool)                    // tests if word exists, even if a partial matching.
 	Get(path string) (data T, found bool)                // shortcut to Query
 	MustGet(path string) (data T)                        // shortcut to Get
 
@@ -56,14 +59,17 @@ type Trie[T any] interface {
 
 // Node is a Trie-tree node.
 type Node[T any] interface {
-	isBranch() bool
-	hasData() bool
-	endsWith(ch rune) bool
-	endsWithLite(ch rune) bool
-	insert(word []rune, fullPath string, data T) (node Node[T], oldData any)
-	remove(item *nodeS[T]) (removed bool)
-	matchR(word []rune, delimiter rune, parentNode *nodeS[T]) (matched, partialMatched bool, child, parent *nodeS[T])
-	dump(noColor bool) string
+	// isBranch() bool
+	// hasData() bool
+	// endsWith(ch rune) bool
+	// endsWithLite(ch rune) bool
+	// insert(word []rune, fullPath string, data T) (node Node[T], oldData any)
+	// remove(item *nodeS[T]) (removed bool)
+	// matchR(word []rune, delimiter rune, parentNode *nodeS[T]) (matched, partialMatched bool, child, parent *nodeS[T])
+	// dump(noColor bool) string
+
+	EndsWith(ch rune) bool
+	StartsWith(ch rune) bool
 
 	// Walk iterators the whole sub-tree from this node.
 	Walk(cb func(path, fragment string, node Node[T]))
@@ -86,8 +92,10 @@ type Node[T any] interface {
 	SetModified(b bool) // set modified state
 	ToggleModified()    // toggle modified state
 
-	IsLeaf() bool  // check if a node type is leaf
-	HasData() bool // check if a node has data. only leaf node can contain data field. = ! Empty() bool
+	IsLeaf() bool   // check if a node type is leaf
+	IsBranch() bool // check if a node is branch (has children)
+	HasData() bool  // check if a node has data. only leaf node can contain data field. = ! Empty() bool
+	Empty() bool    // check if the node has no data. It means an empty data.
 }
 
 const NoDelimiter rune = 0 // reserved for an internal special tree
