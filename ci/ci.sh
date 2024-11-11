@@ -34,11 +34,13 @@
 #
 # Howto release the New Version:
 #
-# 1. `$0 update`: upgrade deps and make security patches
+# 1. `$0 update`                                             : upgrade deps and make security patches
 # 2. edit doc.go and CHANGELOG
-# 3. `$0 update-main`: upgrade deps to the releasing version of main lib (hedzr/store)
-# 4. `make cov`: ensure all tests passed
-# 5.  commit all, bump version, push all
+# 3. `$0 update-main`                                        : upgrade deps to the releasing version of main lib (hedzr/store)
+# 4. `make cov`                                              : ensure all tests passed
+# 5. `git push --all`                                        : commit all, and wait for remote tests passed
+# 6. `git tag $VER && git push --all && git push --tags`     : bump version, push it
+# 7. `$0 pushlish-all && git push --all && git push --tags`  : release the submodules
 #
 # Using ci.sh to upgrade go modules under current directory, try this:
 #
