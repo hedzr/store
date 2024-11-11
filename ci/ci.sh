@@ -30,7 +30,17 @@
 #     $0 commit-examples
 #  7. push all of them
 #
-# Using ci.sh to upgrade go modules in current directory, try this:
+# [deprecated] END
+#
+# Howto release the New Version:
+#
+# 1. `$0 update`: upgrade deps and make security patches
+# 2. edit doc.go and CHANGELOG
+# 3. `$0 update-main`: upgrade deps to the releasing version of main lib (hedzr/store)
+# 4. `make cov`: ensure all tests passed
+# 5.  commit all, bump version, push all
+#
+# Using ci.sh to upgrade go modules under current directory, try this:
 #
 #     $0 update
 #
@@ -362,6 +372,29 @@ build-update() {
 			d="$(dirname $f)"
 			if [ -d "$d" ]; then
 				do-update-dep "$d"
+			fi
+		done
+	done
+	echo
+}
+
+# update all refs in child modules to hedzr/store's releasing version
+build-update-main() {
+	echo "VERSION: $VER"
+	local ix=0
+	for sm in "${1:-.}"; do
+		for f in $(find ./$sm -type f -iname 'go.mod' -print); do
+			d="$(dirname $f)"
+			if [ -d "$d" ]; then
+				echo "*** file: $f ***************"
+				# echo "d: $d"
+				sed -i '' -E -e 's#(hedzr/store.*)v[0-9]+\.[0-9]+\.[0-9]+#\1'$VER'#g' $f &&
+					{ echo "   $f: $(grep -E 'hedzr/store.*v\d+' $f)" && [ -f "$f.bak" ] && rm "$f.bak"; } ||
+					echo "   $f: FAILED"
+				let ix++
+				# if [[ $ix -gt 2 ]]; then
+				# 	return
+				# fi
 			fi
 		done
 	done
