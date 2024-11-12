@@ -59,9 +59,9 @@ func TestTrieS_InsertPath(t *testing.T) {
 
 	expect := `  /                             <B>
     s                           <B>
-      earch                     <L> /search => 1
+      earch/*kwargs             <L> /search/*kwargs => 1
       upport                    <L> /support => 2
-    blog/:post/                 <L> /blog/:post/ => 3
+    blog/:year/:month/:post     <L> /blog/:year/:month/:post => 3
     about-us/                   <B>
       team                      <L> /about-us/team => 4 // comment | tag = 3.13 ~ desc
       legal                     <L> /about-us/legal => 6
@@ -166,13 +166,57 @@ func TestTrieS_Delimiter(t *testing.T) { //nolint:revive
 	})
 }
 
+func TestTrieS_Locate(t *testing.T) {
+	trie := newTrieTree2()
+	trie.SetDelimiter('/')
+	t.Logf("\nPath of 'trie' (delimeter=%v)\n%v\n",
+		trie.Delimiter(),
+		trie.Dump())
+
+	node, kvp, br, pm, found := trie.Locate("/search/any/thing/here")
+	if !found {
+		t.Fail()
+	} else if br || pm {
+		t.Fail()
+	} else {
+		t.Logf("node matched ok: %v", node)
+		if kvp == nil {
+			t.Fail()
+		}
+		if kvp["kwargs"] != "any/thing/here" {
+			t.Fail()
+		}
+	}
+
+	node, kvp, br, pm, found = trie.Locate("/blog/2011/09/why-so-concise")
+	if !found {
+		t.Fail()
+	} else if br || pm {
+		t.Fail()
+	} else {
+		t.Logf("node matched ok: %v", node)
+		if kvp == nil {
+			t.Fail()
+		}
+		if kvp["year"] != "2011" {
+			t.Fail()
+		}
+		if kvp["month"] != "09" {
+			t.Fail()
+		}
+		if kvp["post"] != "why-so-concise" {
+			t.Fail()
+		}
+	}
+}
+
 func newTrieTree2() *trieS[any] {
 	trie := NewTrie[any]()
-	trie.Insert("/search", 1)
+	trie.Insert("/search/*kwargs", 1)
 	// t.Logf("\nPath\n%v\n", trie.dump())
 	trie.Insert("/support", 2)
 	// t.Logf("\nPath\n%v\n", trie.dump())
-	trie.Insert("/blog/:post/", 3)
+	trie.Insert("/blog/:year/:month/:post", 3)
 	trie.Insert("/about-us/team", 4)
 	trie.Insert("/contact", 5)
 	trie.Insert("/about-us/legal", 6)
