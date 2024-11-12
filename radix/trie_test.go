@@ -140,7 +140,7 @@ func TestTrieS_Delimiter(t *testing.T) { //nolint:revive
 	if has {
 		t.Fail()
 	}
-	n, b, pm, found := conf.Locate("team")
+	n, _, b, pm, found := conf.Locate("team")
 	if !found {
 		t.Fail()
 		_, _, _ = n, b, pm

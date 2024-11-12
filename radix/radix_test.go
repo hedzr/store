@@ -156,7 +156,7 @@ func TestTrieS_Query(t *testing.T) {
 		{"app.", true, nil},
 		{"a", false, nil},
 	} {
-		data, _, found, _ := trie.Query(c.query)
+		data, _, _, found, _ := trie.Query(c.query)
 		if found == c.found && data == c.data {
 			continue
 		}

@@ -219,7 +219,7 @@ func (s *trieS[T]) SetComment(path, description, comment string) (ok bool) { //n
 	if s.prefix != "" {
 		path = s.Join(s.prefix, path) //nolint:revive
 	}
-	node, _, partialMatched := s.search(path)
+	node, _, _, partialMatched := s.search(path)
 	if ok = node != nil || partialMatched; ok {
 		node.description, node.comment = description, comment
 	}
@@ -233,7 +233,7 @@ func (s *trieS[T]) SetTag(path string, tag any) (ok bool) { //nolint:revive// se
 	if s.prefix != "" {
 		path = s.Join(s.prefix, path) //nolint:revive
 	}
-	node, _, partialMatched := s.search(path)
+	node, _, _, partialMatched := s.search(path)
 	if ok = node != nil || partialMatched; ok {
 		node.tag = tag
 	}
@@ -262,17 +262,17 @@ func (s *trieS[T]) Search(path string) (found bool) {
 	if s.prefix != "" {
 		path = s.Join(s.prefix, path) //nolint:revive
 	}
-	node, _, partialMatched := s.search(path)
+	node, _, _, partialMatched := s.search(path)
 	found = node != nil && !partialMatched // && !node.isBranch()
 	return
 }
 
 // Locate checks a path if it exists.
-func (s *trieS[T]) Locate(path string) (node *nodeS[T], branch, partialMatched, found bool) { //nolint:revive
+func (s *trieS[T]) Locate(path string) (node *nodeS[T], kvpair KVPair, branch, partialMatched, found bool) { //nolint:revive
 	if s.prefix != "" {
 		path = s.Join(s.prefix, path) //nolint:revive
 	}
-	node, _, partialMatched = s.search(path)
+	node, _, kvpair, partialMatched = s.search(path)
 	found, branch = node != nil && !partialMatched, safeIsBranch(node)
 	return
 }
@@ -298,7 +298,7 @@ func (s *trieS[T]) Has(path string) (found bool) {
 	if s.prefix != "" {
 		path = s.Join(s.prefix, path) //nolint:revive
 	}
-	node, _, partialMatched := s.search(path)
+	node, _, _, partialMatched := s.search(path)
 	found = node != nil && !partialMatched // && !node.isBranch()
 	return
 }
@@ -310,7 +310,7 @@ func (s *trieS[T]) HasPart(path string) (yes bool) {
 	if s.prefix != "" {
 		path = s.Join(s.prefix, path) //nolint:revive
 	}
-	node, _, partialMatched := s.search(path)
+	node, _, _, partialMatched := s.search(path)
 	yes = node != nil || partialMatched
 	if partialMatched {
 		yes = strings.HasPrefix(node.pathS, path)
@@ -332,7 +332,7 @@ func (s *trieS[T]) RemoveEx(path string) (nodeRemoved, nodeParent Node[T], remov
 	if s.prefix != "" {
 		path = s.Join(s.prefix, path) //nolint:revive
 	}
-	node, parent, partialMatched := s.search(path)
+	node, parent, _, partialMatched := s.search(path)
 	found := node != nil && !partialMatched // && !node.isBranch()
 	if found {
 		if parent != nil {
@@ -352,7 +352,7 @@ func (s *trieS[T]) RemoveEx(path string) (nodeRemoved, nodeParent Node[T], remov
 // If nothing is found, zero data returned.
 func (s *trieS[T]) MustGet(path string) (data T) {
 	var branch, found bool
-	data, branch, found, _ = s.Query(path)
+	data, _, branch, found, _ = s.Query(path)
 	if !found && !branch {
 		data = *new(T)
 	}
@@ -361,7 +361,7 @@ func (s *trieS[T]) MustGet(path string) (data T) {
 
 // Get searches the given path and return its data field if found.
 func (s *trieS[T]) Get(path string) (data T, found bool) {
-	data, _, found, _ = s.Query(path)
+	data, _, _, found, _ = s.Query(path)
 	return
 }
 
@@ -371,11 +371,12 @@ func (s *trieS[T]) Get(path string) (data T, found bool) {
 //
 // If something is wrong, 'err' might collect the reason for why. But,
 // it generally is errors.NotFound (errors.Code -5).
-func (s *trieS[T]) Query(path string) (data T, branch, found bool, err error) { //nolint:revive
+func (s *trieS[T]) Query(path string) (data T, kvpair KVPair, branch, found bool, err error) { //nolint:revive
 	if s.prefix != "" {
 		path = s.Join(s.prefix, path) //nolint:revive
 	}
-	node, _, partialMatched := s.search(path)
+	node, _, kvp, partialMatched := s.search(path)
+	kvpair = kvp
 	found = node != nil && !partialMatched
 	if found {
 		if node.isBranch() {
@@ -395,15 +396,17 @@ func (s *trieS[T]) Query(path string) (data T, branch, found bool, err error) { 
 	return
 }
 
-func (s *trieS[T]) search(word string) (found, parent *nodeS[T], partialMatched bool) { //nolint:revive
+func (s *trieS[T]) search(word string) (found, parent *nodeS[T], kvpair KVPair, partialMatched bool) { //nolint:revive
 	found = s.root
 	// stringtoslicerune needs two pass full-scanning for a string, but it have to be to do.
-	if matched, pm, child, p := found.matchR([]rune(word), s.delimiter, nil); matched || pm {
-		return child, p, pm
+	if matched, pm, kvp, child, p := found.matchR([]rune(word), s.delimiter, nil); matched || pm {
+		return child, p, kvp, pm
 	}
 	found = nil
 	return
 }
+
+type KVPair map[string]string
 
 // Delimiter returns the current delimiter in using.
 //
@@ -491,7 +494,7 @@ func (s *trieS[T]) Dup() (newTrie *trieS[T]) { //nolint:revive
 func (s *trieS[T]) Walk(path string, cb func(path, fragment string, node Node[T])) { //nolint:revive
 	root := s.root
 	if path != "" {
-		node, parent, partialMatched := s.search(path)
+		node, parent, _, partialMatched := s.search(path)
 		if !partialMatched {
 			root = parent
 			if runes := []rune(path); runes[len(runes)-1] == s.delimiter {

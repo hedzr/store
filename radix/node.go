@@ -261,25 +261,47 @@ func (s *nodeS[T]) matchChildren(word []rune) (matched bool, child *nodeS[T]) {
 	return
 }
 
-func (s *nodeS[T]) matchR(word []rune, delimiter rune, parentNode *nodeS[T]) (matched, partialMatched bool, child, parent *nodeS[T]) { //nolint:revive
+func extractor(from, to int, src, piece []rune, delimiter rune) (ret string, pos int, end bool) {
+	j := 0
+	for i := from; i < to; j++ {
+		if src[i] == delimiter {
+			ret, pos = string(piece[:j]), i
+			break
+		}
+		piece[j] = src[i]
+		i++
+		if i == to {
+			ret, pos, end = string(piece[:j+1]), i, true
+		}
+	}
+	return
+}
+
+func (s *nodeS[T]) matchR(word []rune, delimiter rune, parentNode *nodeS[T]) (matched, partialMatched bool, kvp KVPair, child, parent *nodeS[T]) { //nolint:revive
 	wl, l := len(word), len(s.path)
 	if wl == 0 {
-		return true, false, s, parentNode
+		return true, false, nil, s, parentNode
 	}
 
-	matchedL, minL := 0, min(l, wl)
-	for ; matchedL < minL; matchedL++ {
-		if s.path[matchedL] == word[matchedL] {
+	dm, srcMatchedL, dstMatchedL, minL, maxL := false, 0, 0, min(l, wl), max(l, wl)
+	if parentNode != nil {
+		dm = parentNode.endsWith(delimiter)
+	}
+masterLoop:
+	for ; srcMatchedL < minL; srcMatchedL++ {
+		ch := s.path[srcMatchedL]
+		if ch1 := word[srcMatchedL]; ch == ch1 {
+			dm = ch == delimiter
 			continue
 		}
 		if matchedL < l {
 			// partial matched.
 			if matchedL < wl {
 				// eg: matching 'apple' on 'apk'
-				return false, false, nil, nil
+				return false, false, nil, nil, nil
 			}
 			// eg: matching 'app' on 'apple', or 'apk' on 'apple'
-			return true, false, s, parentNode
+			return true, false, nil, s, parentNode
 		}
 	}
 
@@ -296,7 +318,17 @@ func (s *nodeS[T]) matchR(word []rune, delimiter rune, parentNode *nodeS[T]) (ma
 			return
 		}
 		for _, child = range s.children {
-			matched, partialMatched, child, parent = child.matchR(word[minL:], delimiter, s)
+			var kvpChild KVPair
+			matched, partialMatched, kvpChild, child, parent = child.matchR(restPart, delimiter, s)
+			if kvpChild != nil {
+				if kvp == nil {
+					kvp = kvpChild
+				} else {
+					for k, v := range kvpChild {
+						kvp[k] = v
+					}
+				}
+			}
 			if matched || partialMatched {
 				return
 			}
