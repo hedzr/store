@@ -76,25 +76,25 @@ func (s *nodeS[T]) ResetModified() {
 
 // Data returns the Data field of a node.
 func (s *nodeS[T]) Data() (data T) {
-	if !s.isBranch() {
-		data = s.data
-	}
+	// if !s.isBranch() {
+	data = s.data
+	// }
 	return
 }
 
 // SetData sets the Data field of a node.
 func (s *nodeS[T]) SetData(data T) {
-	if !s.isBranch() {
-		s.data = data
-		s.nType |= NTData
-	}
+	// if !s.isBranch() {
+	s.data = data
+	s.nType |= NTData
+	// }
 }
 
 // SetEmpty clear the Data field.
 func (s *nodeS[T]) SetEmpty() {
-	if !s.isBranch() {
-		s.nType &= ^NTData
-	}
+	// if !s.isBranch() {
+	s.nType &= ^NTData
+	// }
 }
 
 // SetComment sets the Description and Comment field.
@@ -185,6 +185,7 @@ func (s *nodeS[T]) insertInternal(word []rune, fullPath string, data T) (node *n
 	if cpl < ourLen {
 		// eg: insert 'apple' into 'appZ', or insert 'appZ' into 'apple'
 		base.split(cpl, word) // split this as 'app' and 'Z'/'le'
+		// eg2: insert '/app/:client/tokens' into '/app/:client/tokens/:token',
 	}
 
 	if cpl < wordLen {
@@ -236,6 +237,8 @@ func (s *nodeS[T]) split(pos int, word []rune) (newNode *nodeS[T]) { //nolint:un
 	s.pathS = s.pathS[:len(s.pathS)-d] // s.pathS[:pos] //
 	s.children = []*nodeS[T]{newNode}
 	s.nType = NTBranch
+	var t T
+	s.data = t
 	assert(strings.HasSuffix(s.pathS, string(s.path)), "parentNode: pathS(%q) should end with path(%q)", s.pathS, string(s.path))
 	return
 }
