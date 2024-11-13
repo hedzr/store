@@ -278,49 +278,129 @@ func extractor(from, to int, src, piece []rune, delimiter rune) (ret string, pos
 	return
 }
 
+// matchR matches a path by walking child nodes recursively.
 func (s *nodeS[T]) matchR(word []rune, delimiter rune, parentNode *nodeS[T]) (matched, partialMatched bool, kvp KVPair, child, parent *nodeS[T]) { //nolint:revive
 	wl, l := len(word), len(s.path)
 	if wl == 0 {
 		return true, false, nil, s, parentNode
 	}
 
-	dm, srcMatchedL, dstMatchedL, minL, maxL := false, 0, 0, min(l, wl), max(l, wl)
+	// dm: delimiter just matched?
+	// mptr: the working node ptr
+	mptr, dm, srcMatchedL, dstMatchedL, minL, maxL := s, false, 0, 0, min(l, wl), max(l, wl)
 	if parentNode != nil {
 		dm = parentNode.endsWith(delimiter)
 	}
 masterLoop:
 	for ; srcMatchedL < minL; srcMatchedL++ {
-		ch := s.path[srcMatchedL]
+		ch := mptr.path[srcMatchedL]
 		if ch1 := word[srcMatchedL]; ch == ch1 {
 			dm = ch == delimiter
-			continue
+			continue // first comparing loop, assume the index to mptr.path and word are both identical.
 		}
-		if matchedL < l {
-			// partial matched.
-			if matchedL < wl {
+
+		dstMatchedL = srcMatchedL // sync the index now
+
+		// if partial matched,
+		if srcMatchedL < l {
+			if srcMatchedL < wl {
+				var id, val string
+				var srcEnd, dstEnd bool
+			retriever:
+				if dm {
+					// matching "/*filepath"
+					if ch == '*' {
+						piece := make([]rune, maxL)
+						id, srcMatchedL, srcEnd = extractor(srcMatchedL+1, l, mptr.path, piece, delimiter)
+						if !srcEnd {
+							logz.Warn("[matchR] invalid wildcard matching rule, it can only at end of the rule", "id", id, "srcMatchedL", srcMatchedL)
+						}
+						val, dstMatchedL, dstEnd = string(word[dstMatchedL:]), wl, true
+						if kvp == nil {
+							kvp = make(KVPair)
+						}
+						kvp[id] = val
+						logz.Verbose("[matchR] ident matched", "ident", id, "val", val, "key-path", mptr.pathS, "matching", string(word))
+						// break masterLoop
+						matched, child, parent = true, mptr, parentNode
+						return
+					}
+					// matching "/:id/"
+					if ch == ':' {
+						// delimiter+':'+ident? | eg, matching source word "/hello/bob" on a trie-path pattern "/hello/:name"
+
+						piece := make([]rune, maxL)
+						id, srcMatchedL, srcEnd = extractor(srcMatchedL+1, l, mptr.path, piece, delimiter)
+						val, dstMatchedL, dstEnd = extractor(dstMatchedL, wl, word, piece, delimiter)
+						// logz.Verbose("[matchR] ident matched", "ident", id, "val", val, "key-path", mptr.pathS, "matching", string(word))
+						// _, _, _, _, _ = dm, srcEnd, dstEnd, srcMatchedL, dstMatchedL
+
+						if kvp == nil {
+							kvp = make(KVPair)
+						}
+						kvp[id] = val
+						if srcEnd { // s.path matched to end.
+							if dstEnd { // word matched to end.
+								matched, child, parent = true, mptr, parentNode
+								return
+							}
+							// not matched, fallback to return false, false, nil, nil
+						} else if !dstEnd {
+							// sub-comparing loop here,
+							for ; srcMatchedL < l && dstMatchedL < wl; srcMatchedL++ {
+								ch = mptr.path[srcMatchedL]
+								if ch1 := word[dstMatchedL]; ch == ch1 {
+									dm = ch == delimiter
+									dstMatchedL++
+									continue
+								}
+								break // not matched, break to return false, false, nil, nil
+							}
+							if srcMatchedL == l && dstMatchedL == wl {
+								matched, child, parent = true, mptr, parentNode
+								break masterLoop // matched ok
+							}
+							if srcMatchedL == l && dstMatchedL < wl && len(mptr.children) > 0 {
+								// get into and matchR with children nodes
+								partialMatched = true
+								break masterLoop
+							}
+							goto retriever // for the next id+val
+						}
+					}
+				}
+				// NOT matched and shall stop.
 				// eg: matching 'apple' on 'apk'
 				return false, false, nil, nil, nil
 			}
+			// matched.
 			// eg: matching 'app' on 'apple', or 'apk' on 'apple'
-			return true, false, nil, s, parentNode
+			return true, false, nil, mptr, parentNode
 		}
 	}
 
-	if matchedL == l-1 && s.path[matchedL] == delimiter {
-		matched, child, parent = true, s, parentNode
-	} else if minL < l && matchedL == minL {
-		partialMatched, child, parent = true, s, parentNode
-	} else if minL >= l && matchedL == minL && minL > 0 && matchedL > 0 {
-		matched, child, parent = true, s, parentNode
+	if srcMatchedL == l-1 && mptr.path[srcMatchedL] == delimiter {
+		matched, child, parent = true, mptr, parentNode
+	} else if minL < l && srcMatchedL == minL {
+		partialMatched, child, parent = true, mptr, parentNode
+	} else if minL >= l && srcMatchedL == minL && minL > 0 && srcMatchedL > 0 && !partialMatched {
+		matched, child, parent = true, mptr, parentNode
 	}
 	if minL < wl {
-		if len(s.children) == 0 {
+		if len(mptr.children) == 0 {
 			matched, partialMatched = false, true
 			return
 		}
-		for _, child = range s.children {
+
+		// restPart := word[minL:]
+		if dstMatchedL == 0 {
+			dstMatchedL = minL
+		}
+		restPart := word[dstMatchedL:]
+		for _, child = range mptr.children {
 			var kvpChild KVPair
 			matched, partialMatched, kvpChild, child, parent = child.matchR(restPart, delimiter, s)
+			// collect the returned key-value pair, merging it or copy(use) it.
 			if kvpChild != nil {
 				if kvp == nil {
 					kvp = kvpChild
@@ -337,6 +417,8 @@ masterLoop:
 	}
 	return
 }
+
+// matchL matches a path by iterating child nodes in a for-loop.
 
 func (s *nodeS[T]) dump(noColor bool) string { //nolint:revive
 	var sb strings.Builder
