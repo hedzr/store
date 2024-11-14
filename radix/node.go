@@ -344,7 +344,8 @@ masterLoop:
 								matched, child, parent = true, base, parentNode
 								return
 							}
-							// not matched, fallback to return false, false, nil, nil
+							// not matched, break and match the rest part by looping base.children
+							break masterLoop
 						} else if !dstEnd {
 							// sub-comparing loop here,
 							for ; srcMatchedL < l && dstMatchedL < wl; srcMatchedL++ {
