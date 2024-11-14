@@ -235,7 +235,7 @@ func TestStore_Walk2(t *testing.T) {
 	_ = conf.MustGet("x")
 	_ = conf.Remove("x")
 	_ = conf.Has("x")
-	_, _, _, _, _ = conf.Locate("x")
+	_, _, _, _ = conf.Locate("x", nil)
 	_ = conf.Clone()
 	_ = conf.Dup()
 

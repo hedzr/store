@@ -102,7 +102,7 @@ type Store interface {
 	// Locate's results and provides a dotted-key-path-based behaviors.
 	// Which means, Has("app.logging.f") gets false and
 	// Has("app.logging.file") is true.
-	Locate(path string) (node radix.Node[any], kvpair radix.KVPair, branch, partialMatched, found bool)
+	Locate(path string, kvpair radix.KVPair) (node radix.Node[any], branch, partialMatched, found bool)
 
 	radix.TypedGetters[any] // getters
 

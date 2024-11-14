@@ -20,7 +20,7 @@ func TestNewDummyStore(t *testing.T) { //nolint:revive
 	conf.RemoveEx("")
 	_ = conf.Merge("", nil)
 	conf.Has("")
-	conf.Locate("")
+	conf.Locate("", nil)
 	_, _ = conf.GetString("", "")
 	conf.MustString("", "")
 	_, _ = conf.GetStringSlice("", "")

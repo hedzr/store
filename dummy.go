@@ -31,7 +31,7 @@ func (s *dummyS) Merge(pathAt string, data map[string]any) (err error)          
 func (s *dummyS) Has(path string) (found bool)                                             { return } //nolint:revive
 
 // Locate provides an advanced interface for locating a path.
-func (s *dummyS) Locate(path string) (node radix.Node[any], kvpair radix.KVPair, branch, partialMatched, found bool) { //nolint:revive
+func (s *dummyS) Locate(path string, kvpair radix.KVPair) (node radix.Node[any], branch, partialMatched, found bool) { //nolint:revive
 	return
 }
 
