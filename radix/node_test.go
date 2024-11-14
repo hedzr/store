@@ -33,9 +33,9 @@ func TestNodeS_Tag(t *testing.T) {
 	if node.endsWith('.') {
 		t.Fail()
 	}
-	if node.endsWithLite('.') {
-		t.Fail()
-	}
+	// if node.endsWithLite('.') {
+	// 	t.Fail()
+	// }
 
 	assert(!node.IsLeaf())
 	assert(!node.HasData())

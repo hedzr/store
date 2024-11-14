@@ -123,22 +123,24 @@ func (s *nodeS[T]) StartsWith(ch rune) bool { //nolint:revive
 }
 
 func (s *nodeS[T]) EndsWith(ch rune) bool { //nolint:revive
-	if len(s.path) == 0 {
+	kl := len(s.path)
+	if kl == 0 {
 		return false
 	}
-	return s.path[len(s.path)-1] == ch
+	return s.path[kl-1] == ch
 }
 
 func (s *nodeS[T]) endsWith(ch rune) bool { //nolint:revive
-	if len(s.path) == 0 {
+	kl := len(s.path)
+	if kl == 0 {
 		return false
 	}
-	return s.path[len(s.path)-1] == ch
+	return s.path[kl-1] == ch
 }
 
-func (s *nodeS[T]) endsWithLite(ch rune) bool { //nolint:revive,unused
-	return s.path[len(s.path)-1] == ch
-}
+// func (s *nodeS[T]) endsWithLite(ch rune) bool { //nolint:revive,unused
+// 	return s.path[len(s.path)-1] == ch
+// }
 
 func (s *nodeS[T]) remove(item *nodeS[T]) (removed bool) { //nolint:revive
 	if item == nil {
@@ -290,10 +292,7 @@ func (s *nodeS[T]) matchR(word []rune, delimiter rune, dm bool, parentNode *node
 
 	// dm: delimiter just matched?
 	// mptr: the working node ptr
-	mptr, dm, srcMatchedL, dstMatchedL, minL, maxL := s, false, 0, 0, min(l, wl), max(l, wl)
-	if parentNode != nil {
-		dm = parentNode.endsWith(delimiter)
-	}
+	mptr, srcMatchedL, dstMatchedL, minL, maxL := s, 0, 0, min(l, wl), max(l, wl)
 masterLoop:
 	for ; srcMatchedL < minL; srcMatchedL++ {
 		ch := mptr.path[srcMatchedL]
