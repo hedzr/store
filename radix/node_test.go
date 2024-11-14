@@ -10,7 +10,7 @@ func TestNodeS_Tag(t *testing.T) {
 	trie.SetTag("app.dump", 3.13)
 	t.Logf("\nPath\n%v\n", trie.Dump())
 
-	node, _, branch, pm, found := trie.Locate("app.dump")
+	node, branch, pm, found := trie.Locate("app.dump", nil)
 	if !found {
 		t.Fatalf("not found: partial matched = %v, found = %v, branch = %v", pm, found, branch)
 	}

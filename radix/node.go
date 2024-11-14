@@ -282,10 +282,10 @@ func extractor(from, to int, src, piece []rune, delimiter rune) (ret string, pos
 }
 
 // matchR matches a path by walking child nodes recursively.
-func (s *nodeS[T]) matchR(word []rune, delimiter rune, parentNode *nodeS[T]) (matched, partialMatched bool, kvp KVPair, child, parent *nodeS[T]) { //nolint:revive
+func (s *nodeS[T]) matchR(word []rune, delimiter rune, dm bool, parentNode *nodeS[T], kvpair KVPair) (matched, partialMatched bool, child, parent *nodeS[T]) { //nolint:revive
 	wl, l := len(word), len(s.path)
 	if wl == 0 {
-		return true, false, nil, s, parentNode
+		return true, false, s, parentNode
 	}
 
 	// dm: delimiter just matched?
@@ -319,10 +319,9 @@ masterLoop:
 							logz.Warn("[matchR] invalid wildcard matching rule, it can only at end of the rule", "id", id, "srcMatchedL", srcMatchedL)
 						}
 						val, dstMatchedL, dstEnd = string(word[dstMatchedL:]), wl, true
-						if kvp == nil {
-							kvp = make(KVPair)
+						if kvpair != nil {
+							kvpair[id] = val
 						}
-						kvp[id] = val
 						logz.Verbose("[matchR] ident matched", "ident", id, "val", val, "key-path", mptr.pathS, "matching", string(word))
 						// break masterLoop
 						matched, child, parent = true, mptr, parentNode
@@ -338,10 +337,9 @@ masterLoop:
 						// logz.Verbose("[matchR] ident matched", "ident", id, "val", val, "key-path", mptr.pathS, "matching", string(word))
 						// _, _, _, _, _ = dm, srcEnd, dstEnd, srcMatchedL, dstMatchedL
 
-						if kvp == nil {
-							kvp = make(KVPair)
+						if kvpair != nil {
+							kvpair[id] = val
 						}
-						kvp[id] = val
 						if srcEnd { // s.path matched to end.
 							if dstEnd { // word matched to end.
 								matched, child, parent = true, mptr, parentNode
@@ -374,11 +372,11 @@ masterLoop:
 				}
 				// NOT matched and shall stop.
 				// eg: matching 'apple' on 'apk'
-				return false, false, nil, nil, nil
+				return false, false, nil, nil
 			}
 			// matched.
 			// eg: matching 'app' on 'apple', or 'apk' on 'apple'
-			return true, false, nil, mptr, parentNode
+			return true, false, mptr, parentNode
 		}
 	}
 
@@ -401,18 +399,7 @@ masterLoop:
 		}
 		restPart := word[dstMatchedL:]
 		for _, child = range mptr.children {
-			var kvpChild KVPair
-			matched, partialMatched, kvpChild, child, parent = child.matchR(restPart, delimiter, s)
-			// collect the returned key-value pair, merging it or copy(use) it.
-			if kvpChild != nil {
-				if kvp == nil {
-					kvp = kvpChild
-				} else {
-					for k, v := range kvpChild {
-						kvp[k] = v
-					}
-				}
-			}
+			matched, partialMatched, child, parent = child.matchR(restPart, delimiter, dm, s, kvpair)
 			if matched || partialMatched {
 				return
 			}

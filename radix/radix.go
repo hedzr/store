@@ -4,13 +4,13 @@ package radix
 type Trie[T any] interface {
 	// Insert and Search, more Basic Trie Operations
 
-	Insert(path string, data T) (oldData any)                                               // Insert data (T) to path
-	Search(word string) (found bool)                                                        // tests if word exists (= Has)
-	Query(path string) (data T, kvpair KVPair, branch, found bool, err error)               // full ability word searching (=enhanced Has)
-	Locate(path string) (node *nodeS[T], kvpair KVPair, branch, partialMatched, found bool) // Locate is an enhanced Has and returns more internal information (=enhanced Has)
-	SetComment(path, description, comment string) (ok bool)                                 // set extra meta-info bound to a key
-	SetTag(path string, tags any) (ok bool)                                                 // set extra notable data bound to a key
-	Dump() string                                                                           // dumping the node tree for debugging, including some internal states
+	Insert(path string, data T) (oldData any)                                             // Insert data (T) to path
+	Search(word string) (found bool)                                                      // tests if word exists (= Has)
+	Query(path string, pair KVPair) (data T, branch, found bool, err error)               // full ability word searching (=enhanced Has)
+	Locate(path string, pair KVPair) (node *nodeS[T], branch, partialMatched, found bool) // Locate is an enhanced Has and returns more internal information (=enhanced Has)
+	SetComment(path, description, comment string) (ok bool)                               // set extra meta-info bound to a key
+	SetTag(path string, tags any) (ok bool)                                               // set extra notable data bound to a key
+	Dump() string                                                                         // dumping the node tree for debugging, including some internal states
 
 	// Remove and Merge, Special Operations for storeS
 

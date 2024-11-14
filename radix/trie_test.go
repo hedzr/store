@@ -140,7 +140,7 @@ func TestTrieS_Delimiter(t *testing.T) { //nolint:revive
 	if has {
 		t.Fail()
 	}
-	n, _, b, pm, found := conf.Locate("team")
+	n, b, pm, found := conf.Locate("team", nil)
 	if !found {
 		t.Fail()
 		_, _, _ = n, b, pm
@@ -173,7 +173,8 @@ func TestTrieS_Locate(t *testing.T) {
 		trie.Delimiter(),
 		trie.Dump())
 
-	node, kvp, br, pm, found := trie.Locate("/search/any/thing/here")
+	kvp := make(KVPair)
+	node, br, pm, found := trie.Locate("/search/any/thing/here", kvp)
 	if !found {
 		t.Fail()
 	} else if br || pm {
@@ -188,7 +189,8 @@ func TestTrieS_Locate(t *testing.T) {
 		}
 	}
 
-	node, kvp, br, pm, found = trie.Locate("/blog/2011/09/why-so-concise")
+	kvp = make(KVPair)
+	node, br, pm, found = trie.Locate("/blog/2011/09/why-so-concise", kvp)
 	if !found {
 		t.Fail()
 	} else if br || pm {

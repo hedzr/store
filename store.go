@@ -222,7 +222,7 @@ func (s *storeS) Close() {
 func (s *storeS) MustGet(path string) (data any) {
 	var branch, found bool
 	var err error
-	data, _, branch, found, err = s.Trie.Query(path)
+	data, branch, found, err = s.Trie.Query(path, nil)
 	if !found {
 		if err != nil || !branch {
 			data = nil
@@ -233,13 +233,13 @@ func (s *storeS) MustGet(path string) (data any) {
 
 // Get the value at path point 'path'.
 func (s *storeS) Get(path string) (data any, found bool) {
-	data, _, _, found, _ = s.Trie.Query(path)
+	data, _, found, _ = s.Trie.Query(path, nil)
 	return
 }
 
 // Set sets key('path') and value pair into storeS.
 func (s *storeS) Set(path string, data any) (node radix.Node[any], oldData any) {
-	old, _, branch, found, err := s.Trie.Query(path)
+	old, branch, found, err := s.Trie.Query(path, nil)
 	if !found {
 		if err != nil || !branch {
 			old = nil
@@ -379,8 +379,8 @@ func (s *storeS) Has(path string) (found bool) {
 }
 
 // Locate provides an advanced interface for locating a path.
-func (s *storeS) Locate(path string) (node radix.Node[any], kvpaire radix.KVPair, branch, partialMatched, found bool) {
-	return s.Trie.Locate(path)
+func (s *storeS) Locate(path string, kvpaire radix.KVPair) (node radix.Node[any], branch, partialMatched, found bool) {
+	return s.Trie.Locate(path, nil)
 }
 
 // Dump prints internal data tree for debugging

@@ -289,7 +289,7 @@ var _ Trie[any] = (*trieS[any])(nil) // assertion helper
 var converter = evendeep.Cvt{}
 
 func (s *trieS[T]) StartsWith(path string, r rune) bool {
-	node, _, _, _, found := s.Locate(path)
+	node, _, _, found := s.Locate(path, nil)
 	if !found {
 		return false
 	}
@@ -297,7 +297,7 @@ func (s *trieS[T]) StartsWith(path string, r rune) bool {
 }
 
 func (s *trieS[T]) EndsWith(path string, r rune) bool {
-	node, _, _, _, found := s.Locate(path)
+	node, _, _, found := s.Locate(path, nil)
 	if !found {
 		return false
 	}
@@ -327,7 +327,7 @@ func (s *trieS[T]) GetR(path string, defaultVal ...map[string]any) (ret map[stri
 		return
 	}
 
-	nodeX, _, branch, partialMatched, found = s.Locate(path)
+	nodeX, branch, partialMatched, found = s.Locate(path, nil)
 	if found || partialMatched {
 		_, _, ret = branch, partialMatched, make(map[string]any)
 
@@ -358,7 +358,7 @@ func (s *trieS[T]) GetR(path string, defaultVal ...map[string]any) (ret map[stri
 			}
 		})
 		logz.Debug("[GetR] ", "ret", ret)
-	} else if !found {
+	} else {
 		for _, v := range defaultVal {
 			ret = v
 		}
@@ -401,7 +401,7 @@ func (s *trieS[T]) GetM(path string, opts ...MOpt[T]) (ret map[string]any, err e
 		return
 	}
 
-	nodeX, _, branch, partialMatched, found = s.Locate(path)
+	nodeX, branch, partialMatched, found = s.Locate(path, nil)
 	if found || partialMatched {
 		_, _, ret = branch, partialMatched, make(map[string]any)
 		putter := prefixPutter[T]{prefix: strings.Split(s.Join(s.prefix, path), string(s.delimiter))}
@@ -613,7 +613,7 @@ func (s *trieS[T]) GetString(path string, defaultVal ...string) (ret string, err
 		found bool
 		data  any
 	)
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.String(data)
 	} else if !found {
@@ -625,7 +625,7 @@ func (s *trieS[T]) GetString(path string, defaultVal ...string) (ret string, err
 }
 
 func (s *trieS[T]) MustString(path string, defaultVal ...string) (ret string) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.String(data)
 	} else if !found {
@@ -639,7 +639,7 @@ func (s *trieS[T]) MustString(path string, defaultVal ...string) (ret string) {
 func (s *trieS[T]) GetStringSlice(path string, defaultVal ...string) (ret []string, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.StringSlice(data)
 	} else if !found {
@@ -649,7 +649,7 @@ func (s *trieS[T]) GetStringSlice(path string, defaultVal ...string) (ret []stri
 }
 
 func (s *trieS[T]) MustStringSlice(path string, defaultVal ...string) (ret []string) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.StringSlice(data)
 	} else if !found {
@@ -661,7 +661,7 @@ func (s *trieS[T]) MustStringSlice(path string, defaultVal ...string) (ret []str
 func (s *trieS[T]) GetStringMap(path string, defaultVal ...map[string]string) (ret map[string]string, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.StringMap(data)
 	} else if !found {
@@ -673,7 +673,7 @@ func (s *trieS[T]) GetStringMap(path string, defaultVal ...map[string]string) (r
 }
 
 func (s *trieS[T]) MustStringMap(path string, defaultVal ...map[string]string) (ret map[string]string) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.StringMap(data)
 	} else if !found {
@@ -689,7 +689,7 @@ func (s *trieS[T]) MustStringMap(path string, defaultVal ...map[string]string) (
 func (s *trieS[T]) GetInt64(path string, defaultVal ...int64) (ret int64, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Int(data)
 	} else if !found {
@@ -701,7 +701,7 @@ func (s *trieS[T]) GetInt64(path string, defaultVal ...int64) (ret int64, err er
 }
 
 func (s *trieS[T]) MustInt64(path string, defaultVal ...int64) (ret int64) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Int(data)
 	} else if !found {
@@ -715,7 +715,7 @@ func (s *trieS[T]) MustInt64(path string, defaultVal ...int64) (ret int64) {
 func (s *trieS[T]) GetInt(path string, defaultVal ...int) (ret int, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = int(converter.Int(data))
 	} else if !found {
@@ -727,7 +727,7 @@ func (s *trieS[T]) GetInt(path string, defaultVal ...int) (ret int, err error) {
 }
 
 func (s *trieS[T]) MustInt(path string, defaultVal ...int) (ret int) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = int(converter.Int(data))
 	} else if !found {
@@ -741,7 +741,7 @@ func (s *trieS[T]) MustInt(path string, defaultVal ...int) (ret int) {
 func (s *trieS[T]) GetInt32(path string, defaultVal ...int32) (ret int32, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = int32(converter.Int(data))
 	} else if !found {
@@ -753,7 +753,7 @@ func (s *trieS[T]) GetInt32(path string, defaultVal ...int32) (ret int32, err er
 }
 
 func (s *trieS[T]) MustInt32(path string, defaultVal ...int32) (ret int32) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = int32(converter.Int(data))
 	} else if !found {
@@ -767,7 +767,7 @@ func (s *trieS[T]) MustInt32(path string, defaultVal ...int32) (ret int32) {
 func (s *trieS[T]) GetInt16(path string, defaultVal ...int16) (ret int16, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = int16(converter.Int(data))
 	} else if !found {
@@ -779,7 +779,7 @@ func (s *trieS[T]) GetInt16(path string, defaultVal ...int16) (ret int16, err er
 }
 
 func (s *trieS[T]) MustInt16(path string, defaultVal ...int16) (ret int16) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = int16(converter.Int(data))
 	} else if !found {
@@ -793,7 +793,7 @@ func (s *trieS[T]) MustInt16(path string, defaultVal ...int16) (ret int16) {
 func (s *trieS[T]) GetInt8(path string, defaultVal ...int8) (ret int8, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = int8(converter.Int(data))
 	} else if !found {
@@ -805,7 +805,7 @@ func (s *trieS[T]) GetInt8(path string, defaultVal ...int8) (ret int8, err error
 }
 
 func (s *trieS[T]) MustInt8(path string, defaultVal ...int8) (ret int8) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = int8(converter.Int(data))
 	} else if !found {
@@ -819,7 +819,7 @@ func (s *trieS[T]) MustInt8(path string, defaultVal ...int8) (ret int8) {
 func (s *trieS[T]) GetUint64(path string, defaultVal ...uint64) (ret uint64, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Uint(data)
 	} else if !found {
@@ -831,7 +831,7 @@ func (s *trieS[T]) GetUint64(path string, defaultVal ...uint64) (ret uint64, err
 }
 
 func (s *trieS[T]) MustUint64(path string, defaultVal ...uint64) (ret uint64) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Uint(data)
 	} else if !found {
@@ -845,7 +845,7 @@ func (s *trieS[T]) MustUint64(path string, defaultVal ...uint64) (ret uint64) {
 func (s *trieS[T]) GetUint(path string, defaultVal ...uint) (ret uint, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = uint(converter.Uint(data))
 	} else if !found {
@@ -857,7 +857,7 @@ func (s *trieS[T]) GetUint(path string, defaultVal ...uint) (ret uint, err error
 }
 
 func (s *trieS[T]) MustUint(path string, defaultVal ...uint) (ret uint) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = uint(converter.Uint(data))
 	} else if !found {
@@ -871,7 +871,7 @@ func (s *trieS[T]) MustUint(path string, defaultVal ...uint) (ret uint) {
 func (s *trieS[T]) GetUint32(path string, defaultVal ...uint32) (ret uint32, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = uint32(converter.Uint(data))
 	} else if !found {
@@ -883,7 +883,7 @@ func (s *trieS[T]) GetUint32(path string, defaultVal ...uint32) (ret uint32, err
 }
 
 func (s *trieS[T]) MustUint32(path string, defaultVal ...uint32) (ret uint32) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = uint32(converter.Uint(data))
 	} else if !found {
@@ -897,7 +897,7 @@ func (s *trieS[T]) MustUint32(path string, defaultVal ...uint32) (ret uint32) {
 func (s *trieS[T]) GetUint16(path string, defaultVal ...uint16) (ret uint16, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = uint16(converter.Uint(data))
 	} else if !found {
@@ -909,7 +909,7 @@ func (s *trieS[T]) GetUint16(path string, defaultVal ...uint16) (ret uint16, err
 }
 
 func (s *trieS[T]) MustUint16(path string, defaultVal ...uint16) (ret uint16) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = uint16(converter.Uint(data))
 	} else if !found {
@@ -923,7 +923,7 @@ func (s *trieS[T]) MustUint16(path string, defaultVal ...uint16) (ret uint16) {
 func (s *trieS[T]) GetUint8(path string, defaultVal ...uint8) (ret uint8, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = uint8(converter.Uint(data))
 	} else if !found {
@@ -935,7 +935,7 @@ func (s *trieS[T]) GetUint8(path string, defaultVal ...uint8) (ret uint8, err er
 }
 
 func (s *trieS[T]) MustUint8(path string, defaultVal ...uint8) (ret uint8) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = uint8(converter.Uint(data))
 	} else if !found {
@@ -951,7 +951,7 @@ func (s *trieS[T]) MustUint8(path string, defaultVal ...uint8) (ret uint8) {
 func (s *trieS[T]) GetInt64Slice(path string, defaultVal ...int64) (ret []int64, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Int64Slice(data)
 	} else if !found {
@@ -961,7 +961,7 @@ func (s *trieS[T]) GetInt64Slice(path string, defaultVal ...int64) (ret []int64,
 }
 
 func (s *trieS[T]) MustInt64Slice(path string, defaultVal ...int64) (ret []int64) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Int64Slice(data)
 	} else if !found {
@@ -973,7 +973,7 @@ func (s *trieS[T]) MustInt64Slice(path string, defaultVal ...int64) (ret []int64
 func (s *trieS[T]) GetInt32Slice(path string, defaultVal ...int32) (ret []int32, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Int32Slice(data)
 	} else if !found {
@@ -983,7 +983,7 @@ func (s *trieS[T]) GetInt32Slice(path string, defaultVal ...int32) (ret []int32,
 }
 
 func (s *trieS[T]) MustInt32Slice(path string, defaultVal ...int32) (ret []int32) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Int32Slice(data)
 	} else if !found {
@@ -995,7 +995,7 @@ func (s *trieS[T]) MustInt32Slice(path string, defaultVal ...int32) (ret []int32
 func (s *trieS[T]) GetInt16Slice(path string, defaultVal ...int16) (ret []int16, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Int16Slice(data)
 	} else if !found {
@@ -1005,7 +1005,7 @@ func (s *trieS[T]) GetInt16Slice(path string, defaultVal ...int16) (ret []int16,
 }
 
 func (s *trieS[T]) MustInt16Slice(path string, defaultVal ...int16) (ret []int16) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Int16Slice(data)
 	} else if !found {
@@ -1017,7 +1017,7 @@ func (s *trieS[T]) MustInt16Slice(path string, defaultVal ...int16) (ret []int16
 func (s *trieS[T]) GetInt8Slice(path string, defaultVal ...int8) (ret []int8, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Int8Slice(data)
 	} else if !found {
@@ -1027,7 +1027,7 @@ func (s *trieS[T]) GetInt8Slice(path string, defaultVal ...int8) (ret []int8, er
 }
 
 func (s *trieS[T]) MustInt8Slice(path string, defaultVal ...int8) (ret []int8) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Int8Slice(data)
 	} else if !found {
@@ -1039,7 +1039,7 @@ func (s *trieS[T]) MustInt8Slice(path string, defaultVal ...int8) (ret []int8) {
 func (s *trieS[T]) GetIntSlice(path string, defaultVal ...int) (ret []int, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.IntSlice(data)
 	} else if !found {
@@ -1049,7 +1049,7 @@ func (s *trieS[T]) GetIntSlice(path string, defaultVal ...int) (ret []int, err e
 }
 
 func (s *trieS[T]) MustIntSlice(path string, defaultVal ...int) (ret []int) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.IntSlice(data)
 	} else if !found {
@@ -1063,7 +1063,7 @@ func (s *trieS[T]) MustIntSlice(path string, defaultVal ...int) (ret []int) {
 func (s *trieS[T]) GetUint64Slice(path string, defaultVal ...uint64) (ret []uint64, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Uint64Slice(data)
 	} else if !found {
@@ -1073,7 +1073,7 @@ func (s *trieS[T]) GetUint64Slice(path string, defaultVal ...uint64) (ret []uint
 }
 
 func (s *trieS[T]) MustUint64Slice(path string, defaultVal ...uint64) (ret []uint64) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Uint64Slice(data)
 	} else if !found {
@@ -1085,7 +1085,7 @@ func (s *trieS[T]) MustUint64Slice(path string, defaultVal ...uint64) (ret []uin
 func (s *trieS[T]) GetUint32Slice(path string, defaultVal ...uint32) (ret []uint32, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Uint32Slice(data)
 	} else if !found {
@@ -1095,7 +1095,7 @@ func (s *trieS[T]) GetUint32Slice(path string, defaultVal ...uint32) (ret []uint
 }
 
 func (s *trieS[T]) MustUint32Slice(path string, defaultVal ...uint32) (ret []uint32) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Uint32Slice(data)
 	} else if !found {
@@ -1107,7 +1107,7 @@ func (s *trieS[T]) MustUint32Slice(path string, defaultVal ...uint32) (ret []uin
 func (s *trieS[T]) GetUint16Slice(path string, defaultVal ...uint16) (ret []uint16, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Uint16Slice(data)
 	} else if !found {
@@ -1117,7 +1117,7 @@ func (s *trieS[T]) GetUint16Slice(path string, defaultVal ...uint16) (ret []uint
 }
 
 func (s *trieS[T]) MustUint16Slice(path string, defaultVal ...uint16) (ret []uint16) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Uint16Slice(data)
 	} else if !found {
@@ -1129,7 +1129,7 @@ func (s *trieS[T]) MustUint16Slice(path string, defaultVal ...uint16) (ret []uin
 func (s *trieS[T]) GetUint8Slice(path string, defaultVal ...uint8) (ret []uint8, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Uint8Slice(data)
 	} else if !found {
@@ -1139,7 +1139,7 @@ func (s *trieS[T]) GetUint8Slice(path string, defaultVal ...uint8) (ret []uint8,
 }
 
 func (s *trieS[T]) MustUint8Slice(path string, defaultVal ...uint8) (ret []uint8) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Uint8Slice(data)
 	} else if !found {
@@ -1151,7 +1151,7 @@ func (s *trieS[T]) MustUint8Slice(path string, defaultVal ...uint8) (ret []uint8
 func (s *trieS[T]) GetUintSlice(path string, defaultVal ...uint) (ret []uint, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.UintSlice(data)
 	} else if !found {
@@ -1161,7 +1161,7 @@ func (s *trieS[T]) GetUintSlice(path string, defaultVal ...uint) (ret []uint, er
 }
 
 func (s *trieS[T]) MustUintSlice(path string, defaultVal ...uint) (ret []uint) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.UintSlice(data)
 	} else if !found {
@@ -1175,7 +1175,7 @@ func (s *trieS[T]) MustUintSlice(path string, defaultVal ...uint) (ret []uint) {
 func (s *trieS[T]) GetInt64Map(path string, defaultVal ...map[string]int64) (ret map[string]int64, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Int64Map(data)
 	} else if !found {
@@ -1187,7 +1187,7 @@ func (s *trieS[T]) GetInt64Map(path string, defaultVal ...map[string]int64) (ret
 }
 
 func (s *trieS[T]) MustInt64Map(path string, defaultVal ...map[string]int64) (ret map[string]int64) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Int64Map(data)
 	} else if !found {
@@ -1201,7 +1201,7 @@ func (s *trieS[T]) MustInt64Map(path string, defaultVal ...map[string]int64) (re
 func (s *trieS[T]) GetInt32Map(path string, defaultVal ...map[string]int32) (ret map[string]int32, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Int32Map(data)
 	} else if !found {
@@ -1213,7 +1213,7 @@ func (s *trieS[T]) GetInt32Map(path string, defaultVal ...map[string]int32) (ret
 }
 
 func (s *trieS[T]) MustInt32Map(path string, defaultVal ...map[string]int32) (ret map[string]int32) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Int32Map(data)
 	} else if !found {
@@ -1227,7 +1227,7 @@ func (s *trieS[T]) MustInt32Map(path string, defaultVal ...map[string]int32) (re
 func (s *trieS[T]) GetInt16Map(path string, defaultVal ...map[string]int16) (ret map[string]int16, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Int16Map(data)
 	} else if !found {
@@ -1239,7 +1239,7 @@ func (s *trieS[T]) GetInt16Map(path string, defaultVal ...map[string]int16) (ret
 }
 
 func (s *trieS[T]) MustInt16Map(path string, defaultVal ...map[string]int16) (ret map[string]int16) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Int16Map(data)
 	} else if !found {
@@ -1253,7 +1253,7 @@ func (s *trieS[T]) MustInt16Map(path string, defaultVal ...map[string]int16) (re
 func (s *trieS[T]) GetInt8Map(path string, defaultVal ...map[string]int8) (ret map[string]int8, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Int8Map(data)
 	} else if !found {
@@ -1265,7 +1265,7 @@ func (s *trieS[T]) GetInt8Map(path string, defaultVal ...map[string]int8) (ret m
 }
 
 func (s *trieS[T]) MustInt8Map(path string, defaultVal ...map[string]int8) (ret map[string]int8) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Int8Map(data)
 	} else if !found {
@@ -1279,7 +1279,7 @@ func (s *trieS[T]) MustInt8Map(path string, defaultVal ...map[string]int8) (ret 
 func (s *trieS[T]) GetIntMap(path string, defaultVal ...map[string]int) (ret map[string]int, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.IntMap(data)
 	} else if !found {
@@ -1291,7 +1291,7 @@ func (s *trieS[T]) GetIntMap(path string, defaultVal ...map[string]int) (ret map
 }
 
 func (s *trieS[T]) MustIntMap(path string, defaultVal ...map[string]int) (ret map[string]int) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.IntMap(data)
 	} else if !found {
@@ -1307,7 +1307,7 @@ func (s *trieS[T]) MustIntMap(path string, defaultVal ...map[string]int) (ret ma
 func (s *trieS[T]) GetUint64Map(path string, defaultVal ...map[string]uint64) (ret map[string]uint64, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Uint64Map(data)
 	} else if !found {
@@ -1319,7 +1319,7 @@ func (s *trieS[T]) GetUint64Map(path string, defaultVal ...map[string]uint64) (r
 }
 
 func (s *trieS[T]) MustUint64Map(path string, defaultVal ...map[string]uint64) (ret map[string]uint64) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Uint64Map(data)
 	} else if !found {
@@ -1333,7 +1333,7 @@ func (s *trieS[T]) MustUint64Map(path string, defaultVal ...map[string]uint64) (
 func (s *trieS[T]) GetUint32Map(path string, defaultVal ...map[string]uint32) (ret map[string]uint32, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Uint32Map(data)
 	} else if !found {
@@ -1345,7 +1345,7 @@ func (s *trieS[T]) GetUint32Map(path string, defaultVal ...map[string]uint32) (r
 }
 
 func (s *trieS[T]) MustUint32Map(path string, defaultVal ...map[string]uint32) (ret map[string]uint32) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Uint32Map(data)
 	} else if !found {
@@ -1359,7 +1359,7 @@ func (s *trieS[T]) MustUint32Map(path string, defaultVal ...map[string]uint32) (
 func (s *trieS[T]) GetUint16Map(path string, defaultVal ...map[string]uint16) (ret map[string]uint16, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Uint16Map(data)
 	} else if !found {
@@ -1371,7 +1371,7 @@ func (s *trieS[T]) GetUint16Map(path string, defaultVal ...map[string]uint16) (r
 }
 
 func (s *trieS[T]) MustUint16Map(path string, defaultVal ...map[string]uint16) (ret map[string]uint16) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Uint16Map(data)
 	} else if !found {
@@ -1385,7 +1385,7 @@ func (s *trieS[T]) MustUint16Map(path string, defaultVal ...map[string]uint16) (
 func (s *trieS[T]) GetUint8Map(path string, defaultVal ...map[string]uint8) (ret map[string]uint8, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Uint8Map(data)
 	} else if !found {
@@ -1397,7 +1397,7 @@ func (s *trieS[T]) GetUint8Map(path string, defaultVal ...map[string]uint8) (ret
 }
 
 func (s *trieS[T]) MustUint8Map(path string, defaultVal ...map[string]uint8) (ret map[string]uint8) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Uint8Map(data)
 	} else if !found {
@@ -1411,7 +1411,7 @@ func (s *trieS[T]) MustUint8Map(path string, defaultVal ...map[string]uint8) (re
 func (s *trieS[T]) GetUintMap(path string, defaultVal ...map[string]uint) (ret map[string]uint, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.UintMap(data)
 	} else if !found {
@@ -1423,7 +1423,7 @@ func (s *trieS[T]) GetUintMap(path string, defaultVal ...map[string]uint) (ret m
 }
 
 func (s *trieS[T]) MustUintMap(path string, defaultVal ...map[string]uint) (ret map[string]uint) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.UintMap(data)
 	} else if !found {
@@ -1612,7 +1612,7 @@ func (s *trieS[T]) fromKilobytes(r rune) (times uint64) { //nolint:revive
 func (s *trieS[T]) GetFloat64(path string, defaultVal ...float64) (ret float64, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Float64(data)
 	} else if !found {
@@ -1624,7 +1624,7 @@ func (s *trieS[T]) GetFloat64(path string, defaultVal ...float64) (ret float64, 
 }
 
 func (s *trieS[T]) MustFloat64(path string, defaultVal ...float64) (ret float64) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Float64(data)
 	} else if !found {
@@ -1638,7 +1638,7 @@ func (s *trieS[T]) MustFloat64(path string, defaultVal ...float64) (ret float64)
 func (s *trieS[T]) GetFloat32(path string, defaultVal ...float32) (ret float32, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Float32(data)
 	} else if !found {
@@ -1650,7 +1650,7 @@ func (s *trieS[T]) GetFloat32(path string, defaultVal ...float32) (ret float32, 
 }
 
 func (s *trieS[T]) MustFloat32(path string, defaultVal ...float32) (ret float32) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Float32(data)
 	} else if !found {
@@ -1664,7 +1664,7 @@ func (s *trieS[T]) MustFloat32(path string, defaultVal ...float32) (ret float32)
 func (s *trieS[T]) GetFloat64Slice(path string, defaultVal ...float64) (ret []float64, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Float64Slice(data)
 	} else if !found {
@@ -1674,7 +1674,7 @@ func (s *trieS[T]) GetFloat64Slice(path string, defaultVal ...float64) (ret []fl
 }
 
 func (s *trieS[T]) MustFloat64Slice(path string, defaultVal ...float64) (ret []float64) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Float64Slice(data)
 	} else if !found {
@@ -1686,7 +1686,7 @@ func (s *trieS[T]) MustFloat64Slice(path string, defaultVal ...float64) (ret []f
 func (s *trieS[T]) GetFloat32Slice(path string, defaultVal ...float32) (ret []float32, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Float32Slice(data)
 	} else if !found {
@@ -1696,7 +1696,7 @@ func (s *trieS[T]) GetFloat32Slice(path string, defaultVal ...float32) (ret []fl
 }
 
 func (s *trieS[T]) MustFloat32Slice(path string, defaultVal ...float32) (ret []float32) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Float32Slice(data)
 	} else if !found {
@@ -1708,7 +1708,7 @@ func (s *trieS[T]) MustFloat32Slice(path string, defaultVal ...float32) (ret []f
 func (s *trieS[T]) GetFloat64Map(path string, defaultVal ...map[string]float64) (ret map[string]float64, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Float64Map(data)
 	} else if !found {
@@ -1720,7 +1720,7 @@ func (s *trieS[T]) GetFloat64Map(path string, defaultVal ...map[string]float64) 
 }
 
 func (s *trieS[T]) MustFloat64Map(path string, defaultVal ...map[string]float64) (ret map[string]float64) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Float64Map(data)
 	} else if !found {
@@ -1734,7 +1734,7 @@ func (s *trieS[T]) MustFloat64Map(path string, defaultVal ...map[string]float64)
 func (s *trieS[T]) GetFloat32Map(path string, defaultVal ...map[string]float32) (ret map[string]float32, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Float32Map(data)
 	} else if !found {
@@ -1746,7 +1746,7 @@ func (s *trieS[T]) GetFloat32Map(path string, defaultVal ...map[string]float32) 
 }
 
 func (s *trieS[T]) MustFloat32Map(path string, defaultVal ...map[string]float32) (ret map[string]float32) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Float32Map(data)
 	} else if !found {
@@ -1762,7 +1762,7 @@ func (s *trieS[T]) MustFloat32Map(path string, defaultVal ...map[string]float32)
 func (s *trieS[T]) GetComplex128(path string, defaultVal ...complex128) (ret complex128, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Complex128(data)
 	} else if !found {
@@ -1774,7 +1774,7 @@ func (s *trieS[T]) GetComplex128(path string, defaultVal ...complex128) (ret com
 }
 
 func (s *trieS[T]) MustComplex128(path string, defaultVal ...complex128) (ret complex128) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Complex128(data)
 	} else if !found {
@@ -1788,7 +1788,7 @@ func (s *trieS[T]) MustComplex128(path string, defaultVal ...complex128) (ret co
 func (s *trieS[T]) GetComplex64(path string, defaultVal ...complex64) (ret complex64, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Complex64(data)
 	} else if !found {
@@ -1800,7 +1800,7 @@ func (s *trieS[T]) GetComplex64(path string, defaultVal ...complex64) (ret compl
 }
 
 func (s *trieS[T]) MustComplex64(path string, defaultVal ...complex64) (ret complex64) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Complex64(data)
 	} else if !found {
@@ -1814,7 +1814,7 @@ func (s *trieS[T]) MustComplex64(path string, defaultVal ...complex64) (ret comp
 func (s *trieS[T]) GetComplex128Slice(path string, defaultVal ...complex128) (ret []complex128, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Complex128Slice(data)
 	} else if !found {
@@ -1824,7 +1824,7 @@ func (s *trieS[T]) GetComplex128Slice(path string, defaultVal ...complex128) (re
 }
 
 func (s *trieS[T]) MustComplex128Slice(path string, defaultVal ...complex128) (ret []complex128) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Complex128Slice(data)
 	} else if !found {
@@ -1836,7 +1836,7 @@ func (s *trieS[T]) MustComplex128Slice(path string, defaultVal ...complex128) (r
 func (s *trieS[T]) GetComplex64Slice(path string, defaultVal ...complex64) (ret []complex64, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Complex64Slice(data)
 	} else if !found {
@@ -1846,7 +1846,7 @@ func (s *trieS[T]) GetComplex64Slice(path string, defaultVal ...complex64) (ret 
 }
 
 func (s *trieS[T]) MustComplex64Slice(path string, defaultVal ...complex64) (ret []complex64) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Complex64Slice(data)
 	} else if !found {
@@ -1858,7 +1858,7 @@ func (s *trieS[T]) MustComplex64Slice(path string, defaultVal ...complex64) (ret
 func (s *trieS[T]) GetComplex128Map(path string, defaultVal ...map[string]complex128) (ret map[string]complex128, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Complex128Map(data)
 	} else if !found {
@@ -1870,7 +1870,7 @@ func (s *trieS[T]) GetComplex128Map(path string, defaultVal ...map[string]comple
 }
 
 func (s *trieS[T]) MustComplex128Map(path string, defaultVal ...map[string]complex128) (ret map[string]complex128) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Complex128Map(data)
 	} else if !found {
@@ -1884,7 +1884,7 @@ func (s *trieS[T]) MustComplex128Map(path string, defaultVal ...map[string]compl
 func (s *trieS[T]) GetComplex64Map(path string, defaultVal ...map[string]complex64) (ret map[string]complex64, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Complex64Map(data)
 	} else if !found {
@@ -1896,7 +1896,7 @@ func (s *trieS[T]) GetComplex64Map(path string, defaultVal ...map[string]complex
 }
 
 func (s *trieS[T]) MustComplex64Map(path string, defaultVal ...map[string]complex64) (ret map[string]complex64) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Complex64Map(data)
 	} else if !found {
@@ -1912,7 +1912,7 @@ func (s *trieS[T]) MustComplex64Map(path string, defaultVal ...map[string]comple
 func (s *trieS[T]) GetBool(path string, defaultVal ...bool) (ret bool, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Bool(data)
 	} else if !found {
@@ -1924,7 +1924,7 @@ func (s *trieS[T]) GetBool(path string, defaultVal ...bool) (ret bool, err error
 }
 
 func (s *trieS[T]) MustBool(path string, defaultVal ...bool) (ret bool) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Bool(data)
 	} else if !found {
@@ -1938,7 +1938,7 @@ func (s *trieS[T]) MustBool(path string, defaultVal ...bool) (ret bool) {
 func (s *trieS[T]) GetBoolSlice(path string, defaultVal ...bool) (ret []bool, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.BoolSlice(data)
 	} else if !found {
@@ -1948,7 +1948,7 @@ func (s *trieS[T]) GetBoolSlice(path string, defaultVal ...bool) (ret []bool, er
 }
 
 func (s *trieS[T]) MustBoolSlice(path string, defaultVal ...bool) (ret []bool) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.BoolSlice(data)
 	} else if !found {
@@ -1960,7 +1960,7 @@ func (s *trieS[T]) MustBoolSlice(path string, defaultVal ...bool) (ret []bool) {
 func (s *trieS[T]) GetBoolMap(path string, defaultVal ...map[string]bool) (ret map[string]bool, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.BoolMap(data)
 	} else if !found {
@@ -1972,7 +1972,7 @@ func (s *trieS[T]) GetBoolMap(path string, defaultVal ...map[string]bool) (ret m
 }
 
 func (s *trieS[T]) MustBoolMap(path string, defaultVal ...map[string]bool) (ret map[string]bool) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.BoolMap(data)
 	} else if !found {
@@ -1988,7 +1988,7 @@ func (s *trieS[T]) MustBoolMap(path string, defaultVal ...map[string]bool) (ret 
 func (s *trieS[T]) GetDuration(path string, defaultVal ...time.Duration) (ret time.Duration, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Duration(data)
 	} else if !found {
@@ -2000,7 +2000,7 @@ func (s *trieS[T]) GetDuration(path string, defaultVal ...time.Duration) (ret ti
 }
 
 func (s *trieS[T]) MustDuration(path string, defaultVal ...time.Duration) (ret time.Duration) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Duration(data)
 	} else if !found {
@@ -2014,7 +2014,7 @@ func (s *trieS[T]) MustDuration(path string, defaultVal ...time.Duration) (ret t
 func (s *trieS[T]) GetDurationSlice(path string, defaultVal ...time.Duration) (ret []time.Duration, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.DurationSlice(data)
 	} else if !found {
@@ -2024,7 +2024,7 @@ func (s *trieS[T]) GetDurationSlice(path string, defaultVal ...time.Duration) (r
 }
 
 func (s *trieS[T]) MustDurationSlice(path string, defaultVal ...time.Duration) (ret []time.Duration) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.DurationSlice(data)
 	} else if !found {
@@ -2036,7 +2036,7 @@ func (s *trieS[T]) MustDurationSlice(path string, defaultVal ...time.Duration) (
 func (s *trieS[T]) GetDurationMap(path string, defaultVal ...map[string]time.Duration) (ret map[string]time.Duration, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.DurationMap(data)
 	} else if !found {
@@ -2048,7 +2048,7 @@ func (s *trieS[T]) GetDurationMap(path string, defaultVal ...map[string]time.Dur
 }
 
 func (s *trieS[T]) MustDurationMap(path string, defaultVal ...map[string]time.Duration) (ret map[string]time.Duration) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.DurationMap(data)
 	} else if !found {
@@ -2064,7 +2064,7 @@ func (s *trieS[T]) MustDurationMap(path string, defaultVal ...map[string]time.Du
 func (s *trieS[T]) GetTime(path string, defaultVal ...time.Time) (ret time.Time, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Time(data)
 	} else if !found {
@@ -2076,7 +2076,7 @@ func (s *trieS[T]) GetTime(path string, defaultVal ...time.Time) (ret time.Time,
 }
 
 func (s *trieS[T]) MustTime(path string, defaultVal ...time.Time) (ret time.Time) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.Time(data)
 	} else if !found {
@@ -2090,7 +2090,7 @@ func (s *trieS[T]) MustTime(path string, defaultVal ...time.Time) (ret time.Time
 func (s *trieS[T]) GetTimeSlice(path string, defaultVal ...time.Time) (ret []time.Time, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.TimeSlice(data)
 	} else if !found {
@@ -2100,7 +2100,7 @@ func (s *trieS[T]) GetTimeSlice(path string, defaultVal ...time.Time) (ret []tim
 }
 
 func (s *trieS[T]) MustTimeSlice(path string, defaultVal ...time.Time) (ret []time.Time) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.TimeSlice(data)
 	} else if !found {
@@ -2112,7 +2112,7 @@ func (s *trieS[T]) MustTimeSlice(path string, defaultVal ...time.Time) (ret []ti
 func (s *trieS[T]) GetTimeMap(path string, defaultVal ...map[string]time.Time) (ret map[string]time.Time, err error) {
 	var found bool
 	var data any
-	data, _, _, found, err = s.Query(path)
+	data, _, found, err = s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.TimeMap(data)
 	} else if !found {
@@ -2124,7 +2124,7 @@ func (s *trieS[T]) GetTimeMap(path string, defaultVal ...map[string]time.Time) (
 }
 
 func (s *trieS[T]) MustTimeMap(path string, defaultVal ...map[string]time.Time) (ret map[string]time.Time) {
-	data, _, _, found, err := s.Query(path)
+	data, _, found, err := s.Query(path, nil)
 	if found && err == nil {
 		ret = converter.TimeMap(data)
 	} else if !found {
