@@ -97,10 +97,18 @@ To see the recently changes at [CHANGELOG](https://github.com/hedzr/store/blob/m
 > Since v1.1.0, unexported struct ptr (*storeS) removed from `Store` API.
 > 
 > These apis changed to:
+> 
 > - `Clone() (newStore Store)`
 > - `Dup() (newStore Store)`
 > - `WithPrefix(prefix ...string) (newStore Store)`
 > - `WithPrefixReplaced(newPrefix ...string) (newStore Store)`
+> 
+> Since v1.2.0, the prototypes of `Locate`/`Query` are changed. 
+> 
+> - an extra `kvpair` will be returned if there is `:ident` in trie path and matched ok.
+> - support these url var matching: "/:id/", "/*filepath"
+> 
+> For example, matching `/hello/bob` on a router path pattern `/hello/:name` will get `kvpair = {"name":"bob"}`, and `/search/any/thing/here` on pattern `/search/*keywords` will get `kvpair = {"keywords":"any/thing/here"}`.
 
 ## More Features
 
