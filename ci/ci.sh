@@ -38,6 +38,8 @@
 # 2. edit doc.go and CHANGELOG
 # 3. `$0 update-main`                                        : upgrade deps to the releasing version of main lib (hedzr/store)
 # 4. `make cov`                                              : ensure all tests passed
+#    `go test ./... -v -race -cover -coverprofile=./logs/coverage-cl.txt -covermode=atomic -test.short -vet=off 2&>1 | tee ./logs/cover-cl.log`
+# 4.99. commit the upgraded changes (go.mod & go.sum, ...)
 # 5. `git push --all`                                        : commit all, and wait for remote tests passed
 # 6. `git tag $VER && git push --all && git push --tags`     : bump version, push it
 # 7. `$0 pushlish-all && git push --all && git push --tags`  : release the submodules
@@ -102,6 +104,7 @@ build-tag-codecs() { build-publish-children codecs; }
 build-tag-providers() { build-publish-children providers; }
 build-pub() { build-publish "$@"; }
 build-publish() { build-publish-children "$@"; }
+build-publish-all() { build-publish-children all "$@"; }
 build-publish-codecs() { build-publish-children codecs; }
 build-publish-providers() { build-publish-children providers; }
 build-publish-tests() { build-publish-children tests; }
