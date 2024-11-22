@@ -20,7 +20,7 @@ const (
 
 type nodeS[T any] struct {
 	path        []rune // path fragment for this node.
-	pathS       string // full path for performance
+	pathS       string // full path for performance, on a node we want to retrieve its full path as Key()
 	children    []*nodeS[T]
 	data        T
 	description string
@@ -284,7 +284,7 @@ func extractor(from, to int, src, piece []rune, delimiter rune) (ret string, pos
 }
 
 // matchR matches a path by walking child nodes recursively.
-func (s *nodeS[T]) matchR(word []rune, delimiter rune, dm bool, parentNode *nodeS[T], kvpair KVPair) (matched, partialMatched bool, child, parent *nodeS[T]) { //nolint:revive
+func (s *nodeS[T]) matchR(mctx *matchCtx, word []rune, lastRuneIsDelimiter bool, parentNode *nodeS[T], kvpair KVPair) (matched, partialMatched bool, child, parent *nodeS[T]) { //nolint:revive
 	wl, l := len(word), len(s.path)
 	if wl == 0 {
 		return true, false, s, parentNode
@@ -297,7 +297,7 @@ masterLoop:
 	for ; srcMatchedL < minL; srcMatchedL++ {
 		ch := base.path[srcMatchedL]
 		if ch1 := word[srcMatchedL]; ch == ch1 {
-			dm = ch == delimiter
+			lastRuneIsDelimiter = ch == mctx.delimiter
 			continue // first comparing loop, assume the index to base.path and word are both identical.
 		}
 
@@ -309,11 +309,11 @@ masterLoop:
 				var id, val string
 				var srcEnd, dstEnd bool
 			retriever:
-				if dm {
+				if lastRuneIsDelimiter {
 					// matching "/*filepath"
 					if ch == '*' {
 						piece := make([]rune, maxL)
-						id, srcMatchedL, srcEnd = extractor(srcMatchedL+1, l, base.path, piece, delimiter)
+						id, srcMatchedL, srcEnd = extractor(srcMatchedL+1, l, base.path, piece, mctx.delimiter)
 						if !srcEnd {
 							logz.Warn("[matchR] invalid wildcard matching rule, it can only at end of the rule", "id", id, "srcMatchedL", srcMatchedL)
 						}
@@ -331,8 +331,8 @@ masterLoop:
 						// delimiter+':'+ident? | eg, matching source word "/hello/bob" on a trie-path pattern "/hello/:name"
 
 						piece := make([]rune, maxL)
-						id, srcMatchedL, srcEnd = extractor(srcMatchedL+1, l, base.path, piece, delimiter)
-						val, dstMatchedL, dstEnd = extractor(dstMatchedL, wl, word, piece, delimiter)
+						id, srcMatchedL, srcEnd = extractor(srcMatchedL+1, l, base.path, piece, mctx.delimiter)
+						val, dstMatchedL, dstEnd = extractor(dstMatchedL, wl, word, piece, mctx.delimiter)
 						// logz.Verbose("[matchR] ident matched", "ident", id, "val", val, "key-path", base.pathS, "matching", string(word))
 						// _, _, _, _, _ = dm, srcEnd, dstEnd, srcMatchedL, dstMatchedL
 
@@ -351,7 +351,7 @@ masterLoop:
 							for ; srcMatchedL < l && dstMatchedL < wl; srcMatchedL++ {
 								ch = base.path[srcMatchedL]
 								if ch1 := word[dstMatchedL]; ch == ch1 {
-									dm = ch == delimiter
+									lastRuneIsDelimiter = ch == mctx.delimiter
 									dstMatchedL++
 									continue
 								}
@@ -380,7 +380,7 @@ masterLoop:
 		}
 	}
 
-	if srcMatchedL == l-1 && base.path[srcMatchedL] == delimiter {
+	if srcMatchedL == l-1 && base.path[srcMatchedL] == mctx.delimiter {
 		matched, child, parent = true, base, parentNode
 	} else if minL < l && srcMatchedL == minL {
 		partialMatched, child, parent = true, base, parentNode
@@ -399,7 +399,7 @@ masterLoop:
 		}
 		restPart := word[dstMatchedL:]
 		for _, child = range base.children {
-			matched, partialMatched, child, parent = child.matchR(restPart, delimiter, dm, s, kvpair)
+			matched, partialMatched, child, parent = child.matchR(mctx, restPart, lastRuneIsDelimiter, s, kvpair)
 			if matched || partialMatched {
 				return
 			}

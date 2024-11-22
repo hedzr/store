@@ -401,12 +401,31 @@ func (s *trieS[T]) Query(path string, kvpair KVPair) (data T, branch, found bool
 
 func (s *trieS[T]) search(word string, kvpair KVPair) (found, parent *nodeS[T], partialMatched bool) { //nolint:revive
 	found = s.root
+	mctx := getMatchCtx(word, s.delimiter)
 	// stringtoslicerune needs two pass full-scanning for a string, but it have to be to do.
-	if matched, pm, child, p := found.matchR([]rune(word), s.delimiter, false, nil, kvpair); matched || pm {
-		return child, p, pm
+	if matched, pm, child, prnt := found.matchR(mctx, []rune(word), false, nil, kvpair); matched || pm {
+		putBack(mctx)
+		return child, prnt, pm
 	}
+	putBack(mctx)
 	found = nil
 	return
+}
+
+func getMatchCtx(word string, delimiter rune) *matchCtx {
+	s := matchCtxPool.Get().(*matchCtx)
+	s.fullPath, s.delimiter = word, delimiter
+	return s
+}
+func putBack(mctx *matchCtx) { matchCtxPool.Put(mctx) }
+
+var matchCtxPool = sync.Pool{New: func() any {
+	return &matchCtx{}
+}}
+
+type matchCtx struct {
+	fullPath  string
+	delimiter rune
 }
 
 type KVPair map[string]string
