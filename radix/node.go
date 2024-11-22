@@ -214,7 +214,7 @@ func (s *nodeS[T]) insertInternal(word []rune, fullPath string, data T) (node *n
 }
 
 func (s *nodeS[T]) split(pos int, word []rune) (newNode *nodeS[T]) { //nolint:unparam,revive
-	tip("[store/radix] [split] original path, pathS: %q, %q", string(s.path), s.pathS)
+	tip("[store/radix] split original path %q by word %q at pos %d", string(s.path), string(word), pos)
 
 	// origPath, origPathS := s.path, s.pathS
 	// if assertEnabled {
