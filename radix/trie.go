@@ -447,7 +447,7 @@ type KVPair map[string]string
 // we can re-interpret its meaning dynamically without extras
 // costs.
 //
-// And the benefits are not only replaceing the delimiter
+// And the benefits are not only replacing the delimiter
 // dynamically: splitting a path by a delimiter or joining
 // the segements splitted into from path are both unnecessary, in
 // a conventional designing and implementing mode.
