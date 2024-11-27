@@ -1,5 +1,8 @@
 # CHANGELOG
 
+- v1.2.2
+  - improved matchR with matchCtx
+
 - v1.2.1
   - upgrade deps
 
