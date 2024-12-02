@@ -9,10 +9,10 @@ replace github.com/hedzr/store/providers/file => ../../../providers/file
 replace github.com/hedzr/store/codecs/nestext => ../
 
 require (
-	github.com/hedzr/store v1.2.1
+	github.com/hedzr/store v1.2.2
 	github.com/hedzr/store/codecs/nestext v1.2.1
 	github.com/hedzr/store/providers/file v1.2.1
-	github.com/stretchr/testify v1.9.0
+	github.com/stretchr/testify v1.10.0
 )
 
 require (

@@ -20,7 +20,7 @@ replace github.com/hedzr/store => ../..
 
 // TODO using sonic is a possible choice
 
-require github.com/hedzr/store v1.2.1
+require github.com/hedzr/store v1.2.2
 
 require (
 	github.com/hedzr/evendeep v1.2.7 // indirect

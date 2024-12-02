@@ -45,7 +45,7 @@ replace github.com/hedzr/store/providers/maps => ../providers/maps
 require (
 	github.com/davecgh/go-spew v1.1.1
 	github.com/hedzr/evendeep v1.2.7
-	github.com/hedzr/store v1.2.1
+	github.com/hedzr/store v1.2.2
 	github.com/hedzr/store/codecs/hcl v1.2.1
 	github.com/hedzr/store/codecs/hjson v1.2.1
 	github.com/hedzr/store/codecs/json v1.2.1
@@ -57,7 +57,7 @@ require (
 	github.com/hedzr/store/providers/flags v1.2.1
 	github.com/hedzr/store/providers/fs v1.2.1
 	github.com/hedzr/store/providers/maps v1.2.1
-	github.com/stretchr/testify v1.9.0
+	github.com/stretchr/testify v1.10.0
 )
 
 require (
