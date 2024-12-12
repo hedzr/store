@@ -42,7 +42,18 @@
 # 4.99. commit the upgraded changes (go.mod & go.sum, ...)
 # 5. `git push --all`                                        : commit all, and wait for remote tests passed
 # 6. `git tag $VER && git push --all && git push --tags`     : bump version, push it
-# 7. `$0 pushlish-all && git push --all && git push --tags`  : release the submodules
+# 7. `$0 publish-all && git push --all && git push --tags`   : release the submodules
+#
+# 2024-12-12 Updates:
+#
+# After this updates, just one step needs before commit and push:
+#
+# 1. edit doc.go and CHANGELOG
+# 2. `$0 update`                                             : update deps in main module, and child modules;
+# 3. `make cov`                                              : ensure all tests passed
+# 4. `git push --all`                                        : waiting for the remote ci passed
+# 5. `git tag $VER && git push --all && git push --tags`     : bump version, push it
+# 6. `$0 publish all && git push --all && git push --tags`   : release the submodules
 #
 # Using ci.sh to upgrade go modules under current directory, try this:
 #
@@ -54,7 +65,7 @@
 BUILD_DIR=./build
 INSTALL_TMP_DIR=./bin/install
 OSN=store
-VER=0.1.0
+VER=""
 
 [ -f .version.cmake ] && {
 	VER=$(echo $(grep -oE ' \d+\.\d+\.\d+' .version.cmake))
@@ -62,10 +73,21 @@ VER=0.1.0
 	# echo "VERSION = $VER"
 }
 
-[ -f doc.go ] && {
-	VER=$(echo v$(grep -iE 'Version[ ]*=.*' doc.go | grep -oE '\d+\.\d+\.\d+'))
-	echo "VERSION = $VER"
-}
+if [ x"$VER" == x ]; then
+	notfound=1
+	for f in doc.go _examples/doc.go slog/doc.go; do
+		(($notfound)) && [ -f "$f" ] && {
+			# echo "checking $f for VER..."
+			VER="$(echo v$(grep -iE 'Version[ ]*=.*' "$f" | grep -oE '\d+\.\d+\.\d+'))"
+			[ "$VER" != "v" ] && { echo "VERSION = $VER found!" && notfound=0; } # || { echo " ..loop next"; }
+		}
+	done
+	unset notfound
+else
+	echo "VERSION = $VER found-"
+fi
+
+MODULE=$(grep 'module .*' go.mod | awk '{print $2}' | awk 'sub("git(lab|hub).com/","",$0)')
 
 #
 
@@ -249,12 +271,12 @@ setver-submodule() {
 }
 
 pub-main() {
-	local ver=""
-	if [ -f slog/doc.go ]; then
-		ver="$(grep -Eio 'Version += +\"(v?[0-9]+\.[0-9]+\.[0-9]+)\"' slog/doc.go | awk '{print $3}')"
-	elif [ -f doc.go ]; then
-		ver="$(grep -Eio 'Version += +\"(v?[0-9]+\.[0-9]+\.[0-9]+)\"' doc.go | awk -F$' ' '{print $3}')"
-	fi
+	local ver="$VER"
+	# if [ -f slog/doc.go ]; then
+	# 	ver="$(grep -Eio 'Version += +\"(v?[0-9]+\.[0-9]+\.[0-9]+)\"' slog/doc.go | awk '{print $3}')"
+	# elif [ -f doc.go ]; then
+	# 	ver="$(grep -Eio 'Version += +\"(v?[0-9]+\.[0-9]+\.[0-9]+)\"' doc.go | awk -F$' ' '{print $3}')"
+	# fi
 
 	if [ "$ver" = "" ]; then
 		echo "version tag not found, add doc.go and Version=\"1.0.0\" and retry."
@@ -273,12 +295,12 @@ pub-main() {
 pub-child() {
 	local which="$1"
 	if [ -d "$which" ]; then
-		local ver=""
-		if [ -f slog/doc.go ]; then
-			ver="$(grep -Eio 'Version += +\"(v?[0-9]+\.[0-9]+\.[0-9]+)\"' slog/doc.go | awk '{print $3}')"
-		elif [ -f doc.go ]; then
-			ver="$(grep -Eio 'Version += +\"(v?[0-9]+\.[0-9]+\.[0-9]+)\"' doc.go | awk -F$' ' '{print $3}')"
-		fi
+		local ver="$VER"
+		# if [ -f slog/doc.go ]; then
+		# 	ver="$(grep -Eio 'Version += +\"(v?[0-9]+\.[0-9]+\.[0-9]+)\"' slog/doc.go | awk '{print $3}')"
+		# elif [ -f doc.go ]; then
+		# 	ver="$(grep -Eio 'Version += +\"(v?[0-9]+\.[0-9]+\.[0-9]+)\"' doc.go | awk -F$' ' '{print $3}')"
+		# fi
 
 		if [ "$ver" = "" ]; then
 			echo "version tag not found, add doc.go and Version=\"1.0.0\" and retry."
@@ -372,8 +394,9 @@ build-update-all() {
 }
 
 build-update() {
+	headline "[update] upgrade any deps for '$MODULE'"
 	for sm in "${1:-.}"; do
-		for f in $(find ./$sm -type f -iname 'go.mod' -print); do
+		for f in $(find "./$sm" -type f -iname 'go.mod' -print); do
 			d="$(dirname $f)"
 			if [ -d "$d" ]; then
 				do-update-dep "$d"
@@ -381,25 +404,35 @@ build-update() {
 		done
 	done
 	echo
+	[ -f go.work ] && build-update-main
+	echo
 }
 
 # update all refs in child modules to hedzr/store's releasing version
 build-update-main() {
-	echo "VERSION: $VER"
+	headline "[update-main][go.work] update dep to main module VERSION: $VER"
 	local ix=0
+	local mod="$MODULE"
 	for sm in "${1:-.}"; do
 		for f in $(find ./$sm -type f -iname 'go.mod' -print); do
 			d="$(dirname $f)"
 			if [ -d "$d" ]; then
-				echo "*** file: $f ***************"
-				# echo "d: $d"
-				sed -i '' -E -e 's#(hedzr/store.*)v[0-9]+\.[0-9]+\.[0-9]+#\1'$VER'#g' $f &&
-					{ echo "   $f: $(grep -E 'hedzr/store.*v\d+' $f)" && [ -f "$f.bak" ] && rm "$f.bak"; } ||
-					echo "   $f: FAILED"
-				let ix++
-				# if [[ $ix -gt 2 ]]; then
-				# 	return
-				# fi
+				if [ "$f" != "././go.mod" ]; then
+					# echo "d: $d"
+					if grep -qE "$mod" $f; then
+						tip "*** file: $f ***************"
+						if sed -i '' -E -e 's#('$mod'.*)v[0-9]+\.[0-9]+\.[0-9]+#\1'$VER'#g' $f; then
+							let ix++
+							echo "   $f: $(grep -E $mod'.*v[0-9]+\.[0-9]+\.[0-9]+' $f)"
+							[ -f "$f.bak" ] && rm "$f.bak"
+						else
+							echo "   $f: sed not ok"
+						fi
+						# if [[ $ix -gt 2 ]]; then
+						# 	return
+						# fi
+					fi
+				fi
 			fi
 		done
 	done
@@ -449,7 +482,7 @@ do-update-dep() {
 	local d="$1"
 	pushd "$d" >/dev/null
 	echo
-	echo "==== go mod tidy, dir='$d' =========="
+	tip "==== go mod tidy, dir='$d' =========="
 	go get -v -t -u ./... && go mod tidy
 	popd >/dev/null
 }
