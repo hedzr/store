@@ -1,5 +1,10 @@
 # CHANGELOG
 
+- v1.2.3
+  - security patch
+  - upgrade deps
+  - improvements
+
 - v1.2.2
   - improved matchR with matchCtx
 
