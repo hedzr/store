@@ -3,7 +3,41 @@ package radix
 import (
 	"reflect"
 	"testing"
+	"time"
 )
+
+func TestStoreS_SetTTL(t *testing.T) {
+	conf := newTrieTree()
+	defer conf.Close()
+
+	path := "app.verbose"
+	conf.SetTTL(path, 200*time.Millisecond, func(s *TTL[any], nd Node[any]) {
+		t.Logf("%q cleared", path)
+	})
+
+	time.Sleep(300 * time.Millisecond)
+	assertEqual(t, true, conf.Has(path))
+	assertEqual(t, 0, conf.MustInt(path))
+}
+
+func TestStoreS_SetTTL2(t *testing.T) {
+	conf := newBasicStore()
+	defer conf.Close()
+
+	path := "app.logging.rotate"
+	conf.SetTTL(path, 200*time.Millisecond, func(s *TTL[any], nd Node[any]) {
+		t.Logf("%q cleared", path)
+	})
+	path2 := "app.logging.file"
+	conf.SetTTL(path2, 200*time.Millisecond, func(s *TTL[any], nd Node[any]) {
+		t.Logf("%q (%q) cleared", path2, nd.Data())
+	})
+
+	time.Sleep(450 * time.Millisecond)
+	assertEqual(t, true, conf.Has(path2))
+	assertEqual(t, nil, conf.MustGet(path2))
+	assertEqual(t, 0, conf.MustInt(path))
+}
 
 func TestStoreS_Join(t *testing.T) {
 	// join ...
