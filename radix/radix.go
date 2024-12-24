@@ -1,5 +1,9 @@
 package radix
 
+import (
+	"time"
+)
+
 // Trie tree, an radix-tree
 type Trie[T any] interface {
 	// Insert and Search, more Basic Trie Operations
@@ -37,6 +41,30 @@ type Trie[T any] interface {
 	SetEmpty(path string) (oldData any)
 	// Update a node whether it existed or not.
 	Update(path string, cb func(node Node[T], old any))
+
+	// SetTTL sets a ttl timeout for a branch or a leaf node.
+	//
+	// At ttl arrived, the leaf node value will be cleared.
+	// For a branch node, it will be dropped.
+	//
+	// Once you're using SetTTL, don't forget call Close().
+	// For example:
+	//
+	//	conf := newTrieTree()
+	//	defer conf.Close()
+	//
+	//	path := "app.verbose"
+	//	conf.SetTTL(path, 200*time.Millisecond, func(ctx context.Context, s *TTL[any], nd *Node[any]) {
+	//		t.Logf("%q cleared", path)
+	//	})
+	//
+	// **[Pre-API]**
+	//
+	// SetTTL is a prerelease API since v1.2.5, it's mutable in the
+	// several future releases recently.
+	//
+	// The returned `state`: 0 assumed no error.
+	SetTTL(path string, ttl time.Duration, cb OnTTLRinging[T]) (state int)
 
 	TypedGetters[T] // getters
 

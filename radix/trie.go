@@ -156,6 +156,8 @@ func (s *trieS[T]) Close() {
 //
 // SetTTL is a prerelease API since v1.2.5, it's mutable in the
 // several future releases recently.
+//
+// The returned `state`: 0 assumed no error.
 func (s *trieS[T]) SetTTL(path string, ttl time.Duration, cb OnTTLRinging[T]) (state int) {
 	if s.prefix != "" {
 		path = s.Join(s.prefix, path) //nolint:revive

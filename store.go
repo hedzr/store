@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/hedzr/store/radix"
 )
@@ -251,6 +252,33 @@ func (s *storeS) Set(path string, data any) (node radix.Node[any], oldData any) 
 
 	node, oldData = s.setKV(path, data, !found, nil)
 	// s.tryOnSet(path, false, old, data)
+	return
+}
+
+// SetTTL sets a ttl timeout for a branch or a leaf node.
+//
+// At ttl arrived, the leaf node value will be cleared.
+// For a branch node, it will be dropped.
+//
+// Once you're using SetTTL, don't forget call Close().
+// For example:
+//
+//	conf := newBasicStore()
+//	defer conf.Close()
+//
+//	path := "app.verbose"
+//	conf.SetTTL(path, 200*time.Millisecond, func(ctx context.Context, func(s *radix.TTL[any], nd radix.Node[any]) {
+//		t.Logf("%q cleared", path)
+//	})
+//
+// **[Pre-API]**
+//
+// SetTTL is a prerelease API since v1.2.5, it's mutable in the
+// several future releases recently.
+//
+// The returned `state`: 0 assumed no error.
+func (s *storeS) SetTTL(path string, ttl time.Duration, cb radix.OnTTLRinging[any]) (state int) {
+	state = s.Trie.SetTTL(path, ttl, cb)
 	return
 }
 
