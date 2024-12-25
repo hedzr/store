@@ -111,7 +111,9 @@ func (s *TTL[T]) run() {
 			for {
 				select {
 				case <-timer.C:
-					job.action(s, job.node)
+					if job.action != nil {
+						job.action(s, job.node)
+					}
 					if job.node.isBranch() {
 						s.treevec[0].Remove(job.node.pathS)
 					} else {
