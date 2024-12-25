@@ -36,6 +36,9 @@ conf.Set("app.bool", "[on,off,   true]")
 conf.SetComment("app.bool", "a bool slice", "remarks here")
 conf.SetTag("app.bool", []any{"on", "off", true})
 
+conf.SetTTL("app.bool", 15 * time.Second, nil)  // since v1.2.5
+defer conf.Close()  // when you used SetTTL, the Close() is must be had.
+
 states.Env().SetNoColorMode(true) // to disable ansi escape sequences in dump output
 fmt.Println(conf.Dump())
 ```
@@ -530,6 +533,35 @@ type ProviderSupports interface {
 ```
 
 Your provider can support `OnceProvider` or `StreamProvider` while its `Read` return `radix.ErrNotImplemented`. OnceProvider assumes the loader read binary content at once. `StreamProvider` allows reading the large content progressively.
+
+### Set TTL for A Key
+
+Since v1.2.5, we added TTL support for a trie node. Once the TTL arrives, the data of the target key will be cleared. Which means, the data field would be reset to zero value (or a nil value for an any type T).
+
+The code could be:
+
+```go
+func TestStore_SetTTL(t *testing.T) {
+	conf := newBasicStore()
+	defer conf.Close()
+
+	path := "app.logging.rotate"
+	conf.SetTTL(path, 200*time.Millisecond, func(s *radix.TTL[any], nd radix.Node[any]) {
+		t.Logf("%q cleared", path)
+	})
+	path2 := "app.logging.file"
+	conf.SetTTL(path2, 200*time.Millisecond, func(s *radix.TTL[any], nd radix.Node[any]) {
+		t.Logf("%q (%q) cleared", path2, nd.Data())
+	})
+
+	time.Sleep(450 * time.Millisecond)
+	assertEqual(t, true, conf.Has(path2))
+	assertEqual(t, nil, conf.MustGet(path2))
+	assertEqual(t, 0, conf.MustInt(path))
+}
+```
+
+
 
 ## Benchmarks
 

@@ -1,5 +1,8 @@
 # CHANGELOG
 
+- v1.2.5
+  - added TTL support: clear leaf data or drop branch node 
+
 - v1.2.3
   - security patch
   - upgrade deps
