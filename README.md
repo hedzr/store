@@ -112,6 +112,8 @@ To see the recently changes at [CHANGELOG](https://github.com/hedzr/store/blob/m
 > - support these url var matching: "/:id/", "/*filepath"
 > 
 > For example, matching `/hello/bob` on a router path pattern `/hello/:name` will get `kvpair = {"name":"bob"}`, and `/search/any/thing/here` on pattern `/search/*keywords` will get `kvpair = {"keywords":"any/thing/here"}`.
+> 
+> Since v1.2.5, `SetTTL` added.
 
 ## More Features
 
