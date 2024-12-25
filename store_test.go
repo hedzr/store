@@ -6,6 +6,7 @@ import (
 	"slices"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/hedzr/store/radix"
 )
@@ -183,6 +184,25 @@ func TestStore_Set(t *testing.T) {
 	trie := newBasicStore()
 	trie.Set("app.debug.map", map[string]any{"tags": []string{"delve", "verbose"}, "verbose": true})
 	t.Logf("\nPath\n%v\n", trie.Dump())
+}
+
+func TestStore_SetTTL(t *testing.T) {
+	conf := newBasicStore()
+	defer conf.Close()
+
+	path := "app.logging.rotate"
+	conf.SetTTL(path, 200*time.Millisecond, func(s *radix.TTL[any], nd radix.Node[any]) {
+		t.Logf("%q cleared", path)
+	})
+	path2 := "app.logging.file"
+	conf.SetTTL(path2, 200*time.Millisecond, func(s *radix.TTL[any], nd radix.Node[any]) {
+		t.Logf("%q (%q) cleared", path2, nd.Data())
+	})
+
+	time.Sleep(450 * time.Millisecond)
+	assertEqual(t, true, conf.Has(path2))
+	assertEqual(t, nil, conf.MustGet(path2))
+	assertEqual(t, 0, conf.MustInt(path))
 }
 
 func TestStore_Merge(t *testing.T) {

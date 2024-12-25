@@ -2,9 +2,12 @@ package radix
 
 import (
 	"bytes"
+	"context"
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
+	"time"
 
 	"gopkg.in/hedzr/errors.v3"
 
@@ -28,9 +31,173 @@ func newTrie[T any]() *trieS[T] { //nolint:revive
 }
 
 type trieS[T any] struct {
-	root      *nodeS[T]
-	prefix    string
-	delimiter rune
+	root       *nodeS[T]
+	prefix     string
+	delimiter  rune
+	ttlpresent atomic.Uint32
+	ttls       *TTL[T]
+}
+
+type TTL[T any] struct {
+	treevec []*trieS[T]
+	mu      sync.RWMutex
+	cancel  context.CancelFunc // exit signal
+	done    <-chan struct{}
+	adder   chan ttljobS[T]
+
+	// in the future, we might try timing-wheel way.
+
+	weeks   *wheelS // by weeks, years, ...
+	years   *wheelS // by years, months, days, weeks
+	days    *wheelS // by days, hours, minutes, seconds
+	seconds *wheelS // by seconds, ms, us, ns
+}
+
+type wheelS struct {
+	wheel    map[int]*wheelS
+	mu       sync.RWMutex
+	onAction wheelAction
+}
+
+type wheelAction func(ctx context.Context, w *wheelS)
+
+type ttljobS[T any] struct {
+	node     *nodeS[T]
+	duration time.Duration
+	action   OnTTLRinging[T]
+}
+
+type OnTTLRinging[T any] func(s *TTL[T], nd Node[T])
+
+func newttls[T any](t *trieS[T]) *TTL[T] {
+	ctx, cancel := context.WithCancel(context.Background())
+	s := &TTL[T]{
+		treevec: []*trieS[T]{t},
+		cancel:  cancel,
+		done:    ctx.Done(),
+		adder:   make(chan ttljobS[T]),
+	}
+	go s.run()
+	return s
+}
+
+func (s *TTL[T]) dupS() *TTL[T] {
+	ctx, cancel := context.WithCancel(context.Background())
+	n := &TTL[T]{
+		treevec: []*trieS[T]{s.treevec[0]},
+		cancel:  cancel,
+		done:    ctx.Done(),
+		adder:   make(chan ttljobS[T]),
+	}
+	go n.run()
+	return n
+}
+
+func (s *TTL[T]) Close() {
+	s.cancel()
+}
+
+func (s *TTL[T]) Tree() Trie[T] { return s.treevec[0] }
+
+func (s *TTL[T]) Add(nd *nodeS[T], duration time.Duration, action OnTTLRinging[T]) {
+	s.adder <- ttljobS[T]{node: nd, duration: duration, action: action}
+}
+
+func (s *TTL[T]) run() {
+	adder := func(job ttljobS[T]) {
+		timer := time.NewTimer(job.duration)
+		go func(timer *time.Timer, job ttljobS[T]) {
+			defer timer.Stop()
+			for {
+				select {
+				case <-timer.C:
+					if job.action != nil {
+						job.action(s, job.node)
+					}
+					if job.node.isBranch() {
+						s.treevec[0].Remove(job.node.pathS)
+					} else {
+						job.node.SetEmpty()
+					}
+					return
+				case <-s.done:
+					return
+				}
+			}
+		}(timer, job)
+	}
+
+	for {
+		select {
+		case <-s.done:
+			return
+		case job := <-s.adder:
+			adder(job)
+		}
+	}
+}
+
+func (s *trieS[T]) Close() {
+	if s.ttlpresent.CompareAndSwap(1, 0) {
+		if s.ttls != nil {
+			s.ttls.Close()
+		}
+	}
+}
+
+// SetTTL sets a ttl timeout for a branch or a leaf node.
+//
+// At ttl arrived, the leaf node value will be cleared.
+// For a branch node, it will be dropped.
+//
+// Once you're using SetTTL, don't forget call Close().
+// For example:
+//
+//	conf := newTrieTree()
+//	defer conf.Close()
+//
+//	path := "app.verbose"
+//	conf.SetTTL(path, 200*time.Millisecond, func(ctx context.Context, s *TTL[any], nd *Node[any]) {
+//		t.Logf("%q cleared", path)
+//	})
+//
+// **[Pre-API]**
+//
+// SetTTL is a prerelease API since v1.2.5, it's mutable in the
+// several future releases recently.
+//
+// The returned `state`: 0 assumed no error.
+func (s *trieS[T]) SetTTL(path string, ttl time.Duration, cb OnTTLRinging[T]) (state int) {
+	if s.prefix != "" {
+		path = s.Join(s.prefix, path) //nolint:revive
+	}
+	node, _, partialMatched := s.search(path, nil)
+	found := node != nil && !partialMatched // && !node.isBranch()
+	state = -1
+	if found {
+		state = 0
+		if s.ttlpresent.CompareAndSwap(0, 1) {
+			s.ttls = newttls[T](s)
+		}
+		s.ttls.Add(node, ttl, cb)
+	}
+	return
+}
+
+//
+
+// dupS for duplicating itself. see also Dup, WithPrefix, WithPrefix & WithPrefixReplaced, withPrefixReplacedImpl.
+func (s *trieS[T]) dupS(root *nodeS[T], prefix string) (newTrie *trieS[T]) { //nolint:revive
+	newTrie = &trieS[T]{
+		root:      root,
+		prefix:    prefix,
+		delimiter: s.delimiter,
+	}
+	if s.ttlpresent.Load() > 0 {
+		newTrie.ttls = s.ttls.dupS()
+		newTrie.ttlpresent.Add(1)
+	}
+	return
 }
 
 func (s *trieS[T]) String() string {
@@ -51,11 +218,6 @@ func (s *trieS[T]) MarshalJSON() ([]byte, error) {
 	_, _ = sb.WriteRune(s.delimiter)
 	_, _ = sb.WriteString("\"}")
 	return []byte(sb.String()), nil
-}
-
-func (s *trieS[T]) dupS(root *nodeS[T], prefix string) (newTrie *trieS[T]) { //nolint:revive
-	newTrie = &trieS[T]{root: root, prefix: prefix, delimiter: s.delimiter}
-	return
 }
 
 //
