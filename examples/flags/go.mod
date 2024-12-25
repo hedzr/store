@@ -37,14 +37,14 @@ replace github.com/hedzr/store/providers/fs => ../../providers/fs
 replace github.com/hedzr/store/providers/maps => ../../providers/maps
 
 require (
-	github.com/hedzr/logg v0.7.16
+	github.com/hedzr/logg v0.7.17
 	github.com/hedzr/store v1.2.5
 	github.com/hedzr/store/providers/flags v1.2.5
 )
 
 require (
-	github.com/hedzr/evendeep v1.2.8 // indirect
-	github.com/hedzr/is v0.6.3 // indirect
+	github.com/hedzr/evendeep v1.2.9 // indirect
+	github.com/hedzr/is v0.6.5 // indirect
 	golang.org/x/crypto v0.31.0 // indirect
 	golang.org/x/net v0.33.0 // indirect
 	golang.org/x/sys v0.28.0 // indirect
