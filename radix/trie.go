@@ -38,20 +38,11 @@ type trieS[T any] struct {
 	ttls       *TTL[T]
 }
 
-func newttls[T any](t *trieS[T]) *TTL[T] {
-	s := &TTL[T]{
-		treevec: []*trieS[T]{t},
-		exitS:   make(chan struct{}),
-		adder:   make(chan ttljobS[T]),
-	}
-	go s.run()
-	return s
-}
-
 type TTL[T any] struct {
 	treevec []*trieS[T]
 	mu      sync.RWMutex
-	exitS   chan struct{}
+	cancel  context.CancelFunc // exit signal
+	done    <-chan struct{}
 	adder   chan ttljobS[T]
 
 	// in the future, we might try timing-wheel way.
@@ -78,16 +69,32 @@ type ttljobS[T any] struct {
 
 type OnTTLRinging[T any] func(s *TTL[T], nd Node[T])
 
+func newttls[T any](t *trieS[T]) *TTL[T] {
+	ctx, cancel := context.WithCancel(context.Background())
+	s := &TTL[T]{
+		treevec: []*trieS[T]{t},
+		cancel:  cancel,
+		done:    ctx.Done(),
+		adder:   make(chan ttljobS[T]),
+	}
+	go s.run()
+	return s
+}
+
 func (s *TTL[T]) dupS() *TTL[T] {
+	ctx, cancel := context.WithCancel(context.Background())
 	n := &TTL[T]{
-		exitS: make(chan struct{}),
+		treevec: []*trieS[T]{s.treevec[0]},
+		cancel:  cancel,
+		done:    ctx.Done(),
+		adder:   make(chan ttljobS[T]),
 	}
 	go n.run()
 	return n
 }
 
 func (s *TTL[T]) Close() {
-	close(s.exitS)
+	s.cancel()
 }
 
 func (s *TTL[T]) Tree() Trie[T] { return s.treevec[0] }
@@ -111,7 +118,7 @@ func (s *TTL[T]) run() {
 						job.node.SetEmpty()
 					}
 					return
-				case <-s.exitS:
+				case <-s.done:
 					return
 				}
 			}
@@ -120,7 +127,7 @@ func (s *TTL[T]) run() {
 
 	for {
 		select {
-		case <-s.exitS:
+		case <-s.done:
 			return
 		case job := <-s.adder:
 			adder(job)
