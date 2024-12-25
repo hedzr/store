@@ -45,18 +45,18 @@ replace github.com/hedzr/store/providers/maps => ../providers/maps
 require (
 	github.com/davecgh/go-spew v1.1.1
 	github.com/hedzr/evendeep v1.2.8
-	github.com/hedzr/store v1.2.3
-	github.com/hedzr/store/codecs/hcl v1.2.3
-	github.com/hedzr/store/codecs/hjson v1.2.3
-	github.com/hedzr/store/codecs/json v1.2.3
-	github.com/hedzr/store/codecs/nestext v1.2.3
-	github.com/hedzr/store/codecs/toml v1.2.3
-	github.com/hedzr/store/codecs/yaml v1.2.3
-	github.com/hedzr/store/providers/env v1.2.3
-	github.com/hedzr/store/providers/file v1.2.3
-	github.com/hedzr/store/providers/flags v1.2.3
-	github.com/hedzr/store/providers/fs v1.2.3
-	github.com/hedzr/store/providers/maps v1.2.3
+	github.com/hedzr/store v1.2.5
+	github.com/hedzr/store/codecs/hcl v1.2.5
+	github.com/hedzr/store/codecs/hjson v1.2.5
+	github.com/hedzr/store/codecs/json v1.2.5
+	github.com/hedzr/store/codecs/nestext v1.2.5
+	github.com/hedzr/store/codecs/toml v1.2.5
+	github.com/hedzr/store/codecs/yaml v1.2.5
+	github.com/hedzr/store/providers/env v1.2.5
+	github.com/hedzr/store/providers/file v1.2.5
+	github.com/hedzr/store/providers/flags v1.2.5
+	github.com/hedzr/store/providers/fs v1.2.5
+	github.com/hedzr/store/providers/maps v1.2.5
 	github.com/stretchr/testify v1.10.0
 )
 
@@ -70,7 +70,7 @@ require (
 	github.com/pelletier/go-toml/v2 v2.2.3 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	golang.org/x/crypto v0.31.0 // indirect
-	golang.org/x/net v0.32.0 // indirect
+	golang.org/x/net v0.33.0 // indirect
 	golang.org/x/sys v0.28.0 // indirect
 	golang.org/x/term v0.27.0 // indirect
 	gopkg.in/hedzr/errors.v3 v3.3.5 // indirect

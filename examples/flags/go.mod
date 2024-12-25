@@ -38,15 +38,15 @@ replace github.com/hedzr/store/providers/maps => ../../providers/maps
 
 require (
 	github.com/hedzr/logg v0.7.16
-	github.com/hedzr/store v1.2.3
-	github.com/hedzr/store/providers/flags v1.2.3
+	github.com/hedzr/store v1.2.5
+	github.com/hedzr/store/providers/flags v1.2.5
 )
 
 require (
 	github.com/hedzr/evendeep v1.2.8 // indirect
 	github.com/hedzr/is v0.6.3 // indirect
 	golang.org/x/crypto v0.31.0 // indirect
-	golang.org/x/net v0.32.0 // indirect
+	golang.org/x/net v0.33.0 // indirect
 	golang.org/x/sys v0.28.0 // indirect
 	golang.org/x/term v0.27.0 // indirect
 	gopkg.in/hedzr/errors.v3 v3.3.5 // indirect
