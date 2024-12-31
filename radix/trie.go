@@ -105,6 +105,14 @@ func (s *TTL[T]) Add(nd *nodeS[T], duration time.Duration, action OnTTLRinging[T
 
 func (s *TTL[T]) run() {
 	adder := func(job ttljobS[T]) {
+		if job.duration < 200*time.Nanosecond {
+			if job.duration == 0 {
+				// reset a job (might be planned in the future)
+			}
+			return
+		}
+
+		// add a new job
 		timer := time.NewTimer(job.duration)
 		go func(timer *time.Timer, job ttljobS[T]) {
 			defer timer.Stop()
