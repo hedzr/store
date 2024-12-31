@@ -32,11 +32,15 @@ ss.Set("rotate", 6)
 ss.Set("words", []any{"a", 1, false})
 ss.Set("keys", map[any]any{"a": 3.13, 1.73: "zz", false: true})
 
+// Tag; Comment & Description
 conf.Set("app.bool", "[on,off,   true]")
 conf.SetComment("app.bool", "a bool slice", "remarks here")
 conf.SetTag("app.bool", []any{"on", "off", true})
 
-conf.SetTTL("app.bool", 15 * time.Second, nil)  // since v1.2.5
+// TTL to clear the node data to zero
+conf.SetTTL("app.bool", 15 * time.Second, func(_ *radix.TTL[any], nd radix.Node[any]) {
+  t.Logf("%q (%q) cleared", "app.bool", nd.Data())
+})  // since v1.2.5
 defer conf.Close()  // when you used SetTTL, the Close() is must be had.
 
 states.Env().SetNoColorMode(true) // to disable ansi escape sequences in dump output
