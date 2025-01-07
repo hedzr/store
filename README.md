@@ -120,7 +120,7 @@ To see the recently changes at [CHANGELOG](https://github.com/hedzr/store/blob/m
 >
 > Since v1.2.5, `SetTTL` added.
 
-Using store as tof core of a http router is possible. Since v1.2 we added builtin http route param support (like `:user`).
+Using store as the core of a http router is possible. Since v1.2 we added builtin http route param support (like `:user`).
 
 Using [hedzr/store](https://github.com/hedzr/store) as a in-memory Cache provider is possible. Since v1.2.5 we added `SetTTL` to reset the data of a node (by key) to zero value. You can inject your codes to drop the key or whatever else.
 
