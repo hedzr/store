@@ -120,6 +120,8 @@ To see the recently changes at [CHANGELOG](https://github.com/hedzr/store/blob/m
 >
 > Since v1.2.5, `SetTTL` added.
 
+Using store as tof core of a http router is possible. Since v1.2 we added builtin http route param support (like `:user`).
+
 Using [hedzr/store](https://github.com/hedzr/store) as a in-memory Cache provider is possible. Since v1.2.5 we added `SetTTL` to reset the data of a node (by key) to zero value. You can inject your codes to drop the key or whatever else.
 
 ## More Features
@@ -297,7 +299,7 @@ app:
 
 This feature is builtin and cannot disable, due to we have a Trie-tree store and the node is always recognized at extracting.
 
-A side effect is when you're using a float-point number as a key, that will have matters. Our tip is, don't do that.
+A side effect is, when you're using a float-point number as a key, that will have matters. Our tip is, don't do that.
 
 ### Decompound Map
 
