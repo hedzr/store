@@ -8,6 +8,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/hedzr/store/badge.svg?branch=master&.9)](https://coveralls.io/github/hedzr/store?branch=master)
 [![Go Dev](https://img.shields.io/badge/go-dev-green)](https://pkg.go.dev/github.com/hedzr/store)
 [![deps.dev](https://img.shields.io/badge/deps-dev-green)](https://deps.dev/go/github.com%2Fhedzr%2Fstore)
+[![Mentioned in Awesome Go](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go#configuration)
 
 `hedzr/store` provides an extensible, high-performance configuration management library. It is optimized for accessing hierarchical data.
 
@@ -102,22 +103,24 @@ For more information, browse these public sites:
 To see the recently changes at [CHANGELOG](https://github.com/hedzr/store/blob/master/CHANGELOG).
 
 > Since v1.1.0, unexported struct ptr (*storeS) removed from `Store` API.
-> 
+>
 > These apis changed to:
-> 
+>
 > - `Clone() (newStore Store)`
 > - `Dup() (newStore Store)`
 > - `WithPrefix(prefix ...string) (newStore Store)`
 > - `WithPrefixReplaced(newPrefix ...string) (newStore Store)`
-> 
-> Since v1.2.0, the prototypes of `Locate`/`Query` are changed. 
-> 
+>
+> Since v1.2.0, the prototypes of `Locate`/`Query` are changed.
+>
 > - an extra `kvpair` will be returned if there is `:ident` in trie path and matched ok.
 > - support these url var matching: "/:id/", "/*filepath"
-> 
+>
 > For example, matching `/hello/bob` on a router path pattern `/hello/:name` will get `kvpair = {"name":"bob"}`, and `/search/any/thing/here` on pattern `/search/*keywords` will get `kvpair = {"keywords":"any/thing/here"}`.
-> 
+>
 > Since v1.2.5, `SetTTL` added.
+
+Using [hedzr/store](https://github.com/hedzr/store) as a in-memory Cache provider is possible. Since v1.2.5 we added `SetTTL` to reset the data of a node (by key) to zero value. You can inject your codes to drop the key or whatever else.
 
 ## More Features
 
