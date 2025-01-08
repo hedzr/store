@@ -225,7 +225,7 @@ func TestTagAndComment(t *testing.T) {
 
 	found := conf.Has("app.logging.rotate")
 	println(found)
-	node, isBranch, isPartialMatched, found := conf.Locate("app.logging.rotate")
+	node, isBranch, isPartialMatched, found := conf.Locate("app.logging.rotate", nil)
 	t.Logf("%v    | %v, %v, found: %v", node.Data(), isBranch, isPartialMatched, found)
 
 	conf.Set("debug", false)
@@ -234,7 +234,7 @@ func TestTagAndComment(t *testing.T) {
 		"handler": func() {},
 	})
 
-	node, _, _, found = conf.Locate("debug")
+	node, _, _, found = conf.Locate("debug", nil)
 	if found {
 		t.Log(node.Tag(), node.Description(), node.Comment())
 	}
