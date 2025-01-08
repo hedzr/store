@@ -2,6 +2,7 @@ package tests
 
 import (
 	"context"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -30,6 +31,8 @@ func newBasicStore() store.Store {
 }
 
 func TestStore_Env_Load(t *testing.T) {
+	os.Setenv("GO111MODULE", "ON")
+
 	s := newBasicStore()
 	if _, err := s.Load(context.TODO(),
 		store.WithStorePrefix("app.env"),
@@ -51,7 +54,7 @@ func TestStore_Env_Load(t *testing.T) {
 	ret := s.Dump()
 	t.Logf("\nPath\n%v\n", ret)
 
-	assert.Equal(t, `on`, s.MustGet("app.env.poor.go111module"))
+	assert.Equal(t, `ON`, s.MustGet("app.env.poor.go111module"))
 
 	// assertTrue(t, store.MustGet("app.env.HOME") == `/Users/hz`,
 	//    `expecting store.Get("app.env.HOME") return '/Users/hz', but got '%`+`v'`,
