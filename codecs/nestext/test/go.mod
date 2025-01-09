@@ -18,9 +18,9 @@ require (
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fsnotify/fsnotify v1.8.0 // indirect
-	github.com/hedzr/evendeep v1.2.9 // indirect
-	github.com/hedzr/is v0.6.5 // indirect
-	github.com/hedzr/logg v0.7.17 // indirect
+	github.com/hedzr/evendeep v1.2.10 // indirect
+	github.com/hedzr/is v0.6.6 // indirect
+	github.com/hedzr/logg v0.7.18 // indirect
 	github.com/npillmayer/nestext v0.1.3 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	golang.org/x/crypto v0.32.0 // indirect
