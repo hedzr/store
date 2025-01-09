@@ -1,5 +1,15 @@
 # CHANGELOG
 
+- v1.2.7
+  - improved TTL support - better behaviors.
+  - added `SetEx(path, val, cb)` for easier setting a node's tag, ttl, and so on.
+  - added `SetTTLFast(node, ttl, cb)` so that `node.SetTTL(ttl, trie, cb)` can work.
+  - fix `SetEmpty`, it'll set Data field to zero value, Tag field to nil now.
+    In older versions, it simply clear `hasData` flag but keep all else field. Sometimes it might be harmful. 
+  - fix tests
+  - security patch
+  - upgrade deps
+
 - v1.2.5
   - added TTL support - clear leaf data or drop branch node 
   - security patch

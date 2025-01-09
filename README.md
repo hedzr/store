@@ -44,6 +44,18 @@ conf.SetTTL("app.bool", 15 * time.Second, func(_ *radix.TTL[any], nd radix.Node[
 })  // since v1.2.5
 defer conf.Close()  // when you used SetTTL, the Close() is must be had.
 
+conf.SetEx("app.logging.auto-stop", true,
+  func(path string, oldData any, node radix.Node[any], trie radix.Trie[any]) {
+    conf.SetTTL(path, 30*time.Minute,
+      func(s *radix.TTL[any], node radix.Node[any]) {
+        conf.Remove(node.Key()) // erase the key with the node
+      })
+    // Or:
+    trie.SetTTLFast(node, 3*time.Second, nil)
+	// Or:
+	node.SetTTL(3*time.Second, trie, nil)
+  })
+
 states.Env().SetNoColorMode(true) // to disable ansi escape sequences in dump output
 fmt.Println(conf.Dump())
 ```
@@ -119,6 +131,7 @@ To see the recently changes at [CHANGELOG](https://github.com/hedzr/store/blob/m
 > For example, matching `/hello/bob` on a router path pattern `/hello/:name` will get `kvpair = {"name":"bob"}`, and `/search/any/thing/here` on pattern `/search/*keywords` will get `kvpair = {"keywords":"any/thing/here"}`.
 >
 > Since v1.2.5, `SetTTL` added.
+> Since v1.2.6, `SetEx(path, val, callback)` added.
 
 Using store as the core of a http router is possible. Since v1.2 we added builtin http route param support (like `:user`).
 
