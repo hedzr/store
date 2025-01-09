@@ -1,5 +1,11 @@
 # CHANGELOG
 
+- v1.2.8
+  - a patch for v1.2.7 (to fix deps)
+    - security patch
+    - upgrade deps
+  - fix a data race in TTL
+
 - v1.2.7
   - improved TTL support - better behaviors.
   - added `SetEx(path, val, cb)` for easier setting a node's tag, ttl, and so on.
