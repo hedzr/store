@@ -33,9 +33,9 @@ ss.Set("rotate", 6)
 ss.Set("words", []any{"a", 1, false})
 ss.Set("keys", map[any]any{"a": 3.13, 1.73: "zz", false: true})
 
-// Tag; Comment & Description
+// Tag, Comment & Description
 conf.Set("app.bool", "[on,off,   true]")
-conf.SetComment("app.bool", "a bool slice", "remarks here")
+conf.SetComment("app.bool", "desc: a bool slice", "cmmt: remarks here")
 conf.SetTag("app.bool", []any{"on", "off", true})
 
 // TTL to clear the node data to zero
@@ -44,6 +44,7 @@ conf.SetTTL("app.bool", 15 * time.Second, func(_ *radix.TTL[any], nd radix.Node[
 })  // since v1.2.5
 defer conf.Close()  // when you used SetTTL, the Close() is must be had.
 
+// Set/create a node at once by SetEx()
 conf.SetEx("app.logging.auto-stop", true,
   func(path string, oldData any, node radix.Node[any], trie radix.Trie[any]) {
     conf.SetTTL(path, 30*time.Minute,
@@ -56,11 +57,12 @@ conf.SetEx("app.logging.auto-stop", true,
 	node.SetTTL(3*time.Second, trie, nil)
   })
 
+// inspect it
 states.Env().SetNoColorMode(true) // to disable ansi escape sequences in dump output
 fmt.Println(conf.Dump())
 ```
 
-It dumps as (internal data structure):
+The dumping result looks like (internal data structure):
 
 ```text
   app.                          <B>
@@ -130,8 +132,9 @@ To see the recently changes at [CHANGELOG](https://github.com/hedzr/store/blob/m
 >
 > For example, matching `/hello/bob` on a router path pattern `/hello/:name` will get `kvpair = {"name":"bob"}`, and `/search/any/thing/here` on pattern `/search/*keywords` will get `kvpair = {"keywords":"any/thing/here"}`.
 >
-> Since v1.2.5, `SetTTL` added.
-> Since v1.2.6, `SetEx(path, val, callback)` added.
+> Since v1.2.5, `SetTTL(path, ttl, callback)` added.
+> Since v1.2.8, `SetTTLFast(node, ttl, callback)` added.
+> Since v1.2.8, `SetEx(path, val, callback)` added.
 
 Using store as the core of a http router is possible. Since v1.2 we added builtin http route param support (like `:user`).
 
@@ -145,6 +148,21 @@ In short, the `store` can load the data from a provider which will load from its
 
 Once your configuration data is loaded or inserted into the store manually, you can read them at any time, in any way.
 That is, the original items can be extracted with a different data type if they can convert smoothly. For example, a string item `3d3h3s` can be got as a `time.Duration` value (via `MustDuration(path)`).
+
+In totally:
+
+- access fastly to the hierarchical tree data
+- app configurations management
+- load app configs from external sources
+  - various codec translators and source providers
+- merge config fragment
+- save the modifications to alternated external source
+  - see [cmdr-loaders](https://github.com/hedzr/cmdr-laoders)
+  - `$(PWD)/.app.toml` is the target
+- standalone in-memory key-value pair
+- as a in memory cache provider
+- as a kernel of a http-router
+- highly customizable
 
 ### Retrieve Node Data
 
