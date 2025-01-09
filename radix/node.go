@@ -3,6 +3,7 @@ package radix
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/hedzr/evendeep"
 	logz "github.com/hedzr/logg/slog"
@@ -90,10 +91,19 @@ func (s *nodeS[T]) SetData(data T) {
 	// }
 }
 
+func (s *nodeS[T]) SetTTL(duration time.Duration, trie Trie[T], cb OnTTLRinging[T]) {
+	trie.SetTTLFast(s, duration, cb)
+}
+
 // SetEmpty clear the Data field.
+//
+// Internally, SetEmpty sets Data field to zero value, and Tag field to nil, since v1.2.7+.
 func (s *nodeS[T]) SetEmpty() {
 	// if !s.isBranch() {
-	s.nType &= ^NTData
+	// s.nType &= ^NTData
+	var t T
+	s.data = t
+	s.tag = nil
 	// }
 }
 

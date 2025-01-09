@@ -192,6 +192,18 @@ func (s *trieS[T]) SetTTL(path string, ttl time.Duration, cb OnTTLRinging[T]) (s
 	return
 }
 
+func (s *trieS[T]) SetTTLFast(node Node[T], ttl time.Duration, cb OnTTLRinging[T]) (state int) {
+	if nd, ok := node.(*nodeS[T]); ok {
+		if s.ttlpresent.CompareAndSwap(0, 1) {
+			s.ttls = newttls[T](s)
+		}
+		s.ttls.Add(nd, ttl, cb)
+	} else {
+		state = -1
+	}
+	return
+}
+
 //
 
 // dupS for duplicating itself. see also Dup, WithPrefix, WithPrefix & WithPrefixReplaced, withPrefixReplacedImpl.
