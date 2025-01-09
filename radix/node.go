@@ -3,6 +3,7 @@ package radix
 import (
 	"fmt"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/hedzr/evendeep"
@@ -28,6 +29,7 @@ type nodeS[T any] struct {
 	comment     string
 	tag         any
 	nType       nodeType
+	rw          *sync.RWMutex
 }
 
 var _ Node[any] = (*nodeS[any])(nil) // assertion helper
@@ -47,6 +49,26 @@ func (s *nodeS[T]) IsLeaf() bool        { return s.nType&NTMask == NTLeaf }   //
 func (s *nodeS[T]) IsBranch() bool      { return s.nType&NTMask == NTBranch } // branch node?
 func (s *nodeS[T]) HasData() bool       { return s.nType&NTData != 0 }        //nolint:revive //data field is valid?
 func (s *nodeS[T]) Empty() bool         { return s.nType&NTData == 0 }        //nolint:revive //data field is empty?
+
+func (s *nodeS[T]) readLockFor(cb func(*nodeS[T])) { //nolint:revive
+	if s.rw != nil {
+		s.rw.RLock()
+		cb(s)
+		s.rw.RUnlock()
+	} else {
+		cb(s)
+	}
+}
+
+func (s *nodeS[T]) lockFor(cb func(*nodeS[T])) { //nolint:revive
+	if s.rw != nil {
+		s.rw.Lock()
+		cb(s)
+		s.rw.Unlock()
+	} else {
+		cb(s)
+	}
+}
 
 // SetModified sets the modified state to true or false.
 //
@@ -78,7 +100,9 @@ func (s *nodeS[T]) ResetModified() {
 // Data returns the Data field of a node.
 func (s *nodeS[T]) Data() (data T) {
 	// if !s.isBranch() {
-	data = s.data
+	s.readLockFor(func(s *nodeS[T]) {
+		data = s.data
+	})
 	// }
 	return
 }
@@ -86,8 +110,10 @@ func (s *nodeS[T]) Data() (data T) {
 // SetData sets the Data field of a node.
 func (s *nodeS[T]) SetData(data T) {
 	// if !s.isBranch() {
-	s.data = data
-	s.nType |= NTData
+	s.lockFor(func(s *nodeS[T]) {
+		s.data = data
+		s.nType |= NTData
+	})
 	// }
 }
 
@@ -101,9 +127,11 @@ func (s *nodeS[T]) SetTTL(duration time.Duration, trie Trie[T], cb OnTTLRinging[
 func (s *nodeS[T]) SetEmpty() {
 	// if !s.isBranch() {
 	// s.nType &= ^NTData
-	var t T
-	s.data = t
-	s.tag = nil
+	s.lockFor(func(s *nodeS[T]) {
+		var t T
+		s.data = t
+		s.tag = nil
+	})
 	// }
 }
 
@@ -479,29 +507,31 @@ func (s *nodeS[T]) dumpR(sb *strings.Builder, lvl int, noColor bool) string { //
 			// }
 		}
 
-		if s.hasData() {
-			_, _ = sb.WriteString(" ")
-			_, _ = sb.WriteString(s.pathS)
-			_, _ = sb.WriteString(" => ")
-			_, _ = sb.WriteString(ColorToDim(fmt.Sprint(s.data)))
-		}
+		s.readLockFor(func(n *nodeS[T]) {
+			if s.hasData() {
+				_, _ = sb.WriteString(" ")
+				_, _ = sb.WriteString(s.pathS)
+				_, _ = sb.WriteString(" => ")
+				_, _ = sb.WriteString(ColorToDim(fmt.Sprint(s.Data())))
+			}
 
-		if s.comment != "" {
-			_, _ = sb.WriteString(ColorToColor(FgLightGreen, " // "+s.comment))
-		}
+			if s.comment != "" {
+				_, _ = sb.WriteString(ColorToColor(FgLightGreen, " // "+s.comment))
+			}
 
-		if s.tag != nil {
-			_, _ = sb.WriteString(" | tag = ")
-			_, _ = sb.WriteString(ColorToColor(FgGreen, fmt.Sprint(s.tag)))
-		}
+			if s.tag != nil {
+				_, _ = sb.WriteString(" | tag = ")
+				_, _ = sb.WriteString(ColorToColor(FgGreen, fmt.Sprint(s.tag)))
+			}
 
-		if s.description != "" {
-			_, _ = sb.WriteString(ColorToColor(FgLightGreen, " ~ "+s.description))
-		}
+			if s.description != "" {
+				_, _ = sb.WriteString(ColorToColor(FgLightGreen, " ~ "+s.description))
+			}
 
-		if !strings.HasSuffix(s.pathS, string(s.path)) {
-			_, _ = fmt.Fprintf(sb, " [WRONG path & pathS: %q / %q]", string(s.path), s.pathS)
-		}
+			if !strings.HasSuffix(s.pathS, string(s.path)) {
+				_, _ = fmt.Fprintf(sb, " [WRONG path & pathS: %q / %q]", string(s.path), s.pathS)
+			}
+		})
 		_ = sb.WriteByte('\n')
 	}
 
@@ -526,7 +556,7 @@ func (s *nodeS[T]) Dup() (newNode *nodeS[T]) { //nolint:revive
 		newNode.children = append(newNode.children, ch.Dup())
 	}
 
-	data := evendeep.MakeClone(s.data)
+	data := evendeep.MakeClone(s.Data())
 	switch z := data.(type) {
 	case *T:
 		newNode.data = *z

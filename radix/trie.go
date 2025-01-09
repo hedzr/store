@@ -100,6 +100,9 @@ func (s *TTL[T]) Close() {
 func (s *TTL[T]) Tree() Trie[T] { return s.treevec[0] }
 
 func (s *TTL[T]) Add(nd *nodeS[T], duration time.Duration, action OnTTLRinging[T]) {
+	if nd.rw == nil {
+		nd.rw = &sync.RWMutex{}
+	}
 	s.adder <- ttljobS[T]{node: nd, duration: duration, action: action}
 }
 
@@ -116,6 +119,7 @@ func (s *TTL[T]) run() {
 		timer := time.NewTimer(job.duration)
 		go func(timer *time.Timer, job ttljobS[T]) {
 			defer timer.Stop()
+			// defer func() { job.node.rw = nil }()
 			for {
 				select {
 				case <-timer.C:
@@ -581,7 +585,9 @@ func (s *trieS[T]) Query(path string, kvpair KVPair) (data T, branch, found bool
 			}
 		}
 		if node.hasData() {
-			data = node.data
+			node.lockFor(func(n *nodeS[T]) {
+				data = node.data
+			})
 		}
 	}
 	// if !found {
