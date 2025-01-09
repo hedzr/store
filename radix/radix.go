@@ -66,6 +66,20 @@ type Trie[T any] interface {
 	// The returned `state`: 0 assumed no error.
 	SetTTL(path string, ttl time.Duration, cb OnTTLRinging[T]) (state int)
 
+	SetTTLFast(node Node[T], ttl time.Duration, cb OnTTLRinging[T]) (state int)
+
+	// SetEx is advanced version of Set.
+	//
+	// Using it to setup a new node at once. For example:
+	//
+	//	conf.SetEx("app.logging.auto-stop", true, func(path string, olddata any, node radix.Node[any]){
+	//	    conf.SetTTL(path, 30 * time.Minutes,
+	//	      func(s *radix.TTL[T], node radix.Node[any], trie radix.Trie[any]) {
+	//	        conf.Remove(node.Key()) // erase the key with the node
+	//	      })
+	//	})
+	SetEx(path string, data T, cb OnSetEx[T]) (oldData any)
+
 	TypedGetters[T] // getters
 
 	WithPrefix(prefix ...string) (entry Trie[T])            // appends prefix string and make a new instance of Trie[T]

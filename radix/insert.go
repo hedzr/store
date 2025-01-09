@@ -3,6 +3,6 @@
 
 package radix
 
-func (s *nodeS[T]) insert(word []rune, fullPath string, data T) (node Node[T], oldData any) {
-	return s.insertInternal(word, fullPath, data)
+func (s *nodeS[T]) insert(word []rune, fullPath string, data T, trie *trieS[T], cb OnSetEx[T]) (node Node[T], oldData any) {
+	return s.insertInternal(word, fullPath, data, trie, cb)
 }

@@ -164,7 +164,7 @@ func (s *nodeS[T]) findCommonPrefixLength(word []rune) (length int) {
 	return
 }
 
-func (s *nodeS[T]) insertInternal(word []rune, fullPath string, data T) (node *nodeS[T], oldData any) { //nolint:revive
+func (s *nodeS[T]) insertInternal(word []rune, fullPath string, data T, trie *trieS[T], cb OnSetEx[T]) (node *nodeS[T], oldData any) { //nolint:revive
 	if strings.Contains(string(word), " ") {
 		word = []rune(strings.ReplaceAll(string(word), " ", "-")) //nolint:revive
 		fullPath = strings.ReplaceAll(fullPath, " ", "-")         //nolint:revive
@@ -198,17 +198,26 @@ func (s *nodeS[T]) insertInternal(word []rune, fullPath string, data T) (node *n
 		matched, child := base.matchChildren(word)
 		if matched {
 			var n Node[T]
-			n, oldData = child.insert(word, fullPath, data)
+			n, oldData = child.insert(word, fullPath, data, trie, cb)
 			if nn, ok := n.(*nodeS[T]); ok {
 				node = nn
+				if cb != nil {
+					cb(fullPath, oldData, node, trie)
+				}
 			}
 		} else {
 			node = base.insertAsLeaf(word, fullPath, data)
+			if cb != nil {
+				cb(fullPath, nil, node, trie)
+			}
 		}
 	} else {
 		// hit this node,
 		base.nType |= NTData
 		node, oldData, base.data = base, base.data, data
+		if cb != nil {
+			cb(fullPath, oldData, node, trie)
+		}
 	}
 	return
 }

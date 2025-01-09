@@ -338,7 +338,17 @@ func (s *trieS[T]) Set(path string, data T) (node Node[T], oldData any) {
 	if s.prefix != "" {
 		path = s.Join(s.prefix, path) //nolint:revive
 	}
-	return s.root.insert([]rune(path), path, data)
+	return s.root.insert([]rune(path), path, data, s, nil)
+}
+
+type OnSetEx[T any] func(path string, oldData any, node Node[T], trie Trie[T])
+
+func (s *trieS[T]) SetEx(path string, data T, cb OnSetEx[T]) (oldData any) {
+	if s.prefix != "" {
+		path = s.Join(s.prefix, path) //nolint:revive
+	}
+	_, oldData = s.root.insert([]rune(path), path, data, s, cb)
+	return
 }
 
 // SetNode sets the all node fields at once.
@@ -346,7 +356,7 @@ func (s *trieS[T]) SetNode(path string, data T, tag any, descriptionAndComments 
 	if s.prefix != "" {
 		path = s.Join(s.prefix, path) //nolint:revive
 	}
-	node, old := s.root.insertInternal([]rune(path), path, data)
+	node, old := s.root.insertInternal([]rune(path), path, data, s, nil)
 	switch len(descriptionAndComments) {
 	case 0:
 	case 1:
@@ -367,7 +377,7 @@ func (s *trieS[T]) SetEmpty(path string) (oldData any) { //nolint:revive
 		path = s.Join(s.prefix, path) //nolint:revive
 	}
 	var v T
-	node, old := s.root.insertInternal([]rune(path), path, v)
+	node, old := s.root.insertInternal([]rune(path), path, v, s, nil)
 	node.SetEmpty()
 	return old
 }
@@ -377,7 +387,7 @@ func (s *trieS[T]) Update(path string, cb func(node Node[T], old any)) {
 		path = s.Join(s.prefix, path) //nolint:revive
 	}
 	var v T
-	node, old := s.root.insertInternal([]rune(path), path, v)
+	node, old := s.root.insertInternal([]rune(path), path, v, s, nil)
 	cb(node, old)
 	return
 }

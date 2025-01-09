@@ -180,10 +180,36 @@ func TestStore_GetSectionFrom(t *testing.T) {
 }
 
 func TestStore_Set(t *testing.T) {
-	// trie := NewStoreT[any]()
-	trie := newBasicStore()
-	trie.Set("app.debug.map", map[string]any{"tags": []string{"delve", "verbose"}, "verbose": true})
-	t.Logf("\nPath\n%v\n", trie.Dump())
+	// conf := NewStoreT[any]()
+	conf := newBasicStore()
+	conf.Set("app.debug.map", map[string]any{"tags": []string{"delve", "verbose"}, "verbose": true})
+	t.Logf("\nPath\n%v\n", conf.Dump())
+}
+
+func TestStore_SetEx(t *testing.T) {
+	// conf := NewStoreT[any]()
+	conf := newBasicStore()
+	conf.SetEx("app.debug.map",
+		map[string]any{"tags": []string{"delve", "verbose"}, "verbose": true},
+		func(path string, oldData any, node radix.Node[any], trie radix.Trie[any]) {
+			node.SetTag([]string{"map", "test", "setEx"})
+			trie.SetTTLFast(node, 3*time.Second, nil)
+		},
+	)
+
+	conf.SetEx("app.logging.auto-stop", true,
+		func(path string, oldData any, node radix.Node[any], trie radix.Trie[any]) {
+			conf.SetTTL(path, 30*time.Minute,
+				func(s *radix.TTL[any], node radix.Node[any]) {
+					conf.Remove(node.Key()) // erase the key with the node
+				})
+			// Or:
+			trie.SetTTLFast(node, 3*time.Second, nil)
+		})
+
+	t.Logf("\nPath\n%v\n", conf.Dump())
+	time.Sleep(3 * time.Second)
+	t.Logf("\nPath\n%v\n", conf.Dump())
 }
 
 func TestStore_SetTTL(t *testing.T) {

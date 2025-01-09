@@ -19,12 +19,19 @@ var _ Store = (*dummyS)(nil) // assertion helper
 
 var _ MinimalStoreT[any] = (*dummyS)(nil) // assertion helper
 
-func (s *dummyS) Close()                                                                   {}
-func (s *dummyS) MustGet(path string) (data any)                                           { return } //nolint:revive
-func (s *dummyS) Get(path string) (data any, found bool)                                   { return } //nolint:revive
-func (s *dummyS) Set(path string, data any) (node radix.Node[any], old any)                { return } //nolint:revive
-func (s *dummyS) SetComment(path, description, comment string) (ok bool)                   { return } //nolint:revive
-func (s *dummyS) SetTag(path string, tags any) (ok bool)                                   { return } //nolint:revive // set extra notable data bound to a key
+func (s *dummyS) Close()                                                    {}
+func (s *dummyS) MustGet(path string) (data any)                            { return } //nolint:revive
+func (s *dummyS) Get(path string) (data any, found bool)                    { return } //nolint:revive
+func (s *dummyS) Set(path string, data any) (node radix.Node[any], old any) { return } //nolint:revive
+func (s *dummyS) SetComment(path, description, comment string) (ok bool)    { return } //nolint:revive
+func (s *dummyS) SetTag(path string, tags any) (ok bool)                    { return } //nolint:revive // set extra notable data bound to a key
+func (s *dummyS) SetTTL(path string, ttl time.Duration, cb radix.OnTTLRinging[any]) (state int) {
+	return
+}
+func (s *dummyS) SetTTLFast(node radix.Node[any], ttl time.Duration, cb radix.OnTTLRinging[any]) (state int) {
+	return
+}
+func (s *dummyS) SetEx(path string, data any, cb radix.OnSetEx[any]) (old any)             { return } //nolint:revive
 func (s *dummyS) Remove(path string) (removed bool)                                        { return } //nolint:revive
 func (s *dummyS) RemoveEx(path string) (nodeRemoved, parent radix.Node[any], removed bool) { return } //nolint:revive
 func (s *dummyS) Merge(pathAt string, data map[string]any) (err error)                     { return } //nolint:revive

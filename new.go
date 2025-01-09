@@ -4,6 +4,7 @@ import (
 	"context"
 	stderr "errors"
 	"io"
+	"time"
 
 	"gopkg.in/hedzr/errors.v3"
 
@@ -105,6 +106,43 @@ type Store interface {
 	Locate(path string, kvpair radix.KVPair) (node radix.Node[any], branch, partialMatched, found bool)
 
 	radix.TypedGetters[any] // getters
+
+	// SetTTL sets a ttl timeout for a branch or a leaf node.
+	//
+	// At ttl arrived, the leaf node value will be cleared.
+	// For a branch node, it will be dropped.
+	//
+	// Once you're using SetTTL, don't forget call Close().
+	// For example:
+	//
+	//	conf := newTrieTree()
+	//	defer conf.Close()
+	//
+	//	path := "app.verbose"
+	//	conf.SetTTL(path, 200*time.Millisecond, func(ctx context.Context, s *TTL[any], nd *Node[any]) {
+	//		t.Logf("%q cleared", path)
+	//	})
+	//
+	// **[Pre-API]**
+	//
+	// SetTTL is a prerelease API since v1.2.5, it's mutable in the
+	// several future releases recently.
+	//
+	// The returned `state`: 0 assumed no error.
+	SetTTL(path string, ttl time.Duration, cb radix.OnTTLRinging[any]) (state int)
+	SetTTLFast(node radix.Node[any], ttl time.Duration, cb radix.OnTTLRinging[any]) (state int)
+
+	// SetEx is advanced version of Set.
+	//
+	// Using it to setup a new node at once. For example:
+	//
+	//	conf.SetEx("app.logging.auto-stop", true, func(path string, olddata any, node radix.Node[any]){
+	//	    conf.SetTTL(path, 30 * time.Minutes,
+	//	      func(s *radix.TTL[T], node radix.Node[any], trie radix.Trie[any]) {
+	//	        conf.Remove(node.Key()) // erase the key with the node
+	//	      })
+	//	})
+	SetEx(path string, data any, cb radix.OnSetEx[any]) (oldData any)
 
 	SetComment(path, description, comment string) (ok bool) // set extra meta-info bound to a key
 	SetTag(path string, tags any) (ok bool)                 // set extra notable data bound to a key
