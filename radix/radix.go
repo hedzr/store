@@ -72,12 +72,17 @@ type Trie[T any] interface {
 	//
 	// Using it to setup a new node at once. For example:
 	//
-	//	conf.SetEx("app.logging.auto-stop", true, func(path string, olddata any, node radix.Node[any]){
-	//	    conf.SetTTL(path, 30 * time.Minutes,
-	//	      func(s *radix.TTL[T], node radix.Node[any], trie radix.Trie[any]) {
+	//	conf.SetEx("app.logging.auto-stop", true,
+	//	  func(path string, oldData any, node radix.Node[any], trie radix.Trie[any]) {
+	//	    conf.SetTTL(path, 30*time.Minute,
+	//	      func(s *radix.TTL[any], node radix.Node[any]) {
 	//	        conf.Remove(node.Key()) // erase the key with the node
 	//	      })
-	//	})
+	//	    // Or:
+	//	    trie.SetTTLFast(node, 3*time.Second, nil)
+	//	    // Or:
+	//	    node.SetTTL(3*time.Second, trie, nil)
+	//	  })
 	SetEx(path string, data T, cb OnSetEx[T]) (oldData any)
 
 	TypedGetters[T] // getters
