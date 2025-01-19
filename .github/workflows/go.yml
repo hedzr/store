@@ -53,6 +53,13 @@ jobs:
             ${{ runner.os }}-go-
       - name: Test
         run: |
+          # # for GOOS in $(go tool dist list|awk -F'/' '{print $1}'|sort -u); do
+          # #   echo -e "\n\nTESTING FOR $GOOS ...\n"
+          # #   go test ./...
+          # # done
+          # go test -v ./...
+          #
+          #
           # if [[ $ENABLE_FULL_ARCHes_TESTS -eq 1 ]]; then
           #   for GOOS in $(go tool dist list|awk -F'/' '{print $1}'|sort -u); do
           #     echo -e "\n\nTESTING FOR $GOOS ...\n"
