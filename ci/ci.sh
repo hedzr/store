@@ -51,7 +51,7 @@
 # 1. edit doc.go and CHANGELOG
 # 2. `$0 update`                                             : update deps in main module, and child modules;
 # 3. `make cov`                                              : ensure all tests passed
-# 4. `git push --all`                                        : waiting for the remote ci passed
+# 4. `git commit -am 'security patch' && git push --all`     : and now waiting for the remote ci passed
 # 5. `git tag $VER && git push --all && git push --tags`     : bump version, push it
 # 6. `$0 publish all && git push --all && git push --tags`   : release the submodules
 #
