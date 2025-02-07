@@ -1,5 +1,10 @@
 # CHANGELOG
 
+- v1.2.12
+  - bump version number for compliant with evendeep & cmdr-loaders
+  - security patch
+  - upgrade deps
+
 - v1.2.8
   - a patch for v1.2.7 (to fix deps)
     - security patch
