@@ -47,14 +47,14 @@ defer conf.Close()  // when you used SetTTL, the Close() is must be had.
 // Set/create a node at once by SetEx()
 conf.SetEx("app.logging.auto-stop", true,
   func(path string, oldData any, node radix.Node[any], trie radix.Trie[any]) {
-    conf.SetTTL(path, 30*time.Minute,
+    trie.SetTTL(path, 30*time.Minute,
       func(s *radix.TTL[any], node radix.Node[any]) {
-        conf.Remove(node.Key()) // erase the key with the node
+          trie.Remove(node.Key()) // erase the key with the node
       })
     // Or:
     trie.SetTTLFast(node, 3*time.Second, nil)
-	// Or:
-	node.SetTTL(3*time.Second, trie, nil)
+    // Or:
+    node.SetTTL(3*time.Second, trie, nil)
   })
 
 // inspect it
