@@ -19,9 +19,9 @@ require (
 
 require (
 	github.com/fsnotify/fsnotify v1.8.0 // indirect
-	github.com/hedzr/evendeep v1.2.12 // indirect
-	github.com/hedzr/is v0.6.8 // indirect
-	github.com/hedzr/logg v0.7.20 // indirect
+	github.com/hedzr/evendeep v1.2.13 // indirect
+	github.com/hedzr/is v0.6.9 // indirect
+	github.com/hedzr/logg v0.7.21 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	golang.org/x/crypto v0.33.0 // indirect
 	golang.org/x/net v0.34.0 // indirect
