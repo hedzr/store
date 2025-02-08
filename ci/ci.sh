@@ -75,7 +75,7 @@ VER=""
 
 if [ x"$VER" == x ]; then
 	notfound=1
-	for f in doc.go _examples/doc.go slog/doc.go; do
+	for f in doc.go _examples/doc.go _examples/small/doc.go slog/doc.go; do
 		(($notfound)) && [ -f "$f" ] && {
 			# echo "checking $f for VER..."
 			VER="$(echo v$(grep -iE 'Version[ ]*=.*' "$f" | grep -oE '\d+\.\d+\.\d+'))"
@@ -482,7 +482,7 @@ do-update-dep() {
 	local d="$1"
 	pushd "$d" >/dev/null
 	echo
-	tip "==== go mod tidy, dir='$d' =========="
+	tip "==== go mod tidy with update all, dir='$d ($(pwd))' =========="
 	go get -v -t -u ./... && go mod tidy
 	popd >/dev/null
 }
