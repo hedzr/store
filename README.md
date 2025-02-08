@@ -132,9 +132,9 @@ To see the recently changes at [CHANGELOG](https://github.com/hedzr/store/blob/m
 >
 > For example, matching `/hello/bob` on a router path pattern `/hello/:name` will get `kvpair = {"name":"bob"}`, and `/search/any/thing/here` on pattern `/search/*keywords` will get `kvpair = {"keywords":"any/thing/here"}`.
 >
-> Since v1.2.5, `SetTTL(path, ttl, callback)` added.
-> Since v1.2.8, `SetTTLFast(node, ttl, callback)` added.
-> Since v1.2.8, `SetEx(path, val, callback)` added.
+> Since v1.2.5, `SetTTL(path, ttl, callback)` added.  
+> Since v1.2.8, `SetTTLFast(node, ttl, callback)` added.  
+> Since v1.2.8, `SetEx(path, val, callback)` added.  
 
 Using store as the core of a http router is possible. Since v1.2 we added builtin http route param support (like `:user`).
 
