@@ -22,7 +22,7 @@ env:
   ENABLE_DOCKER: 0
   ENABLE_Apps_Building: 0
   ENABLE_FULL_ARCHes_TEST: 0
-  ENABLE_Coveralls_Sender: 1  # need COVERALLS_REPO_TOKEN or CODECOV_TOKEN
+  ENABLE_Coveralls_Sender: 0  # need COVERALLS_REPO_TOKEN or CODECOV_TOKEN
   ENABLE_Simple_Release: 1    # simple (1), or normal (0): build+docker+brew+release
   ENABLE_Homebrew: 0
   #HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
