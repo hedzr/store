@@ -117,6 +117,7 @@ jobs:
     name: Finish Coverage
     needs: coverage
     runs-on: ubuntu-latest
+    if: env.ENABLE_Coveralls_Sender != 0
     steps:
       - uses: shogo82148/actions-goveralls@v1
         with:
