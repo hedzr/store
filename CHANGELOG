@@ -1,5 +1,10 @@
 # CHANGELOG
 
+- v1.3.0
+  - upgrade toolchain to go1.23.7
+  - security patch
+  - upgrade deps
+
 - v1.2.15
   - security patch
   - upgrade deps
