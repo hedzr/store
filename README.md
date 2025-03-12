@@ -135,6 +135,7 @@ To see the recently changes at [CHANGELOG](https://github.com/hedzr/store/blob/m
 > Since v1.2.5, `SetTTL(path, ttl, callback)` added.  
 > Since v1.2.8, `SetTTLFast(node, ttl, callback)` added.  
 > Since v1.2.8, `SetEx(path, val, callback)` added.  
+> Since v1.3.0, move the minimal toolchain to go1.23.7.  
 
 Using store as the core of a http router is possible. Since v1.2 we added builtin http route param support (like `:user`).
 
