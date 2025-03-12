@@ -59,7 +59,7 @@ func WithPrefix(prefix string, strippedPrefix ...string) Opt {
 
 // WithStorePrefix gives a dotted key prefix for store.Store.
 //
-// Such as: "app.cmd", ..
+// Such as: "app.whatever", ..
 func WithStorePrefix(position string) Opt {
 	return func(s *pvdr) {
 		s.storePrefix = position
