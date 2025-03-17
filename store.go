@@ -472,3 +472,41 @@ func (s *storeS) WithPrefixReplaced(newPrefix ...string) (newStore Store) {
 func (s *storeS) SetPrefix(newPrefix ...string) {
 	s.Trie.SetPrefix(newPrefix...)
 }
+
+// To finds a given path and loads the subtree into
+// 'holder', typically 'holder' could be a struct.
+//
+// For yaml input
+//
+//	app:
+//	  server:
+//	    sites:
+//	      - name: default
+//	        addr: ":7999"
+//	        location: ~/Downloads/w/docs
+//
+// The following codes can load it into sitesS struct:
+//
+//	var sites sitesS
+//	err = store.To(store.WithPrefix("app"), "server.sites", &sites)
+//
+//	type sitesS struct{ Sites []siteS }
+//
+//	type siteS struct {
+//	  Name        string
+//	  Addr        string
+//	  Location    string
+//	}
+//
+// In this above case, 'store' loaded yaml and built it
+// into memory, and extract 'server.sites' into 'sitesS'.
+// Since 'server.sites' is a yaml array, it was loaded
+// as a store entry and holds a slice value, so GetSectionFrom
+// extract it to sitesS.Sites field.
+//
+// The optional MOpt operators could be:
+//   - WithKeepPrefix
+//   - WithFilter
+func To[T any](s Store, path string, holder *T, opts ...radix.MOpt[any]) (err error) {
+	return s.To(path, holder, opts...)
+}

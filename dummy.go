@@ -318,6 +318,7 @@ func (s *dummyS) GetM(path string, opt ...radix.MOpt[any]) (ret map[string]any, 
 
 func (s *dummyS) MustM(path string, opt ...radix.MOpt[any]) (ret map[string]any)              { return } //nolint:revive
 func (s *dummyS) GetSectionFrom(path string, holder any, opts ...radix.MOpt[any]) (err error) { return } //nolint:revive
+func (s *dummyS) To(path string, target any, opts ...radix.MOpt[any]) (err error)             { return } //nolint:revive
 
 func (s *dummyS) Dump() (text string)                                                    { return }                          //nolint:revive
 func (s *dummyS) Clone() (newStore Store)                                                { return }                          //nolint:revive

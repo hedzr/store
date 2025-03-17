@@ -144,6 +144,41 @@ type TypedGetters[T any] interface {
 	//  - WithKeepPrefix
 	//  - WithFilter
 	GetSectionFrom(path string, holder any, opts ...MOpt[T]) (err error)
+	// To finds a given path and loads the subtree into
+	// 'holder', typically 'holder' could be a struct.
+	//
+	// For yaml input
+	//
+	//    app:
+	//      server:
+	//        sites:
+	//          - name: default
+	//            addr: ":7999"
+	//            location: ~/Downloads/w/docs
+	//
+	// The following codes can load it into sitesS struct:
+	//
+	//	var sites sitesS
+	//	err = store.WithPrefix("app").To("server.sites", &sites)
+	//
+	//	type sitesS struct{ Sites []siteS }
+	//
+	//	type siteS struct {
+	//	  Name        string
+	//	  Addr        string
+	//	  Location    string
+	//	}
+	//
+	// In this above case, 'store' loaded yaml and built it
+	// into memory, and extract 'server.sites' into 'sitesS'.
+	// Since 'server.sites' is a yaml array, it was loaded
+	// as a store entry and holds a slice value, so GetSectionFrom
+	// extract it to sitesS.Sites field.
+	//
+	// The optional MOpt operators could be:
+	//  - WithKeepPrefix
+	//  - WithFilter
+	To(path string, holder any, opts ...MOpt[T]) (err error)
 }
 
 // TypedBooleanGetters collects boolean extractors
@@ -488,6 +523,10 @@ func reloadIntoStruct(m map[string]any, holder any) (err error) {
 }
 
 func (s *trieS[T]) GetSectionFrom(path string, holder any, opts ...MOpt[T]) (err error) {
+	return s.To(path, holder, opts...)
+}
+
+func (s *trieS[T]) To(path string, holder any, opts ...MOpt[T]) (err error) {
 	if holder == nil {
 		return
 	}

@@ -177,6 +177,58 @@ func TestStore_GetSectionFrom(t *testing.T) {
 	if err != nil {
 		t.Fail()
 	}
+	assertTrue(t, ss.App.Server.Sites == -1)
+}
+
+func TestTo(t *testing.T) {
+	conf := newBasicStore()
+	conf.Set("app.logging.words", []any{"a", 1, false})
+	conf.Set("app.server.sites", -1)
+	t.Logf("\nPath\n%v\n", conf.Dump())
+
+	type loggingS struct {
+		File   uint
+		Rotate uint64
+		Words  []any
+	}
+
+	type serverS struct {
+		Start int
+		Sites int
+	}
+
+	type appS struct {
+		Debug   bool
+		Dump    int
+		Verbose bool
+		Logging loggingS
+		Server  serverS
+	}
+
+	type cfgS struct {
+		App appS
+	}
+
+	var ss cfgS
+	err := To(conf, "", &ss)
+	t.Logf("cfgS: %v | err: %v", ss, err)
+
+	assertEqual(t, []any{"a", 1, false}, ss.App.Logging.Words)
+	assertEqual(t, -1, ss.App.Server.Sites)
+
+	if !reflect.DeepEqual(ss.App.Logging.Words, []any{"a", 1, false}) {
+		t.Fail()
+	}
+
+	// err = To(conf, "nonexist", nil)
+	// t.Log("nothing happened")
+
+	err = To(conf, "nonexist", &ss)
+	t.Logf("cfgS: %v | err: %v", ss, err)
+	if err != nil {
+		t.Fail()
+	}
+	assertTrue(t, ss.App.Server.Sites == -1)
 }
 
 func TestStore_Set(t *testing.T) {
