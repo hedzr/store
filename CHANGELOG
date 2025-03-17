@@ -1,5 +1,8 @@
 # CHANGELOG
 
+- v1.3.2
+  - add `To()`
+
 - v1.3.1
   - upgrade deps
 
