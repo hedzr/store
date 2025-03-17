@@ -22,7 +22,7 @@ replace github.com/hedzr/store => ../..
 
 require (
 	github.com/fsnotify/fsnotify v1.8.0
-	github.com/hedzr/store v1.3.1
+	github.com/hedzr/store v1.3.2
 )
 
 require (

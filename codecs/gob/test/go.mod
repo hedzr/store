@@ -10,9 +10,9 @@ replace github.com/hedzr/store/codecs/gob => ../
 
 require (
 	github.com/davecgh/go-spew v1.1.1
-	github.com/hedzr/store v1.3.1
-	github.com/hedzr/store/codecs/gob v1.3.1
-	github.com/hedzr/store/providers/file v1.3.1
+	github.com/hedzr/store v1.3.2
+	github.com/hedzr/store/codecs/gob v1.3.2
+	github.com/hedzr/store/providers/file v1.3.2
 	github.com/stretchr/testify v1.10.0
 )
 

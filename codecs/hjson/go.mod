@@ -19,7 +19,7 @@ replace github.com/hedzr/store => ../..
 // replace github.com/hedzr/store/providers/file => ../../providers/file
 
 require (
-	github.com/hedzr/store v1.3.1
+	github.com/hedzr/store v1.3.2
 	github.com/hjson/hjson-go/v4 v4.4.0
 )
 

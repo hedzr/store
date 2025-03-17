@@ -19,7 +19,7 @@ replace github.com/hedzr/store => ../..
 //replace github.com/hedzr/store/providers/file => ../../providers/file
 
 require (
-	github.com/hedzr/store v1.3.1
+	github.com/hedzr/store v1.3.2
 	gopkg.in/yaml.v3 v3.0.1
 )
 
