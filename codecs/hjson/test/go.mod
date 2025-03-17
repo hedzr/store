@@ -10,18 +10,18 @@ replace github.com/hedzr/store/codecs/hjson => ../
 
 require (
 	github.com/davecgh/go-spew v1.1.1
-	github.com/hedzr/store v1.3.0
-	github.com/hedzr/store/codecs/hjson v1.3.0
-	github.com/hedzr/store/providers/file v1.3.0
+	github.com/hedzr/store v1.3.1
+	github.com/hedzr/store/codecs/hjson v1.3.1
+	github.com/hedzr/store/providers/file v1.3.1
 	github.com/hjson/hjson-go/v4 v4.4.0
 	github.com/stretchr/testify v1.10.0
 )
 
 require (
 	github.com/fsnotify/fsnotify v1.8.0 // indirect
-	github.com/hedzr/evendeep v1.3.0 // indirect
-	github.com/hedzr/is v0.7.0 // indirect
-	github.com/hedzr/logg v0.8.0 // indirect
+	github.com/hedzr/evendeep v1.3.1 // indirect
+	github.com/hedzr/is v0.7.1 // indirect
+	github.com/hedzr/logg v0.8.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	golang.org/x/crypto v0.36.0 // indirect
 	golang.org/x/net v0.37.0 // indirect

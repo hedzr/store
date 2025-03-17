@@ -17,9 +17,9 @@ go 1.23.7
 // replace github.com/hedzr/go-utils/v2 => ./
 
 require (
-	github.com/hedzr/evendeep v1.3.0
-	github.com/hedzr/is v0.7.0
-	github.com/hedzr/logg v0.8.0
+	github.com/hedzr/evendeep v1.3.1
+	github.com/hedzr/is v0.7.1
+	github.com/hedzr/logg v0.8.1
 	gopkg.in/hedzr/errors.v3 v3.3.5
 )
 

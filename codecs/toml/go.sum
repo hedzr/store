@@ -1,11 +1,11 @@
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/hedzr/evendeep v1.3.0 h1:9nIt23PjWQfqXjN+nQBb6/opdq33q8zw2/lFz9wBaMU=
-github.com/hedzr/evendeep v1.3.0/go.mod h1:96iu6yZbK4rK6PrNKcEf6TUtsEFfN/ndRtQI9EqVeXw=
-github.com/hedzr/is v0.7.0 h1:uKPejQpaSIai6smKYDRJL9mLJ/He7bG2uLFusrk/i3s=
-github.com/hedzr/is v0.7.0/go.mod h1:jRcIeQxDUf7YsLWchonaIzPZEJ3rqjIn5VD1rHLrkI4=
-github.com/hedzr/logg v0.8.0 h1:EWiUo0vfNxQ4EJmVmU6erOm+PETxkgTgd7eaRkrjlhU=
-github.com/hedzr/logg v0.8.0/go.mod h1:lctCG4mym9rrrzvysg/4fjwr4d4na6MY/FEogPYVCVE=
+github.com/hedzr/evendeep v1.3.1 h1:oZqbKTe5gS1dpXoE/TQh2p1nsF4WWLLdbpTOcZ/WkR0=
+github.com/hedzr/evendeep v1.3.1/go.mod h1:tA51IiwbOb6JhVGrxIM3tEYfmm/K3ga3mlOuS4im+J8=
+github.com/hedzr/is v0.7.1 h1:IsEvpkjiGpR7FTZgBvVnIJxcM8pES+/DOm0LwT+YYCs=
+github.com/hedzr/is v0.7.1/go.mod h1:jRcIeQxDUf7YsLWchonaIzPZEJ3rqjIn5VD1rHLrkI4=
+github.com/hedzr/logg v0.8.1 h1:B+o8CEIWlCF0nkVZTKDliaGxO2xkKXXESC8NVTQK2Lc=
+github.com/hedzr/logg v0.8.1/go.mod h1:6owYrtlMLVQ5Ibbc/zkub772XiCWUNXBiFZSEVguLDI=
 github.com/pelletier/go-toml/v2 v2.2.3 h1:YmeHyLY8mFWbdkNWwpr+qIL2bEqT0o95WSdkNHvL12M=
 github.com/pelletier/go-toml/v2 v2.2.3/go.mod h1:MfCQTFTvCcUyyvvwm1+G6H/jORL20Xlb6rzQu9GuUkc=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
