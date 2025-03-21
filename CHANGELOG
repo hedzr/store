@@ -1,5 +1,9 @@
 # CHANGELOG
 
+- v1.3.5
+  - fix crash if root cannot be found in `Walk()`
+  - upgrade deps
+
 - v1.3.2
   - add `To()`
 
