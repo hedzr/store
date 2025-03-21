@@ -723,5 +723,7 @@ func (s *trieS[T]) Walk(path string, cb func(path, fragment string, node Node[T]
 		}
 	}
 
-	root.walk(0, cb)
+	if root != nil {
+		root.walk(0, cb)
+	}
 }
