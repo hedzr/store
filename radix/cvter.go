@@ -420,9 +420,9 @@ func (s *trieS[T]) GetM(path string, opts ...MOpt[T]) (ret map[string]any, err e
 		for _, opt := range opts {
 			opt(&putter)
 		}
-		prelen := 0
+		prelen := -1
 		if l := len(s.Prefix()); l > 0 {
-			prelen = l
+			prelen = l + 1 // s.prefix + '.'
 		}
 		s.root.Walk(func(path, fragment string, node Node[T]) { //nolint:revive
 			if (path == "" || !s.simpleEndsWith(path, s.delimiter)) && !node.IsBranch() {
@@ -433,10 +433,8 @@ func (s *trieS[T]) GetM(path string, opts ...MOpt[T]) (ret map[string]any, err e
 				}
 				if putter.keepPrefix {
 					ret[path] = node.Data()
-				} else if prelen < len(path) {
+				} else if prelen <= len(path) {
 					ret[path[prelen+1:]] = node.Data()
-				} else if prelen == len(path) {
-					ret[path[prelen:]] = node.Data()
 				}
 			}
 		})
@@ -453,7 +451,7 @@ func (s *trieS[T]) GetM(path string, opts ...MOpt[T]) (ret map[string]any, err e
 		for _, opt := range opts {
 			opt(&putter)
 		}
-		prelen := 0
+		prelen := -1
 		if l := len(s.Prefix()); l > 0 {
 			prelen = l + 1
 		}
@@ -470,10 +468,10 @@ func (s *trieS[T]) GetM(path string, opts ...MOpt[T]) (ret map[string]any, err e
 				}
 				if putter.keepPrefix {
 					putter.put(ret, path, string(s.delimiter), node.Data())
+				} else if prelen+1 == len(path) {
+					putter.put(ret, fragment, string(s.delimiter), node.Data())
 				} else if prelen < len(path) {
 					putter.put(ret, path[prelen+1:], string(s.delimiter), node.Data())
-				} else if prelen == len(path) {
-					putter.put(ret, fragment, string(s.delimiter), node.Data())
 				}
 			}
 		})
