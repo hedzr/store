@@ -541,9 +541,10 @@ func (s *trieS[T]) submap(src map[string]any, keys []string, v any) {
 
 // reloadIntoStruct reimplement map to struct with a new strategy:
 // removed yaml.v3, instead with evendeep.
-func reloadIntoStruct(m map[string]any, holder any) (err error) {
-	evendeep.Copy(m, holder) // evendeep.WithAutoExpandStructOpt,
-	// evendeep.WithSyncAdvancingOpt,
+func reloadIntoStruct(m map[string]any, holder any, opts ...evendeep.Opt) (err error) {
+	// evendeep.Copy(m, holder) // evendeep.WithAutoExpandStructOpt, // evendeep.WithSyncAdvancingOpt,
+	defer evendeep.DefaultCopyController.SaveFlagsAndRestore()() //nolint:revive
+	err = evendeep.DefaultCopyController.CopyTo(m, holder, opts...)
 	return
 }
 
@@ -557,14 +558,15 @@ func (s *trieS[T]) To(path string, holder any, opts ...MOpt[T]) (err error) {
 	}
 
 	var ret map[string]any
+	var m map[string]any
 	ret, err = s.GetM(path, opts...)
 	if err == nil && ret != nil {
-		m := s.splitCompactKeys(ret)
+		m = s.splitCompactKeys(ret)
 		err = reloadIntoStruct(m, holder)
 	} else {
 		ret, err = s.GetR(path)
 		if err == nil && ret != nil {
-			m := s.splitCompactKeys(ret)
+			m = s.splitCompactKeys(ret)
 			err = reloadIntoStruct(m, holder)
 		}
 	}
