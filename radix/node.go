@@ -44,7 +44,7 @@ func (s *nodeS[T]) Description() string { return s.description }              //
 func (s *nodeS[T]) Comment() string     { return s.comment }                  // comment field
 func (s *nodeS[T]) Tag() any            { return s.tag }                      // tag field
 func (s *nodeS[T]) Key() string         { return s.pathS }                    // key field is the full path of this node
-func (s *nodeS[T]) keyPiece() string    { return string(s.path) }             // key piece field for this node
+func (s *nodeS[T]) KeyPiece() string    { return string(s.path) }             // key piece field for this node
 func (s *nodeS[T]) IsLeaf() bool        { return s.nType&NTMask == NTLeaf }   // leaf node?
 func (s *nodeS[T]) IsBranch() bool      { return s.nType&NTMask == NTBranch } // branch node?
 func (s *nodeS[T]) HasData() bool       { return s.nType&NTData != 0 }        //nolint:revive //data field is valid?

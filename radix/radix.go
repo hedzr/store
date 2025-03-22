@@ -143,6 +143,8 @@ type Node[T any] interface {
 	IsBranch() bool // check if a node is branch (has children)
 	HasData() bool  // check if a node has data. only leaf node can contain data field. = ! Empty() bool
 	Empty() bool    // check if the node has no data. It means an empty data.
+
+	KeyPiece() string // key piece field for this node
 }
 
 const NoDelimiter rune = 0 // reserved for an internal special tree
