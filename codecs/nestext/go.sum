@@ -1,9 +1,9 @@
-github.com/hedzr/evendeep v1.3.5 h1:Z0xL9NRIfjIaIAFBt5kIJtmvoKsj1Jx/tMwlqZRZoaQ=
-github.com/hedzr/evendeep v1.3.5/go.mod h1:fSI3844/aWA/qW6/rdIHqC2QDifUbjn3jr++y62gvis=
-github.com/hedzr/is v0.7.5 h1:SMht3oZ/3IMST4CwsVeM7YQgsuA8ts7PjIJnwpDsekg=
-github.com/hedzr/is v0.7.5/go.mod h1:jRcIeQxDUf7YsLWchonaIzPZEJ3rqjIn5VD1rHLrkI4=
-github.com/hedzr/logg v0.8.5 h1:n5R6uEf5SitL8itXWHb2iRlNTlvsh0GXFEz8qgnJqJI=
-github.com/hedzr/logg v0.8.5/go.mod h1:LtAyeZG9vit5sN99dgBAbWWFy9INIBsDYZwhcOv1kNg=
+github.com/hedzr/evendeep v1.3.6 h1:5167VmlbEEaGUWJgWT0uII6nBI3jbom7Jp6jCqQLyuI=
+github.com/hedzr/evendeep v1.3.6/go.mod h1:32KYssbem5xNOS8LRcM52jEljQiR8t36kqNGeXhGvq0=
+github.com/hedzr/is v0.7.6 h1:e07hfGsYc/+SBYyZpow/cTA3biYb5RXnKGqFpwvvBTc=
+github.com/hedzr/is v0.7.6/go.mod h1:jRcIeQxDUf7YsLWchonaIzPZEJ3rqjIn5VD1rHLrkI4=
+github.com/hedzr/logg v0.8.6 h1:boOi4uj9PG0Up8k84ug+ii3JhPdoDZBoNNxyeF5S/9Q=
+github.com/hedzr/logg v0.8.6/go.mod h1:2Az1hkKGI/El6z7HeG0pdi901583inc33QrQLNd+Uwg=
 github.com/npillmayer/nestext v0.1.3 h1:2dkbzJ5xMcyJW5b8wwrX+nnRNvf/Nn1KwGhIauGyE2E=
 github.com/npillmayer/nestext v0.1.3/go.mod h1:h2lrijH8jpicr25dFY+oAJLyzlya6jhnuG+zWp9L0Uk=
 golang.org/x/crypto v0.36.0 h1:AnAEvhDddvBdpY+uR+MyHmuZzzNqXSe/GvuDeob5L34=
