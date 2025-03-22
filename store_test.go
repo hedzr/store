@@ -437,15 +437,134 @@ func TestStoreS_Dump(t *testing.T) {
 	assertEqual(t, []string{"a", "1", "false"}, s2)
 	assertEqual(t, []string{"a", "1", "false"}, conf.MustStringSlice("app.logging.words"))
 	assertEqual(t, []int{0, 1, 0}, conf.MustIntSlice("app.logging.words"))
-	val := conf.MustM("app.logging.words")
-	assertEqual(t, map[string]any{"words": []any{"a", 1, false}}, val)
-	val = conf.MustM("app.logging",
-		radix.WithFilter[any](func(node radix.Node[any]) bool {
-			return node.KeyPiece() == "words"
-		}))
-	assertEqual(t, map[string]any{"words": []any{"a", 1, false}}, val)
+	// val := conf.MustM("app.logging.words")
+	// assertEqual(t, map[string]any{"words": []any{"a", 1, false}}, val)
+	// val = conf.MustM("app.logging",
+	// 	radix.WithFilter[any](func(node radix.Node[any]) bool {
+	// 		return node.KeyPiece() == "words"
+	// 	}))
+	// assertEqual(t, map[string]any{"words": []any{"a", 1, false}}, val)
 
 	t.Logf("%v", conf.Dump())
+}
+
+// func TestStoreS_MustM(t *testing.T) {
+// 	conf := New()
+// 	conf.Set("app.debug", false)
+// 	conf.Set("app.verbose", true)
+// 	conf.Set("app.dump", 3)
+// 	conf.Set("app.logging.file", "/tmp/1.log")
+// 	conf.Set("app.server.start", 5)
+//
+// 	ss := conf.WithPrefix("app.logging")
+// 	ss.Set("rotate", 6)
+// 	ss.Set("words", []any{"a", 1, false})
+//
+// 	val := conf.MustM("app.logging.words")
+// 	assertEqual(t, map[string]any{"words": []any{"a", 1, false}}, val)
+//
+// 	val = conf.MustM("app.logging",
+// 		radix.WithFilter[any](func(node radix.Node[any]) bool {
+// 			return node.KeyPiece() == "words"
+// 		}))
+// 	assertEqual(t, map[string]any{"words": []any{"a", 1, false}}, val)
+//
+// 	// type manS struct {
+// 	// 	Dir  string
+// 	// 	Type int
+// 	// }
+// 	// type genS struct {
+// 	// 	Manual manS
+// 	// }
+// 	// var v genS
+// 	// err := conf.GetSectionFrom("app.cmd.generate", &v)
+// 	// if err != nil {
+// 	// 	t.Fail()
+// 	// }
+// 	// t.Logf("v[ap.cmd.generate]: %#v", v)
+// 	// assertEqual(t, 1, v.Manual.Type)
+// }
+
+func makeConfig() Store {
+	conf := New()
+	conf.Set("app.debug", false)
+	conf.Set("app.verbose", true)
+	conf.Set("app.dump", 3)
+	conf.Set("app.logging.file", "/tmp/1.log")
+	conf.Set("app.server.start", 5)
+
+	ss := conf.WithPrefix("app.logging")
+	ss.Set("rotate", 6)
+	ss.Set("words", []any{"a", 1, false})
+	return conf
+}
+
+func TestStoreS_GetSectionFrom(t *testing.T) {
+	conf := makeConfig()
+
+	type loggingS struct {
+		File   uint
+		Rotate uint64
+		Words  []any
+	}
+
+	type serverS struct {
+		Start int
+		Sites int
+	}
+
+	type appS struct {
+		Debug   bool
+		Dump    int
+		Verbose bool
+		Logging loggingS
+		Server  serverS
+	}
+
+	type cfgS struct {
+		App appS
+	}
+
+	t.Run("MustM(\"\")", func(t *testing.T) {
+		val := conf.MustM("app.logging.words")
+		assertEqual(t, map[string]any{"words": []any{"a", 1, false}}, val)
+
+		val = conf.MustM("app.logging",
+			radix.WithFilter[any](func(node radix.Node[any]) bool {
+				return node.KeyPiece() == "words"
+			}))
+		assertEqual(t, map[string]any{"words": []any{"a", 1, false}}, val)
+	})
+	t.Run("MustM(path)", func(t *testing.T) {
+		val := conf.MustM("app.logging.words")
+		assertEqual(t, map[string]any{"words": []any{"a", 1, false}}, val)
+
+		val = conf.MustM("app.logging",
+			radix.WithFilter[any](func(node radix.Node[any]) bool {
+				return node.KeyPiece() == "words"
+			}))
+		assertEqual(t, map[string]any{"words": []any{"a", 1, false}}, val)
+	})
+	t.Run("GetSectionFrom(\"\")", func(t *testing.T) {
+		var cfg cfgS
+		err := conf.GetSectionFrom("", &cfg)
+		t.Logf("cfgS: %v | err: %v", cfg, err)
+
+		assertEqual(t, []any{"a", 1, false}, cfg.App.Logging.Words)
+		if !reflect.DeepEqual(cfg.App.Logging.Words, []any{"a", 1, false}) {
+			t.Fail()
+		}
+	})
+	t.Run("GetSectionFrom(path)", func(t *testing.T) {
+		var logging loggingS
+		err := conf.GetSectionFrom("app.logging", &logging)
+		t.Logf("loggingS: %v | err: %v", logging, err)
+
+		assertEqual(t, []any{"a", 1, false}, logging.Words)
+		if !reflect.DeepEqual(logging.Words, []any{"a", 1, false}) {
+			t.Fail()
+		}
+	})
 }
 
 //
