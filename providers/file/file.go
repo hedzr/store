@@ -57,6 +57,8 @@ type pvdr struct {
 	prefix       string
 }
 
+func (s *pvdr) String() string { return s.file }
+
 func (s *pvdr) Count() int {
 	return 0
 }
