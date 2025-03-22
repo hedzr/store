@@ -437,7 +437,13 @@ func TestStoreS_Dump(t *testing.T) {
 	assertEqual(t, []string{"a", "1", "false"}, s2)
 	assertEqual(t, []string{"a", "1", "false"}, conf.MustStringSlice("app.logging.words"))
 	assertEqual(t, []int{0, 1, 0}, conf.MustIntSlice("app.logging.words"))
-	assertEqual(t, map[string]any{"words": []any{"a", 1, false}}, conf.MustM("app.logging.words"))
+	val := conf.MustM("app.logging.words")
+	assertEqual(t, map[string]any{"words": []any{"a", 1, false}}, val)
+	val = conf.MustM("app.logging",
+		radix.WithFilter[any](func(node radix.Node[any]) bool {
+			return node.KeyPiece() == "words"
+		}))
+	assertEqual(t, map[string]any{"words": []any{"a", 1, false}}, val)
 
 	t.Logf("%v", conf.Dump())
 }

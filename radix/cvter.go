@@ -422,7 +422,7 @@ func (s *trieS[T]) GetM(path string, opts ...MOpt[T]) (ret map[string]any, err e
 		}
 		prelen := 0
 		if l := len(s.Prefix()); l > 0 {
-			prelen = l + 1
+			prelen = l
 		}
 		s.root.Walk(func(path, fragment string, node Node[T]) { //nolint:revive
 			if (path == "" || !s.simpleEndsWith(path, s.delimiter)) && !node.IsBranch() {
@@ -433,7 +433,9 @@ func (s *trieS[T]) GetM(path string, opts ...MOpt[T]) (ret map[string]any, err e
 				}
 				if putter.keepPrefix {
 					ret[path] = node.Data()
-				} else {
+				} else if prelen < len(path) {
+					ret[path[prelen+1:]] = node.Data()
+				} else if prelen == len(path) {
 					ret[path[prelen:]] = node.Data()
 				}
 			}
@@ -455,14 +457,23 @@ func (s *trieS[T]) GetM(path string, opts ...MOpt[T]) (ret map[string]any, err e
 		if l := len(s.Prefix()); l > 0 {
 			prelen = l + 1
 		}
+		prelen += len(path) + 1
+		prelen--
 		logz.Verbose("[GetM] loop subtree and return as a map", "path", putter.prefix)
 		nodeX.Walk(func(path, fragment string, node Node[T]) {
 			if !s.simpleEndsWith(path, s.delimiter) && !node.IsBranch() {
 				logz.Verbose("  - put into map", "path", path, "fragment", fragment)
+				if putter.filterFn != nil {
+					if !putter.filterFn(node) {
+						return
+					}
+				}
 				if putter.keepPrefix {
 					putter.put(ret, path, string(s.delimiter), node.Data())
-				} else {
-					putter.put(ret, path[prelen:], string(s.delimiter), node.Data())
+				} else if prelen < len(path) {
+					putter.put(ret, path[prelen+1:], string(s.delimiter), node.Data())
+				} else if prelen == len(path) {
+					putter.put(ret, fragment, string(s.delimiter), node.Data())
 				}
 			}
 		})

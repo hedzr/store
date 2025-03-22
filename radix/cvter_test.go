@@ -169,6 +169,14 @@ func TestTrieS_GetSectionFrom(t *testing.T) {
 	if !reflect.DeepEqual(ss.App.Logging.Words, []any{"a", 1, false}) {
 		t.Fail()
 	}
+
+	var logging loggingS
+	err = trie.GetSectionFrom("app.logging", &logging)
+	t.Logf("cfgS: %v | err: %v", ss, err)
+
+	if !reflect.DeepEqual(logging.Words, []any{"a", 1, false}) {
+		t.Fail()
+	}
 }
 
 func TestTrieS_GetString(t *testing.T) {
