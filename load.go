@@ -125,6 +125,12 @@ func (s *storeS) loadMap(m map[string]any, position string, creating bool, onSet
 	return
 }
 
+func privateSetter(ss *storeS, position, k string, v any, creating bool, onSet lmOnSet) {
+	set := ss.WithPrefixReplaced(position).(*storeS)
+	defer func() { atomic.StoreInt32(&set.loading, 0) }()
+	set.setKV(k, v, creating, onSet)
+}
+
 func (s *storeS) loadMapByValueType(ec errors.Error, position, k string, v any, creating bool, onSet lmOnSet) { //nolint:revive
 	switch vv := v.(type) {
 	case ValPkg:
@@ -145,11 +151,14 @@ func (s *storeS) loadMapByValueType(ec errors.Error, position, k string, v any, 
 			}
 			break
 		}
-		if cc, ok := s.WithPrefixReplaced(position).(interface {
-			setKV(path string, data any, createOrModify bool, onSet lmOnSet) (node radix.Node[any], oldData any)
-		}); ok {
-			cc.setKV(k, v, creating, onSet)
-		}
+
+		privateSetter(s, position, k, v, creating, onSet)
+
+		// if cc, ok := s.WithPrefixReplaced(position).(interface {
+		// 	setKV(path string, data any, createOrModify bool, onSet lmOnSet) (node radix.Node[any], oldData any)
+		// }); ok {
+		// 	cc.setKV(k, v, creating, onSet)
+		// }
 	case []map[any]any:
 		if s.flattenSlice {
 			buf := make([]byte, 0, len(k)+16)
@@ -162,11 +171,14 @@ func (s *storeS) loadMapByValueType(ec errors.Error, position, k string, v any, 
 			}
 			break
 		}
-		if cc, ok := s.WithPrefixReplaced(position).(interface {
-			setKV(path string, data any, createOrModify bool, onSet lmOnSet) (node radix.Node[any], oldData any)
-		}); ok {
-			cc.setKV(k, v, creating, onSet)
-		}
+
+		privateSetter(s, position, k, v, creating, onSet)
+
+		// if cc, ok := s.WithPrefixReplaced(position).(interface {
+		// 	setKV(path string, data any, createOrModify bool, onSet lmOnSet) (node radix.Node[any], oldData any)
+		// }); ok {
+		// 	cc.setKV(k, v, creating, onSet)
+		// }
 	case []any:
 		if s.flattenSlice {
 			buf := make([]byte, 0, len(k)+16)
@@ -183,17 +195,22 @@ func (s *storeS) loadMapByValueType(ec errors.Error, position, k string, v any, 
 			}
 			break
 		}
-		if cc, ok := s.WithPrefixReplaced(position).(interface {
-			setKV(path string, data any, createOrModify bool, onSet lmOnSet) (node radix.Node[any], oldData any)
-		}); ok {
-			cc.setKV(k, v, creating, onSet)
-		}
+
+		privateSetter(s, position, k, v, creating, onSet)
+
+		// if cc, ok := s.WithPrefixReplaced(position).(interface {
+		// 	setKV(path string, data any, createOrModify bool, onSet lmOnSet) (node radix.Node[any], oldData any)
+		// }); ok {
+		// 	cc.setKV(k, v, creating, onSet)
+		// }
 	default:
-		if cc, ok := s.WithPrefixReplaced(position).(interface {
-			setKV(path string, data any, createOrModify bool, onSet lmOnSet) (node radix.Node[any], oldData any)
-		}); ok {
-			cc.setKV(k, v, creating, onSet)
-		}
+		privateSetter(s, position, k, v, creating, onSet)
+
+		// if cc, ok := set.(interface {
+		// 	setKV(path string, data any, createOrModify bool, onSet lmOnSet) (node radix.Node[any], oldData any)
+		// }); ok {
+		// 	cc.setKV(k, v, creating, onSet)
+		// }
 	}
 }
 
@@ -463,10 +480,17 @@ func (s *loadS) Save(ctx context.Context) (err error) { return s.trySave(ctx) }
 func (s *loadS) trySave(ctx context.Context) (err error) { //nolint:revive
 	_ = ctx
 	if s.codec != nil && s.provider != nil {
+		// logz.InfoContext(ctx, "Write-Back", "position", s.position)
 		var m map[string]any
-		if m, err = s.GetM("", WithFilter[any](func(node radix.Node[any]) bool {
-			return node.Modified() // && !strings.HasPrefix(node.Key(), "app.cmd.")
-		})); err == nil {
+		logz.DebugContext(ctx, "Write-Back checking", "src", s.provider)
+		if m, err = s.GetM("",
+			WithFilter[any](func(node radix.Node[any]) bool {
+				return node.Modified() // && !strings.HasPrefix(node.Key(), "app.cmd.")
+			}),
+			// WithKeepPrefix[any](true),
+			WithoutFlattenKeys[any](true),
+		); err == nil && m != nil && len(m) > 0 {
+			logz.DebugContext(ctx, "Write-Back checked and invoking", "src", s.provider)
 			var data []byte
 			if data, err = s.codec.Marshal(m); err == nil {
 				switch fp := s.provider.(type) {

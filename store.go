@@ -136,6 +136,7 @@ func (s *storeS) dupS(trie radix.Trie[any]) (newStore *storeS) {
 		Trie:         trie,
 		flattenSlice: s.flattenSlice,
 		allowWatch:   s.allowWatch,
+		loading:      s.loading,
 		// don't dup the member 'parent' here
 	}
 	return
