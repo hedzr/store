@@ -95,7 +95,7 @@ func TestTrieS_GetM(t *testing.T) {
 
 	m, err = trie.GetM("", WithFilter[any](func(node Node[any]) bool {
 		return strings.HasPrefix(node.Key(), "app.logging.")
-	}), WithoutFlattenKeys[any](true))
+	}), WithoutFlattenKeys[any](true), WithKeepPrefix[any](true))
 	m1 := trie.MustM("app.logging", WithKeepPrefix[any](false))
 	m2 = trie.MustM("app.logging", WithKeepPrefix[any](true))
 	if !reflect.DeepEqual(m, m2) {
