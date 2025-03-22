@@ -1,5 +1,13 @@
 # CHANGELOG
 
+- v1.3.7
+  - store: improved test for `GetSectionFrom()`
+  - store: improved `GetSectionFrom()`
+  - store: improved `GetM()`
+  - store: fix `To()` while path not empty
+  - store: fix `GetM()` opts: `radix.WithFilter[T]()`, `radix.WithKeepPrefix[T]()`
+  - exposed `Node[T].KeyPiece()`
+
 - v1.3.6
   - store: fix `keepPrefix` opt for `GetM()`
   - store: fix tracing modified state `inloading`
