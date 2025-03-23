@@ -50,13 +50,13 @@ func main() {
 				wg.Done() // just for programmatic safety
 				log.Fatal("server shutdown error", "err", err)
 			}
-			wg.Done() // http server shutdown ok, so closing catcher's wg counter.
+			// wg.Done() // http server shutdown ok, so closing catcher's wg counter.
 			testStore(conf)
 		}).
-		Wait(func(stopChan chan<- os.Signal, wgShutdown *sync.WaitGroup) {
+		WaitFor(func(closer func()) {
 			// server.Debug("entering looper's loop...")
 			go func() {
-				_, _ = stopChan, wgShutdown
+				defer closer()
 				err := svr.ListenAndServe()
 				if err != nil {
 					log.Fatal("server serve failed", "err", err)
