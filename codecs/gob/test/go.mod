@@ -1,6 +1,8 @@
 module github.com/hedzr/store/codecs/gob/test
 
-go 1.23.7
+go 1.23.0
+
+toolchain go1.23.3
 
 replace github.com/hedzr/store => ../../..
 
@@ -10,17 +12,17 @@ replace github.com/hedzr/store/codecs/gob => ../
 
 require (
 	github.com/davecgh/go-spew v1.1.1
-	github.com/hedzr/store v1.3.6
-	github.com/hedzr/store/codecs/gob v1.3.6
-	github.com/hedzr/store/providers/file v1.3.6
+	github.com/hedzr/store v1.3.8
+	github.com/hedzr/store/codecs/gob v1.3.8
+	github.com/hedzr/store/providers/file v1.3.8
 	github.com/stretchr/testify v1.10.0
 )
 
 require (
 	github.com/fsnotify/fsnotify v1.8.0 // indirect
-	github.com/hedzr/evendeep v1.3.6 // indirect
-	github.com/hedzr/is v0.7.6 // indirect
-	github.com/hedzr/logg v0.8.6 // indirect
+	github.com/hedzr/evendeep v1.3.7 // indirect
+	github.com/hedzr/is v0.7.7 // indirect
+	github.com/hedzr/logg v0.8.7 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	golang.org/x/crypto v0.36.0 // indirect
 	golang.org/x/net v0.37.0 // indirect

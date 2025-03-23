@@ -1,6 +1,8 @@
 module github.com/hedzr/store/codecs/toml
 
-go 1.23.7
+go 1.23.0
+
+toolchain go1.23.3
 
 // replace gopkg.in/hedzr/errors.v3 => ../../../../24/libs.errors
 
@@ -19,14 +21,14 @@ replace github.com/hedzr/store => ../..
 //replace github.com/hedzr/store/providers/file => ../../providers/file
 
 require (
-	github.com/hedzr/store v1.3.6
+	github.com/hedzr/store v1.3.8
 	github.com/pelletier/go-toml/v2 v2.2.3
 )
 
 require (
-	github.com/hedzr/evendeep v1.3.6 // indirect
-	github.com/hedzr/is v0.7.6 // indirect
-	github.com/hedzr/logg v0.8.6 // indirect
+	github.com/hedzr/evendeep v1.3.7 // indirect
+	github.com/hedzr/is v0.7.7 // indirect
+	github.com/hedzr/logg v0.8.7 // indirect
 	golang.org/x/crypto v0.36.0 // indirect
 	golang.org/x/net v0.37.0 // indirect
 	golang.org/x/sys v0.31.0 // indirect

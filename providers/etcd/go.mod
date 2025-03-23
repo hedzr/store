@@ -1,6 +1,8 @@
 module github.com/hedzr/store/providers/etcd
 
-go 1.23.7
+go 1.23.0
+
+toolchain go1.23.3
 
 // replace gopkg.in/hedzr/errors.v3 => ../../../../24/libs.errors
 
@@ -21,7 +23,7 @@ replace github.com/hedzr/store => ../..
 // replace github.com/hedzr/store/codecs/yaml => ../../codecs/yaml
 
 require (
-	github.com/hedzr/store v1.3.6
+	github.com/hedzr/store v1.3.8
 	go.etcd.io/etcd/client/v3 v3.5.20
 )
 
@@ -31,9 +33,9 @@ require (
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
-	github.com/hedzr/evendeep v1.3.6 // indirect
-	github.com/hedzr/is v0.7.6 // indirect
-	github.com/hedzr/logg v0.8.6 // indirect
+	github.com/hedzr/evendeep v1.3.7 // indirect
+	github.com/hedzr/is v0.7.7 // indirect
+	github.com/hedzr/logg v0.8.7 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	go.etcd.io/etcd/api/v3 v3.5.20 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.5.20 // indirect

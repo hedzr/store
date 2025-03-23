@@ -1,6 +1,8 @@
 module github.com/hedzr/store/providers/consul
 
-go 1.23.7
+go 1.23.0
+
+toolchain go1.23.3
 
 // replace gopkg.in/hedzr/errors.v3 => ../../../../24/libs.errors
 
@@ -24,8 +26,8 @@ replace github.com/hedzr/store => ../..
 
 require (
 	github.com/hashicorp/consul/api v1.31.2
-	github.com/hedzr/logg v0.8.6
-	github.com/hedzr/store v1.3.6
+	github.com/hedzr/logg v0.8.7
+	github.com/hedzr/store v1.3.8
 )
 
 require (
@@ -40,8 +42,8 @@ require (
 	github.com/hashicorp/go-rootcerts v1.0.2 // indirect
 	github.com/hashicorp/golang-lru v1.0.2 // indirect
 	github.com/hashicorp/serf v0.10.2 // indirect
-	github.com/hedzr/evendeep v1.3.6 // indirect
-	github.com/hedzr/is v0.7.6 // indirect
+	github.com/hedzr/evendeep v1.3.7 // indirect
+	github.com/hedzr/is v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
