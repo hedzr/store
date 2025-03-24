@@ -55,13 +55,11 @@ func main() {
 		}).
 		WaitFor(func(closer func()) {
 			// server.Debug("entering looper's loop...")
-			go func() {
-				defer closer()
-				err := svr.ListenAndServe()
-				if err != nil {
-					log.Fatal("server serve failed", "err", err)
-				}
-			}()
+			defer closer()
+			err := svr.ListenAndServe()
+			if err != nil {
+				log.Fatal("server serve failed", "err", err)
+			}
 		})
 }
 
