@@ -1,8 +1,10 @@
 # CHANGELOG
 
+- v1.3.9
+  - upgrade deps
+
 - v1.3.8
   - downgrade toolchain to go1.23.0
-  
 
 - v1.3.7
   - store: improved test for `GetSectionFrom()`
