@@ -36,9 +36,9 @@ replace github.com/hedzr/store/providers/maps => ../../providers/maps
 
 require (
 	github.com/hashicorp/consul/api v1.31.2
-	github.com/hedzr/logg v0.8.7
-	github.com/hedzr/store v1.3.8
-	github.com/hedzr/store/providers/consul v1.3.8
+	github.com/hedzr/logg v0.8.8
+	github.com/hedzr/store v1.3.9
+	github.com/hedzr/store/providers/consul v1.3.9
 )
 
 require (
@@ -53,7 +53,7 @@ require (
 	github.com/hashicorp/go-rootcerts v1.0.2 // indirect
 	github.com/hashicorp/golang-lru v1.0.2 // indirect
 	github.com/hashicorp/serf v0.10.2 // indirect
-	github.com/hedzr/evendeep v1.3.7 // indirect
+	github.com/hedzr/evendeep v1.3.9 // indirect
 	github.com/hedzr/is v0.7.10 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect

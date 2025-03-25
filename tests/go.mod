@@ -46,19 +46,19 @@ replace github.com/hedzr/store/providers/maps => ../providers/maps
 
 require (
 	github.com/davecgh/go-spew v1.1.1
-	github.com/hedzr/evendeep v1.3.7
-	github.com/hedzr/store v1.3.8
-	github.com/hedzr/store/codecs/hcl v1.3.8
-	github.com/hedzr/store/codecs/hjson v1.3.8
-	github.com/hedzr/store/codecs/json v1.3.8
-	github.com/hedzr/store/codecs/nestext v1.3.8
-	github.com/hedzr/store/codecs/toml v1.3.8
-	github.com/hedzr/store/codecs/yaml v1.3.8
-	github.com/hedzr/store/providers/env v1.3.8
-	github.com/hedzr/store/providers/file v1.3.8
-	github.com/hedzr/store/providers/flags v1.3.8
-	github.com/hedzr/store/providers/fs v1.3.8
-	github.com/hedzr/store/providers/maps v1.3.8
+	github.com/hedzr/evendeep v1.3.9
+	github.com/hedzr/store v1.3.9
+	github.com/hedzr/store/codecs/hcl v1.3.9
+	github.com/hedzr/store/codecs/hjson v1.3.9
+	github.com/hedzr/store/codecs/json v1.3.9
+	github.com/hedzr/store/codecs/nestext v1.3.9
+	github.com/hedzr/store/codecs/toml v1.3.9
+	github.com/hedzr/store/codecs/yaml v1.3.9
+	github.com/hedzr/store/providers/env v1.3.9
+	github.com/hedzr/store/providers/file v1.3.9
+	github.com/hedzr/store/providers/flags v1.3.9
+	github.com/hedzr/store/providers/fs v1.3.9
+	github.com/hedzr/store/providers/maps v1.3.9
 	github.com/stretchr/testify v1.10.0
 )
 
@@ -66,7 +66,7 @@ require (
 	github.com/fsnotify/fsnotify v1.8.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hedzr/is v0.7.10 // indirect
-	github.com/hedzr/logg v0.8.7 // indirect
+	github.com/hedzr/logg v0.8.8 // indirect
 	github.com/hjson/hjson-go/v4 v4.4.0 // indirect
 	github.com/npillmayer/nestext v0.1.3 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.3 // indirect

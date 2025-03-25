@@ -4,12 +4,12 @@ github.com/fsnotify/fsnotify v1.8.0 h1:dAwr6QBTBZIkG8roQaJjGof0pp0EeF+tNV7YBP3F/
 github.com/fsnotify/fsnotify v1.8.0/go.mod h1:8jBTzvmWwFyi3Pb8djgCCO5IBqzKJ/Jwo8TRcHyHii0=
 github.com/hashicorp/hcl v1.0.0 h1:0Anlzjpi4vEasTeNFn2mLJgTSwt0+6sfsiTG8qcWGx4=
 github.com/hashicorp/hcl v1.0.0/go.mod h1:E5yfLk+7swimpb2L/Alb/PJmXilQ/rhwaUYs4T20WEQ=
-github.com/hedzr/evendeep v1.3.7 h1:DflDySuj5DXE4DjWkgnj0MzIcOkx5mSNgQRZfn83XYI=
-github.com/hedzr/evendeep v1.3.7/go.mod h1:rUbwQlpyHD942ygRXKAZv1f079jZOY99cQVGO7BJmaE=
+github.com/hedzr/evendeep v1.3.9 h1:5GrzxDol23QLzOhDZpySBl1ZExebmE69xJpz4yhKHBw=
+github.com/hedzr/evendeep v1.3.9/go.mod h1:a94ueBirT368Du7+4wDUzebynDpmLTYoVXdmIK4684g=
 github.com/hedzr/is v0.7.10 h1:LJfNMfCL8X9yWnz18Yw7+rml90wy6RibkfjCe8k6UI4=
 github.com/hedzr/is v0.7.10/go.mod h1:qfx6jHILHRete20uVogmadGih7SdnuyumLfkLw23XLg=
-github.com/hedzr/logg v0.8.7 h1:vECNc5EbMB3327A9jD0eUK9fakYEQjX6pXfhiVXek9E=
-github.com/hedzr/logg v0.8.7/go.mod h1:OtzNOPUalC6/HVceo5t9bmbF86d/S6MzKzU8R816zOA=
+github.com/hedzr/logg v0.8.8 h1:oaO5iPDPylM9mBEgt134MePxQUOVgORcj0CzTX7raR4=
+github.com/hedzr/logg v0.8.8/go.mod h1:A5HSQge2SL6uVfEG3liKlfFQNlRw5YG6mMzWqwWZTfQ=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/testify v1.10.0 h1:Xv5erBjTwe/5IxqUQTdXv5kgmIvbHo3QQyRwhJsOfJA=
