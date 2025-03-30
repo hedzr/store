@@ -145,6 +145,14 @@ type Node[T any] interface {
 	SetComment(desc, comment string) // setter for Description and Comment field
 	SetTag(tag any)                  // setter for Tag field
 
+	// SetTTL sets a ttl timeout for a branch or a leaf node.
+	//
+	// At ttl arrived, the leaf node value will be cleared.
+	// For a branch node, it will be dropped.
+	//
+	// Once you're using SetTTL, don't forget call Close().
+	SetTTL(duration time.Duration, trie Trie[T], cb OnTTLRinging[T])
+
 	Modified() bool     // node data changed by user?
 	SetModified(b bool) // set modified state
 	ToggleModified()    // toggle modified state
