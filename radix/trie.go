@@ -415,8 +415,8 @@ func (s *trieS[T]) SetComment(path, description, comment string) (ok bool) { //n
 	if s.prefix != "" {
 		path = s.Join(s.prefix, path) //nolint:revive
 	}
-	node, _, partialMatched := s.search(path, nil)
-	if ok = node != nil || partialMatched; ok {
+	node, _, _ := s.search(path, nil)
+	if ok = node != nil; ok {
 		node.description, node.comment = description, comment
 	}
 	return
@@ -429,8 +429,8 @@ func (s *trieS[T]) SetTag(path string, tag any) (ok bool) { //nolint:revive// se
 	if s.prefix != "" {
 		path = s.Join(s.prefix, path) //nolint:revive
 	}
-	node, _, partialMatched := s.search(path, nil)
-	if ok = node != nil || partialMatched; ok {
+	node, _, _ := s.search(path, nil)
+	if ok = node != nil; ok {
 		node.tag = tag
 	}
 	return

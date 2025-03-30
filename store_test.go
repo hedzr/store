@@ -448,6 +448,11 @@ func TestStoreS_Dump(t *testing.T) {
 	t.Logf("%v", conf.Dump())
 }
 
+func TestSetTagNotExistedKey(t *testing.T) {
+	var s = New()
+	s.SetTag("a.b.c", 123)
+}
+
 // func TestStoreS_MustM(t *testing.T) {
 // 	conf := New()
 // 	conf.Set("app.debug", false)
