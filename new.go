@@ -132,6 +132,9 @@ type Store interface {
 	SetTTL(path string, ttl time.Duration, cb radix.OnTTLRinging[any]) (state int)
 	SetTTLFast(node radix.Node[any], ttl time.Duration, cb radix.OnTTLRinging[any]) (state int)
 
+	// GetEx gives a way to access node fields easily.
+	GetEx(path string, cb func(node radix.Node[any], data any, branch bool, kvpair radix.KVPair))
+
 	// SetEx is advanced version of Set.
 	//
 	// Using it to setup a new node at once. For example:
@@ -148,6 +151,11 @@ type Store interface {
 	//	    node.SetTTL(3*time.Second, trie, nil)
 	//	  })
 	SetEx(path string, data any, cb radix.OnSetEx[any]) (oldData any)
+
+	GetTag(path string) (tag any, err error)            // get tag field directly
+	MustGetTag(path string) (tag any)                   // mustget tag field directly
+	GetComment(path string) (comment string, err error) // get comment field directly
+	MustGetComment(path string) (comment string)        // mustget comment field directly
 
 	SetComment(path, description, comment string) (ok bool) // set extra meta-info bound to a key
 	SetTag(path string, tags any) (ok bool)                 // set extra notable data bound to a key

@@ -31,6 +31,12 @@ func (s *dummyS) SetTTL(path string, ttl time.Duration, cb radix.OnTTLRinging[an
 func (s *dummyS) SetTTLFast(node radix.Node[any], ttl time.Duration, cb radix.OnTTLRinging[any]) (state int) {
 	return
 }
+func (s *dummyS) GetTag(path string) (tag any, err error)            { return } // get tag field directly
+func (s *dummyS) MustGetTag(path string) (tag any)                   { return } // mustget tag field directly
+func (s *dummyS) GetComment(path string) (comment string, err error) { return } // get comment field directly
+func (s *dummyS) MustGetComment(path string) (comment string)        { return } // mustget comment field directly
+func (s *dummyS) GetEx(path string, cb func(node radix.Node[any], data any, branch bool, kvpair radix.KVPair)) {
+}
 func (s *dummyS) SetEx(path string, data any, cb radix.OnSetEx[any]) (old any)             { return } //nolint:revive
 func (s *dummyS) Remove(path string) (removed bool)                                        { return } //nolint:revive
 func (s *dummyS) RemoveEx(path string) (nodeRemoved, parent radix.Node[any], removed bool) { return } //nolint:revive

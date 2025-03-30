@@ -565,6 +565,85 @@ func (s *trieS[T]) Get(path string) (data T, found bool) {
 	return
 }
 
+func (s *trieS[T]) GetEx(path string, cb func(node Node[T], data T, branch bool, kvpair KVPair)) {
+	node, data, kvpair, branch, err := s.getNode(path)
+	if cb != nil && err == nil {
+		cb(node, data, branch, kvpair)
+	}
+	return
+}
+
+func (s *trieS[T]) getNode(path string) (node *nodeS[T], data T, kvpair KVPair, branch bool, err error) {
+	if s.prefix != "" {
+		path = s.Join(s.prefix, path) //nolint:revive
+	}
+	node, _, partialMatched := s.search(path, kvpair)
+	found := node != nil && !partialMatched
+	if found {
+		if node.isBranch() {
+			branch = true
+			if !node.endsWith(s.delimiter) {
+				found = false
+			}
+		}
+		if node.hasData() {
+			node.lockFor(func(n *nodeS[T]) {
+				data = node.data
+			})
+		}
+	}
+	// if !found {
+	// 	err = errors.NotFound
+	// }
+	err = iif(found, error(nil), error(errors.NotFound))
+	return
+}
+
+func (s *trieS[T]) getNodeFast(path string) (node *nodeS[T], err error) {
+	if s.prefix != "" {
+		path = s.Join(s.prefix, path) //nolint:revive
+	}
+	var kvpair KVPair
+	var partialMatched bool
+	node, _, partialMatched = s.search(path, kvpair)
+	found := node != nil && !partialMatched
+	if found {
+		if node.isBranch() {
+			if !node.endsWith(s.delimiter) {
+				found = false
+			}
+		}
+	}
+	err = iif(found, error(nil), error(errors.NotFound))
+	return
+}
+
+func (s *trieS[T]) GetTag(path string) (tag any, err error) {
+	node, err := s.getNodeFast(path)
+	if err == nil {
+		tag = node.Tag()
+	}
+	return
+}
+
+func (s *trieS[T]) MustGetTag(path string) (tag any) {
+	tag, _ = s.GetTag(path)
+	return
+}
+
+func (s *trieS[T]) GetComment(path string) (comment string, err error) {
+	node, err := s.getNodeFast(path)
+	if err == nil {
+		comment = node.Comment()
+	}
+	return
+}
+
+func (s *trieS[T]) MustGetComment(path string) (comment string) {
+	comment, _ = s.GetComment(path)
+	return
+}
+
 // Query searches a path and returns the located info: 'found' boolean flag
 // identify the path found or not; 'branch' flag identify the found node
 // is a branch or a leaf; for a leaf node, 'data' return its Data field.

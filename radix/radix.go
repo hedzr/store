@@ -35,6 +35,9 @@ type Trie[T any] interface {
 	Get(path string) (data T, found bool)                // shortcut to Query
 	MustGet(path string) (data T)                        // shortcut to Get
 
+	// GetEx gives a way to access node fields easily.
+	GetEx(path string, cb func(node Node[T], data T, branch bool, kvpair KVPair))
+
 	// SetNode at once, advanced api here.
 	SetNode(path string, data T, tag any, descriptionAndComments ...string) (ret Node[T], oldData any)
 	// SetEmpty clear the Data field.
@@ -66,6 +69,8 @@ type Trie[T any] interface {
 	// The returned `state`: 0 assumed no error.
 	SetTTL(path string, ttl time.Duration, cb OnTTLRinging[T]) (state int)
 
+	// SetTTLFast ignores the existance validation of the target node
+	// since it is used as a parameter.
 	SetTTLFast(node Node[T], ttl time.Duration, cb OnTTLRinging[T]) (state int)
 
 	// SetEx is advanced version of Set.
@@ -86,6 +91,11 @@ type Trie[T any] interface {
 	SetEx(path string, data T, cb OnSetEx[T]) (oldData any)
 
 	TypedGetters[T] // getters
+
+	GetTag(path string) (tag any, err error)            // get tag field directly
+	MustGetTag(path string) (tag any)                   // mustget tag field directly
+	GetComment(path string) (comment string, err error) // get comment field directly
+	MustGetComment(path string) (comment string)        // mustget comment field directly
 
 	WithPrefix(prefix ...string) (entry Trie[T])            // appends prefix string and make a new instance of Trie[T]
 	WithPrefixReplaced(newPrefix ...string) (entry Trie[T]) // make a new instance of Trie with prefix
