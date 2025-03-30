@@ -490,6 +490,40 @@ func TestSetTagNotExistedKey(t *testing.T) {
 // 	// assertEqual(t, 1, v.Manual.Type)
 // }
 
+func TestSetTag(t *testing.T) {
+	var s = New()
+
+	s.Set("a.b", 123)
+	fmt.Println(s.Dump())
+	s.SetTag("a.b", "tag-a-b")
+	fmt.Println(s.Dump())
+	s.Set("a.c", 345)
+	fmt.Println(s.Dump())
+	s.SetTag("a.c", "tag-a-c")
+
+	fmt.Printf("GetTag[a.b]='%+v'\n", getTag(s, "a.b"))
+	fmt.Printf("GetTag[a.c]='%+v'\n", getTag(s, "a.c"))
+	assertEqual(t, getTag(s, "a.b"), "tag-a-b")
+	assertEqual(t, getTag(s, "a.c"), "tag-a-c")
+
+	var node, _ = s.Set("x.y", 789)
+	node.SetTag("tag-x-y")
+	node, _ = s.Set("x.z", 890)
+	node.SetTag("tag-x-z")
+
+	fmt.Printf("GetTag[x.y]='%+v'\n", getTag(s, "x.y"))
+	fmt.Printf("GetTag[x.z]='%+v'\n", getTag(s, "x.z"))
+	assertEqual(t, getTag(s, "x.y"), "tag-x-y")
+	assertEqual(t, getTag(s, "x.z"), "tag-x-z")
+
+	fmt.Println(s.Dump())
+}
+
+func getTag(s Store, path string) any {
+	var node, _, _, _ = s.Locate(path, nil)
+	return node.Tag()
+}
+
 func makeConfig() Store {
 	conf := New()
 	conf.Set("app.debug", false)

@@ -274,11 +274,14 @@ func (s *nodeS[T]) split(pos int, word []rune) (newNode *nodeS[T]) { //nolint:un
 	_ = word
 
 	newNode = &nodeS[T]{
-		path:     s.path[pos:],
-		pathS:    s.pathS, // [pos:], // s.pathS[len(s.pathS)-d:],
-		children: s.children,
-		data:     s.data,
-		nType:    s.nType,
+		path:        s.path[pos:],
+		pathS:       s.pathS, // [pos:], // s.pathS[len(s.pathS)-d:],
+		children:    s.children,
+		data:        s.data,
+		description: s.description,
+		comment:     s.comment,
+		tag:         s.tag,
+		nType:       s.nType,
 	}
 	assert(strings.HasSuffix(newNode.pathS, string(newNode.path)), "newNode: pathS should end with path")
 
@@ -286,6 +289,9 @@ func (s *nodeS[T]) split(pos int, word []rune) (newNode *nodeS[T]) { //nolint:un
 	s.pathS = s.pathS[:len(s.pathS)-d] // s.pathS[:pos] //
 	s.children = []*nodeS[T]{newNode}
 	s.nType = NTBranch
+	s.description = ""
+	s.comment = ""
+	s.tag = nil
 	var t T
 	s.data = t
 	assert(strings.HasSuffix(s.pathS, string(s.path)), "parentNode: pathS(%q) should end with path(%q)", s.pathS, string(s.path))
