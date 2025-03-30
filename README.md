@@ -37,10 +37,22 @@ ss.Set("keys", map[any]any{"a": 3.13, 1.73: "zz", false: true})
 conf.Set("app.bool", "[on,off,   true]")
 conf.SetComment("app.bool", "desc: a bool slice", "cmmt: remarks here")
 conf.SetTag("app.bool", []any{"on", "off", true})
+// println(conf.MustGetTag("app.bool"))
+// println(conf.MustGetComment("app.bool"))
+
+radix.StatesEnvSetColorMode(true) // to disable ansi escape sequences in dump output
+_, _ = fmt.Println(conf.Dump())   // inspect it
+
+conf.GetEx("app.bool", func(node radix.Node[any], data any, branch bool, kvpair radix.KVPair) {
+  println(node.Comment())
+})
+conf.Update("app.bool", func(node radix.Node[any], old any) {
+  node.SetComment("a bool slice", "remarks here")
+})
 
 // TTL to clear the node data to zero
-conf.SetTTL("app.bool", 15 * time.Second, func(_ *radix.TTL[any], nd radix.Node[any]) {
-  t.Logf("%q (%q) cleared", "app.bool", nd.Data())
+conf.SetTTL("app.bool", 3*time.Second, func(_ *radix.TTL[any], nd radix.Node[any]) {
+  log.Printf("%q (%v) cleared", "app.bool", nd.Data())
 })  // since v1.2.5
 defer conf.Close()  // when you used SetTTL, the Close() is must be had.
 
@@ -52,14 +64,10 @@ conf.SetEx("app.logging.auto-stop", true,
           trie.Remove(node.Key()) // erase the key with the node
       })
     // Or:
-    trie.SetTTLFast(node, 3*time.Second, nil)
+    trie.SetTTLFast(node, 39*time.Second, nil)
     // Or:
-    node.SetTTL(3*time.Second, trie, nil)
+    node.SetTTL(39*time.Second, trie, nil)
   })
-
-// inspect it
-states.Env().SetNoColorMode(true) // to disable ansi escape sequences in dump output
-fmt.Println(conf.Dump())
 ```
 
 The dumping result looks like (internal data structure):

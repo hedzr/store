@@ -3,6 +3,7 @@ package tests
 import (
 	"context"
 	"fmt"
+	"log"
 	"testing"
 	"time"
 
@@ -49,7 +50,7 @@ func ExampleNew() {
 	//     server.start                <L> app.server.start => 5
 }
 
-func ExamplestoreS_Dump() {
+func ExampleStore_Dump() {
 	conf := store.New()
 	conf.Set("app.debug", false)
 	conf.Set("app.verbose", true)
@@ -65,9 +66,38 @@ func ExamplestoreS_Dump() {
 	conf.Set("app.bool", "[on,off,   true]")
 	conf.SetComment("app.bool", "a bool slice", "remarks here")
 	conf.SetTag("app.bool", []any{"on", "off", true})
+	// println(conf.MustGetTag("app.bool"))
+	// println(conf.MustGetComment("app.bool"))
 
 	radix.StatesEnvSetColorMode(true) // to disable ansi escape sequences in dump output
-	_, _ = fmt.Println(conf.Dump())
+	_, _ = fmt.Println(conf.Dump())   // inspect it
+
+	conf.GetEx("app.bool", func(node radix.Node[any], data any, branch bool, kvpair radix.KVPair) {
+		println(node.Comment())
+	})
+	conf.Update("app.bool", func(node radix.Node[any], old any) {
+		node.SetComment("a bool slice", "remarks here")
+	})
+
+	// TTL to clear the node data to zero
+	conf.SetTTL("app.bool", 3*time.Second, func(_ *radix.TTL[any], nd radix.Node[any]) {
+		log.Printf("%q (%v) cleared", "app.bool", nd.Data())
+	}) // since v1.2.5
+	defer conf.Close() // when you used SetTTL, the Close() is must be had.
+
+	// Set/create a node at once by SetEx()
+	conf.SetEx("app.logging.auto-stop", true,
+		func(path string, oldData any, node radix.Node[any], trie radix.Trie[any]) {
+			trie.SetTTL(path, 30*time.Minute,
+				func(s *radix.TTL[any], node radix.Node[any]) {
+					trie.Remove(node.Key()) // erase the key with the node
+				})
+			// Or:
+			trie.SetTTLFast(node, 30*time.Second, nil)
+			// Or:
+			node.SetTTL(30*time.Second, trie, nil)
+		})
+	time.Sleep(3 * time.Second)
 
 	// Output:
 	//   app.                          <B>
