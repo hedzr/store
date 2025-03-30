@@ -300,6 +300,11 @@ func (s *storeS) Merge(pathAt string, data map[string]any) (err error) {
 	return
 }
 
+// Update a node whether it existed or not.
+func (s *storeS) Update(path string, cb func(node radix.Node[any], old any)) {
+	s.Trie.Update(path, cb)
+}
+
 // func (s *storeS) setKValPkg(path string, vp ValPkg, createOrModify bool) (node radix.Node[any], oldData any) {
 // 	s.Trie.SetComment(path, vp.Desc, vp.Comment)
 // 	s.Trie.SetTag(path, vp.Tag)

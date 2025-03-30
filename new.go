@@ -152,6 +152,9 @@ type Store interface {
 	//	  })
 	SetEx(path string, data any, cb radix.OnSetEx[any]) (oldData any)
 
+	// Update a node whether it existed or not.
+	Update(path string, cb func(node radix.Node[any], old any))
+
 	GetTag(path string) (tag any, err error)            // get tag field directly
 	MustGetTag(path string) (tag any)                   // mustget tag field directly
 	GetComment(path string) (comment string, err error) // get comment field directly

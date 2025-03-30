@@ -42,6 +42,7 @@ func (s *dummyS) Remove(path string) (removed bool)                             
 func (s *dummyS) RemoveEx(path string) (nodeRemoved, parent radix.Node[any], removed bool) { return } //nolint:revive
 func (s *dummyS) Merge(pathAt string, data map[string]any) (err error)                     { return } //nolint:revive
 func (s *dummyS) Has(path string) (found bool)                                             { return } //nolint:revive
+func (s *dummyS) Update(path string, cb func(node radix.Node[any], old any))               {}
 
 // Locate provides an advanced interface for locating a path.
 func (s *dummyS) Locate(path string, kvpair radix.KVPair) (node radix.Node[any], branch, partialMatched, found bool) { //nolint:revive
