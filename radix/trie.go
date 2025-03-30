@@ -189,7 +189,7 @@ func (s *trieS[T]) SetTTL(path string, ttl time.Duration, cb OnTTLRinging[T]) (s
 	if found {
 		state = 0
 		if s.ttlpresent.CompareAndSwap(0, 1) {
-			s.ttls = newttls[T](s)
+			s.ttls = newttls(s)
 		}
 		s.ttls.Add(node, ttl, cb)
 	}
@@ -199,7 +199,7 @@ func (s *trieS[T]) SetTTL(path string, ttl time.Duration, cb OnTTLRinging[T]) (s
 func (s *trieS[T]) SetTTLFast(node Node[T], ttl time.Duration, cb OnTTLRinging[T]) (state int) {
 	if nd, ok := node.(*nodeS[T]); ok {
 		if s.ttlpresent.CompareAndSwap(0, 1) {
-			s.ttls = newttls[T](s)
+			s.ttls = newttls(s)
 		}
 		s.ttls.Add(nd, ttl, cb)
 	} else {
