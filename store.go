@@ -408,8 +408,8 @@ func (s *storeS) Has(path string) (found bool) {
 }
 
 // Locate provides an advanced interface for locating a path.
-func (s *storeS) Locate(path string, kvpaire radix.KVPair) (node radix.Node[any], branch, partialMatched, found bool) {
-	return s.Trie.Locate(path, nil)
+func (s *storeS) Locate(path string, kvpair radix.KVPair) (node radix.Node[any], branch, partialMatched, found bool) {
+	return s.Trie.Locate(path, kvpair)
 }
 
 // Dump prints internal data tree for debugging
