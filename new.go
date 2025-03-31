@@ -156,7 +156,7 @@ type Store interface {
 	Update(path string, cb func(node radix.Node[any], old any))
 
 	GetDesc(path string) (desc string, err error)       // get description field directly
-	MustGetDsec(path string) (desc string)              // mustget description field directly
+	MustGetDesc(path string) (desc string)              // mustget description field directly
 	GetTag(path string) (tag any, err error)            // get tag field directly
 	MustGetTag(path string) (tag any)                   // mustget tag field directly
 	GetComment(path string) (comment string, err error) // get comment field directly
