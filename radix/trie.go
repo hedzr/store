@@ -618,6 +618,19 @@ func (s *trieS[T]) getNodeFast(path string) (node *nodeS[T], err error) {
 	return
 }
 
+func (s *trieS[T]) GetDesc(path string) (desc string, err error) {
+	node, err := s.getNodeFast(path)
+	if err == nil {
+		desc = node.Description()
+	}
+	return
+}
+
+func (s *trieS[T]) MustGetDesc(path string) (desc string) {
+	desc, _ = s.GetDesc(path)
+	return
+}
+
 func (s *trieS[T]) GetTag(path string) (tag any, err error) {
 	node, err := s.getNodeFast(path)
 	if err == nil {

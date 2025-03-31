@@ -31,6 +31,8 @@ func (s *dummyS) SetTTL(path string, ttl time.Duration, cb radix.OnTTLRinging[an
 func (s *dummyS) SetTTLFast(node radix.Node[any], ttl time.Duration, cb radix.OnTTLRinging[any]) (state int) {
 	return
 }
+func (s *dummyS) GetDesc(path string) (desc string, err error)       { return } // get tag field directly
+func (s *dummyS) MustGetDesc(path string) (desc string)              { return } // mustget tag field directly
 func (s *dummyS) GetTag(path string) (tag any, err error)            { return } // get tag field directly
 func (s *dummyS) MustGetTag(path string) (tag any)                   { return } // mustget tag field directly
 func (s *dummyS) GetComment(path string) (comment string, err error) { return } // get comment field directly
