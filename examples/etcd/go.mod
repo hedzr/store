@@ -35,9 +35,9 @@ replace github.com/hedzr/store/providers/fs => ../../providers/fs
 replace github.com/hedzr/store/providers/maps => ../../providers/maps
 
 require (
-	github.com/hedzr/logg v0.8.8
-	github.com/hedzr/store v1.3.9
-	github.com/hedzr/store/providers/etcd v1.3.9
+	github.com/hedzr/logg v0.8.11
+	github.com/hedzr/store v1.3.11
+	github.com/hedzr/store/providers/etcd v1.3.11
 )
 
 require (
@@ -45,15 +45,15 @@ require (
 	github.com/coreos/go-systemd/v22 v22.5.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
-	github.com/hedzr/evendeep v1.3.9 // indirect
-	github.com/hedzr/is v0.7.10 // indirect
-	go.etcd.io/etcd/api/v3 v3.5.20 // indirect
-	go.etcd.io/etcd/client/pkg/v3 v3.5.20 // indirect
-	go.etcd.io/etcd/client/v3 v3.5.20 // indirect
+	github.com/hedzr/evendeep v1.3.11 // indirect
+	github.com/hedzr/is v0.7.11 // indirect
+	go.etcd.io/etcd/api/v3 v3.5.21 // indirect
+	go.etcd.io/etcd/client/pkg/v3 v3.5.21 // indirect
+	go.etcd.io/etcd/client/v3 v3.5.21 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
 	golang.org/x/crypto v0.36.0 // indirect
-	golang.org/x/net v0.37.0 // indirect
+	golang.org/x/net v0.38.0 // indirect
 	golang.org/x/sys v0.31.0 // indirect
 	golang.org/x/term v0.30.0 // indirect
 	golang.org/x/text v0.23.0 // indirect
