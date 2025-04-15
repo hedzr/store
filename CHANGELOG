@@ -1,5 +1,9 @@
 # CHANGELOG
 
+- v1.3.13
+  - upgrade deps
+  - security patches
+
 - v1.3.11
   - make `store.Update` visible
   - make `Node[T].SetTTL` public
