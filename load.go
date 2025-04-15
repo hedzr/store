@@ -417,7 +417,7 @@ func WithKeepPrefix[T any](b bool) radix.MOpt[T] {
 
 // WithFilter can be used in calling GetM(path, ...)
 func WithFilter[T any](filter radix.FilterFn[T]) radix.MOpt[T] {
-	return radix.WithFilter[T](filter)
+	return radix.WithFilter(filter)
 }
 
 // WithoutFlattenKeys allows returns a nested map.
@@ -484,7 +484,7 @@ func (s *loadS) trySave(ctx context.Context) (err error) { //nolint:revive
 		var m map[string]any
 		logz.DebugContext(ctx, "Write-Back checking", "src", s.provider)
 		if m, err = s.GetM("",
-			WithFilter[any](func(node radix.Node[any]) bool {
+			WithFilter(func(node radix.Node[any]) bool {
 				return node.Modified() // && !strings.HasPrefix(node.Key(), "app.cmd.")
 			}),
 			// WithKeepPrefix[any](true),

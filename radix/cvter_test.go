@@ -81,7 +81,7 @@ func TestTrieS_GetM(t *testing.T) {
 	}
 	t.Logf("GetM('app.logging') returns:\n\n%v\n\n", m) // no prefix
 
-	m, err = trie.GetM("", WithFilter[any](func(node Node[any]) bool {
+	m, err = trie.GetM("", WithFilter(func(node Node[any]) bool {
 		return strings.HasPrefix(node.Key(), "app.")
 	}))
 	if err != nil {
@@ -93,7 +93,7 @@ func TestTrieS_GetM(t *testing.T) {
 		t.Fatalf("expecting m == m2, but:\n  m : %v\n  m2: %v\n", m, m2)
 	}
 
-	m, err = trie.GetM("", WithFilter[any](func(node Node[any]) bool {
+	m, err = trie.GetM("", WithFilter(func(node Node[any]) bool {
 		return strings.HasPrefix(node.Key(), "app.logging.")
 	}), WithoutFlattenKeys[any](true), WithKeepPrefix[any](true))
 	m1 := trie.MustM("app.logging", WithKeepPrefix[any](false))

@@ -120,7 +120,7 @@ func TestStore_GetM(t *testing.T) {
 	m, err = conf.GetM("",
 		WithKeepPrefix[any](false),
 		WithoutFlattenKeys[any](false),
-		WithFilter[any](func(node radix.Node[any]) bool {
+		WithFilter(func(node radix.Node[any]) bool {
 			return strings.HasPrefix(node.Key(), "app.logging.")
 		}))
 	if err != nil {
@@ -569,7 +569,7 @@ func TestStoreS_GetSectionFrom(t *testing.T) {
 		assertEqual(t, map[string]any{"words": []any{"a", 1, false}}, val)
 
 		val = conf.MustM("app.logging",
-			radix.WithFilter[any](func(node radix.Node[any]) bool {
+			radix.WithFilter(func(node radix.Node[any]) bool {
 				return node.KeyPiece() == "words"
 			}))
 		assertEqual(t, map[string]any{"words": []any{"a", 1, false}}, val)
@@ -579,7 +579,7 @@ func TestStoreS_GetSectionFrom(t *testing.T) {
 		assertEqual(t, map[string]any{"words": []any{"a", 1, false}}, val)
 
 		val = conf.MustM("app.logging",
-			radix.WithFilter[any](func(node radix.Node[any]) bool {
+			radix.WithFilter(func(node radix.Node[any]) bool {
 				return node.KeyPiece() == "words"
 			}))
 		assertEqual(t, map[string]any{"words": []any{"a", 1, false}}, val)
