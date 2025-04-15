@@ -215,9 +215,9 @@ func TestTrieS_Locate(t *testing.T) {
 		t.Fail()
 	} else {
 		t.Logf("node matched ok: %v", node)
-		if kvp == nil {
-			t.Fail()
-		}
+		// if kvp == nil {
+		// 	t.Fail()
+		// }
 		if kvp["kwargs"] != "any/thing/here" {
 			t.Fail()
 		}
@@ -231,9 +231,9 @@ func TestTrieS_Locate(t *testing.T) {
 		t.Fail()
 	} else {
 		t.Logf("node matched ok: %v", node)
-		if kvp == nil {
-			t.Fail()
-		}
+		// if kvp == nil {
+		// 	t.Fail()
+		// }
 		if kvp["year"] != "2011" {
 			t.Fail()
 		}
