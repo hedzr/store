@@ -354,6 +354,9 @@ func (s *trieS[T]) Set(path string, data T) (node Node[T], oldData any) {
 	if s.prefix != "" {
 		path = s.Join(s.prefix, path) //nolint:revive
 	}
+	if strings.Contains(path, " ") {
+		path = strings.ReplaceAll(path, " ", "-")
+	}
 	return s.root.insert([]rune(path), path, data, s, nil)
 }
 

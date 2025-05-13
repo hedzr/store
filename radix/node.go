@@ -202,12 +202,7 @@ func (s *nodeS[T]) findCommonPrefixLength(word []rune) (length int) {
 	return
 }
 
-func (s *nodeS[T]) insertInternal(word []rune, fullPath string, data T, trie *trieS[T], cb OnSetEx[T]) (node *nodeS[T], oldData any) { //nolint:revive
-	if strings.Contains(string(word), " ") {
-		word = []rune(strings.ReplaceAll(string(word), " ", "-")) //nolint:revive
-		fullPath = strings.ReplaceAll(fullPath, " ", "-")         //nolint:revive
-	}
-
+func (s *nodeS[T]) insertInternal(word []rune, fullPath string, data T, trie *trieS[T], cb OnSetEx[T]) (node *nodeS[T], oldData any) {
 	base, ourLen, wordLen := s, len(s.path), len(word)
 	if ourLen == 0 {
 		if wordLen > 0 && len(s.children) == 0 {
@@ -260,7 +255,7 @@ func (s *nodeS[T]) insertInternal(word []rune, fullPath string, data T, trie *tr
 	return
 }
 
-func (s *nodeS[T]) split(pos int, word []rune) (newNode *nodeS[T]) { //nolint:unparam,revive
+func (s *nodeS[T]) split(pos int, word []rune) (newNode *nodeS[T]) {
 	tip("[store/radix] split original path %q by word %q at pos %d", string(s.path), string(word), pos)
 
 	// origPath, origPathS := s.path, s.pathS
@@ -312,6 +307,11 @@ func (s *nodeS[T]) insertAsLeaf(word []rune, fullPath string, data T) (newNode *
 
 func (s *nodeS[T]) matchChildren(word []rune) (matched bool, child *nodeS[T]) {
 	for _, child = range s.children {
+		// not a bug, when we need to compare the given word
+		// with each of children, just the first char need
+		// to be tested, since only have one child will
+		// own the testing prefix, or only one child
+		// have the part of the testing prefix.
 		if child.path[0] == word[0] {
 			matched = true
 			break
