@@ -398,14 +398,14 @@ build-update() {
 	for sm in "${1:-.}"; do
 		for f in $(find "./$sm" -type f -iname 'go.mod' -print); do
 			d="$(dirname $f)"
-			if [[ "$(basename $d)" == '.'* ]]; then
-				echo && tip "==== ignore .github and others hidden directories: '$d'"
-			else
-				if [ -d "$d" ]; then
-					# tip "==== found go.mod in '$d'..."
-					do-update-dep "$d"
-				fi
+			# if [[ "$(basename $d)" == '.'* ]]; then
+			# 	echo && tip "==== ignore .github and others hidden directories: '$d'"
+			# else
+			if [ -d "$d" ]; then
+				# tip "==== found go.mod in '$d'..."
+				do-update-dep "$d"
 			fi
+			# fi
 		done
 	done
 	echo
