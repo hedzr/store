@@ -21,14 +21,14 @@ replace github.com/hedzr/store => ../..
 // replace github.com/hedzr/store/providers/file => ../../providers/file
 
 require (
-	github.com/hedzr/store v1.3.16
+	github.com/hedzr/store v1.3.19
 	github.com/hjson/hjson-go/v4 v4.5.0
 )
 
 require (
-	github.com/hedzr/evendeep v1.3.16 // indirect
-	github.com/hedzr/is v0.7.16 // indirect
-	github.com/hedzr/logg v0.8.16 // indirect
+	github.com/hedzr/evendeep v1.3.19 // indirect
+	github.com/hedzr/is v0.7.19 // indirect
+	github.com/hedzr/logg v0.8.19 // indirect
 	golang.org/x/net v0.40.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/term v0.32.0 // indirect
