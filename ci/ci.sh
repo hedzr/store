@@ -138,8 +138,8 @@ build-publish-children() {
 		pub-main
 		pub-child codecs
 		pub-child providers
-		pub-child tests
-		pub-child examples
+		# pub-child tests
+		# pub-child examples
 	else
 		for sm in $which; do
 			for f in $(find ./$sm -type f -iname 'go.mod' -print); do
