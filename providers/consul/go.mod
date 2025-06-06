@@ -27,7 +27,7 @@ replace github.com/hedzr/store => ../..
 require (
 	github.com/hashicorp/consul/api v1.32.0
 	github.com/hedzr/logg v0.8.15
-	github.com/hedzr/store v1.3.20
+	github.com/hedzr/store v1.3.21
 )
 
 require (
