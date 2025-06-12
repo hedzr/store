@@ -1,5 +1,8 @@
 # CHANGELOG
 
+- v1.3.25
+  - upgrade deps
+
 - v1.3.23
   - upgrade deps
 
@@ -32,7 +35,7 @@
   - make `Node[T].SetTTL` public
   - update `ExampleStore_Dump()` and README.md
   - "fixed #2, some fields haven't been moved to the new child node in `split()`"
-  - "fixing #2, make `store.Locate` go through within `trie.Locate`"
+    - "fixing #2, make `store.Locate` go through within `trie.Locate`"
   - "added some helpers - `GetEx`, `GetTag`, and `MustGetTag`, ... mentioned in #2"
   - added more helpers - `GetDesc`, and `MustGetDesc`
   - upgrade deps
