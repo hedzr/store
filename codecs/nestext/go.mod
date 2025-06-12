@@ -21,14 +21,14 @@ replace github.com/hedzr/store => ../..
 // replace github.com/hedzr/store/providers/file => ../../providers/file
 
 require (
-	github.com/hedzr/store v1.3.23
+	github.com/hedzr/store v1.3.25
 	github.com/npillmayer/nestext v0.1.3
 )
 
 require (
-	github.com/hedzr/evendeep v1.3.23 // indirect
-	github.com/hedzr/is v0.7.23 // indirect
-	github.com/hedzr/logg v0.8.23 // indirect
+	github.com/hedzr/evendeep v1.3.25 // indirect
+	github.com/hedzr/is v0.8.25 // indirect
+	github.com/hedzr/logg v0.8.25 // indirect
 	golang.org/x/net v0.41.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/term v0.32.0 // indirect
