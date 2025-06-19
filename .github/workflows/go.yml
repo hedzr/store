@@ -101,7 +101,12 @@ jobs:
         run: |
           # go install -v github.com/swaggo/swag/cmd/swag
           # go generate ./...
-          go test -v -coverprofile=profile.cov ./...
+          # go test -v -coverprofile=profile.cov ./...
+          go test ./... -v -race -cover -coverprofile=profile.cov \
+            -covermode=atomic -test.short -vet=off \
+            -timeout=20m
+
+
       # # notifies coveralls that all test jobs are finished
       # - name: Send coverage
       #   uses: shogo82148/actions-goveralls@v1
