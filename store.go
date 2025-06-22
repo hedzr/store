@@ -149,10 +149,9 @@ func (s *storeS) dupS(trie radix.Trie[any]) (newStore *storeS) {
 //
 
 var _ radix.TypedGetters[any] = (*storeS)(nil) // assertion helper
-
-var _ Store = (*dummyS)(nil) // assertion helper
-
-var _ MinimalStoreT[any] = (*dummyS)(nil) // assertion helper
+var _ Store = (*storeS)(nil)                   // assertion helper
+var _ Store = (*dummyS)(nil)                   // assertion helper
+var _ MinimalStoreT[any] = (*dummyS)(nil)      // assertion helper
 
 // OnChangeHandler is called back when user setting key & value.
 //
@@ -478,6 +477,11 @@ func (s *storeS) WithPrefixReplaced(newPrefix ...string) (newStore Store) {
 func (s *storeS) SetPrefix(newPrefix ...string) {
 	s.Trie.SetPrefix(newPrefix...)
 }
+
+func (s *storeS) N() (newStore Store)               { return s.dupS(s.Trie.N()) }
+func (s *storeS) R() (newStore Store)               { return s.dupS(s.Trie.R()) }
+func (s *storeS) BR() (newStore Store)              { return s.dupS(s.Trie.BR()) }
+func (s *storeS) RecursiveMode() radix.RecusiveMode { return s.RecursiveMode() }
 
 // To finds a given path and loads the subtree into
 // 'holder', typically 'holder' could be a struct.

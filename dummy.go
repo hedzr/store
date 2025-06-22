@@ -341,3 +341,8 @@ func (s *dummyS) Delimiter() rune                                               
 func (s *dummyS) SetDelimiter(delimiter rune)                                            {}                                  //nolint:revive
 func (s *dummyS) Load(ctx context.Context, opts ...LoadOpt) (wr Writeable, err error)    { return }                          //nolint:revive
 func (s *dummyS) WithinLoading(fn func())                                                { fn() }                            //nolint:revive
+
+func (s *dummyS) N() (newStore Store)               { return s }
+func (s *dummyS) R() (newStore Store)               { return s }
+func (s *dummyS) BR() (newStore Store)              { return s }
+func (s *dummyS) RecursiveMode() radix.RecusiveMode { return radix.RecusiveNone }

@@ -37,3 +37,29 @@ package store
 // 	// 3
 // 	// false
 // }
+
+func ExampleStore_BR() {
+	conf := New()
+
+	conf.Set("path.to.someone.son.grand-son.mid-name", "Von")
+	conf.Set("path.to.someone.son.grand-son-2.mid-name", "Von")
+	conf.Set("path.mid-name", "Von")
+
+	son := conf.WithPrefix("path.to.someone.son")
+	sbr := son.BR()
+
+	// In BR mode enabled, MustString will match these keys
+	// if current node cannot hit 'mid-name' subkey:
+	//    - path.to.someone.son.mid-name ? NOT
+	//    - path.to.someone.mid-name.    ? NOT
+	//    - path.to.mid-name             ? HIT!
+	println("sbr[mid-name] =", sbr.MustString("mid-name"))
+	// In default mode (RecursiveNone), only current node
+	// joint into the matching turn.
+	// So empty result returned.
+	println("son[mid-name] =", sbr.MustString("mid-name"))
+
+	// Outputs:
+	// sbr[mid-name] = Von
+	// son[mid-name] =
+}

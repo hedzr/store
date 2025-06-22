@@ -237,6 +237,29 @@ type Store interface {
 	Delimiter() rune             // return current delimiter, generally it's dot ('.')
 	SetDelimiter(delimiter rune) // setter. Change it at runtime doesn't update old delimiter inside tree nodes.
 
+	// N makes a clone with trie.RecursiveNone mode.
+	//
+	// Get/Query and Locate are effected by this feature (by RecursiveUp).
+	// Also, all MustXXX/GetXXX is also effected.
+	N() (newStore Store)
+	// R makes a clone with trie.RecursiveDown mode.
+	//
+	// This feature is no effect at this version.
+	R() (newStore Store)
+	// BR makes a clone with trie.RecursiveUp mode.
+	//
+	// Suppose you're at "path.to.someone.son" node and querying
+	// "mid-name" key by MustString("mid-name"), and we knew
+	// there're no matched key "mid-name" for node "son",
+	// MustString will lookup all its parents along with the
+	// owner chain till any node matched the key "mid-name".
+	//
+	// Get/Query and Locate are effected by this feature (by RecursiveUp).
+	// Also, all MustXXX/GetXXX is also effected.
+	BR() (newStore Store)
+
+	RecursiveMode() radix.RecusiveMode
+
 	// Load loads k-v pairs from external provider(s) with specified codec decoder(s).
 	//
 	// For those provider which run some service at background, such
