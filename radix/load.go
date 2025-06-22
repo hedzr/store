@@ -36,6 +36,26 @@ func (s *trieS[T]) SetPrefix(newPrefix ...string) {
 	s.prefix = s.Join(newPrefix...)
 }
 
+func (s *trieS[T]) RecursiveMode() RecusiveMode { return s.recursiveMode }
+
+func (s *trieS[T]) N() (entry Trie[T]) {
+	d := s.dupS(s.root, s.prefix)
+	d.recursiveMode = RecusiveNone
+	return d
+}
+
+func (s *trieS[T]) R() (entry Trie[T]) {
+	d := s.dupS(s.root, s.prefix)
+	d.recursiveMode = RecusiveDown
+	return d
+}
+
+func (s *trieS[T]) BR() (entry Trie[T]) {
+	d := s.dupS(s.root, s.prefix)
+	d.recursiveMode = RecusiveUp
+	return d
+}
+
 func (s *trieS[T]) loadMap(m map[string]any) (err error) {
 	ec := errors.New()
 	defer ec.Defer(&err)

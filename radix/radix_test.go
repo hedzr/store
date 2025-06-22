@@ -42,6 +42,23 @@ func newBasicStore() *trieS[any] {
 	return conf
 }
 
+func TestTrieS_BR(t *testing.T) {
+	trie := newTrie[any]()
+	trie.Insert("path.to.someone.son.grand-son.mid-name", "Von")
+	trie.Insert("path.to.someone.son.grand-son-2.mid-name", "Von")
+	trie.Insert("path.mid-name", "Von")
+
+	t.Logf("\nPath    Data\n%v\n", trie.dump(true))
+
+	son := trie.WithPrefix("path.to.someone.son")
+	sbr := son.BR()
+
+	t.Logf("\n sbr.MustString(\"mid-name\"): %v\n", sbr.MustString("mid-name"))
+
+	assertTrue(t, son.MustString("mid-name") == "", `expecting son.MustString("mid-name") == ""`)
+	assertTrue(t, sbr.MustString("mid-name") == "Von", `expecting sbr.MustString("mid-name") == "Von"`)
+}
+
 func TestTrieS_General(t *testing.T) {
 	trie := newTrie[any]()
 	trie.Insert("apple", 1)

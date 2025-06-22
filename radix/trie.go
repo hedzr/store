@@ -3,6 +3,7 @@ package radix
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"strconv"
 	"strings"
 	"sync"
@@ -31,11 +32,40 @@ func newTrie[T any]() *trieS[T] { //nolint:revive
 }
 
 type trieS[T any] struct {
-	root       *nodeS[T]
-	prefix     string
-	delimiter  rune
-	ttlpresent atomic.Uint32
-	ttls       *TTL[T]
+	root          *nodeS[T]
+	prefix        string
+	delimiter     rune
+	ttlpresent    atomic.Uint32
+	ttls          *TTL[T]
+	recursiveMode RecusiveMode
+}
+
+// RecursiveMode specifies how Must/GetXXX looks up a key
+// for matching its parent nodes (Up) or children (Down)
+// if not matched current node.
+//
+// By default, they don't (RecursiveNone).
+//
+// See also: [Trie.N], [Trie.R] and [Trie.BR]
+type RecusiveMode int
+
+const (
+	RecusiveNone RecusiveMode = iota
+	RecusiveUp                // match path-key recusively up for Must/GetXXX
+	RecusiveDown              // match path-key recusively down for Must/GetXXX
+)
+
+func (e RecusiveMode) String() string {
+	switch e {
+	case RecusiveNone:
+		return "None"
+	case RecusiveUp:
+		return "Up"
+	case RecusiveDown:
+		return "Down"
+	default:
+		return fmt.Sprintf("RM(#%d)", int(e))
+	}
 }
 
 type TTL[T any] struct {
@@ -213,9 +243,10 @@ func (s *trieS[T]) SetTTLFast(node Node[T], ttl time.Duration, cb OnTTLRinging[T
 // dupS for duplicating itself. see also Dup, WithPrefix, WithPrefix & WithPrefixReplaced, withPrefixReplacedImpl.
 func (s *trieS[T]) dupS(root *nodeS[T], prefix string) (newTrie *trieS[T]) { //nolint:revive
 	newTrie = &trieS[T]{
-		root:      root,
-		prefix:    prefix,
-		delimiter: s.delimiter,
+		root:          root,
+		prefix:        prefix,
+		delimiter:     s.delimiter,
+		recursiveMode: s.recursiveMode,
 	}
 	if s.ttlpresent.Load() > 0 {
 		newTrie.ttls = s.ttls.dupS()
@@ -230,7 +261,9 @@ func (s *trieS[T]) String() string {
 	_, _ = sb.WriteString(s.prefix)
 	_, _ = sb.WriteString("\", delimiter:'")
 	_, _ = sb.WriteRune(s.delimiter)
-	_, _ = sb.WriteString("'}")
+	_, _ = sb.WriteString("', r:")
+	_, _ = sb.WriteString(s.recursiveMode.String())
+	_, _ = sb.WriteString("}")
 	return sb.String()
 }
 
@@ -240,6 +273,8 @@ func (s *trieS[T]) MarshalJSON() ([]byte, error) {
 	_, _ = sb.WriteString(strconv.Quote(s.prefix))
 	_, _ = sb.WriteString(",\"delimiter\":\"")
 	_, _ = sb.WriteRune(s.delimiter)
+	_, _ = sb.WriteString("\", \"recursive-mode\":\"")
+	_, _ = sb.WriteString(s.recursiveMode.String())
 	_, _ = sb.WriteString("\"}")
 	return []byte(sb.String()), nil
 }
@@ -408,7 +443,6 @@ func (s *trieS[T]) Update(path string, cb func(node Node[T], old any)) {
 	var v T
 	node, old := s.root.insertInternal([]rune(path), path, v, s, nil)
 	cb(node, old)
-	return
 }
 
 // SetComment sets the Desc and Comment field of a node specified by path.
@@ -573,7 +607,6 @@ func (s *trieS[T]) GetEx(path string, cb func(node Node[T], data T, branch bool,
 	if cb != nil && err == nil {
 		cb(node, data, branch, kvpair)
 	}
-	return
 }
 
 func (s *trieS[T]) getNode(path string) (node *nodeS[T], data T, kvpair KVPair, branch bool, err error) {
@@ -692,15 +725,34 @@ func (s *trieS[T]) Query(path string, kvpair KVPair) (data T, branch, found bool
 	return
 }
 
+// search node by dotted path key with RecursiveMode.
+//
+// Since v1.4.29, matchR supports look last key according to RecursiveMode.
 func (s *trieS[T]) search(word string, kvpair KVPair) (found, parent *nodeS[T], partialMatched bool) { //nolint:revive
 	found = s.root
 	mctx := getMatchCtx(word, s.delimiter)
+	defer putBack(mctx)
+
 	// stringtoslicerune needs two pass full-scanning for a string, but it have to be to do.
-	if matched, pm, child, prnt := found.matchR(mctx, []rune(word), false, nil, kvpair); matched || pm {
-		putBack(mctx)
+	if matched, pm, child, prnt := found.search(mctx, []rune(word), false, nil, kvpair); matched || pm {
 		return child, prnt, pm
 	}
-	putBack(mctx)
+
+	if s.recursiveMode == RecusiveUp && strings.Contains(word, string(s.delimiter)) {
+		w := word
+	retry:
+		a := strings.Split(w, string(s.delimiter))
+		if len(a) > 2 {
+			a = append(a[:len(a)-2], a[len(a)-1])
+			w = strings.Join(a, string(s.delimiter))
+			mctx.fullPath = w
+			if matched, pm, child, prnt := found.search(mctx, []rune(w), false, nil, kvpair); matched || pm {
+				return child, prnt, pm
+			}
+			goto retry
+		}
+	}
+
 	found = nil
 	return
 }

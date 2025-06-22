@@ -106,6 +106,11 @@ type Trie[T any] interface {
 	Delimiter() rune                                        // return current delimiter, generally it's dot ('.')
 	SetDelimiter(delimiter rune)                            // setter. Change it in runtime doesn't update old delimiter inside tree nodes.
 
+	R() (entry Trie[T])  // make a clone with [RecursiveDown] mode
+	BR() (entry Trie[T]) // make a clone with [RecursiveUp] mode
+	N() (entry Trie[T])  // make a clone with [RecursiveNone] mode
+	RecursiveMode() RecusiveMode
+
 	// Dup duplicates a new instance from this one. = Clone.
 	Dup() (newTrie *trieS[T]) // a native Clone function
 

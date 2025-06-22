@@ -336,6 +336,12 @@ func extractor(from, to int, src, piece []rune, delimiter rune) (ret string, pos
 	return
 }
 
+// search node by dotted path key with RecursiveMode.
+func (s *nodeS[T]) search(mctx *matchCtx, word []rune, lastRuneIsDelimiter bool, parentNode *nodeS[T], kvpair KVPair) (matched, partialMatched bool, child, parent *nodeS[T]) { //nolint:revive
+	matched, partialMatched, child, parent = s.matchR(mctx, word, lastRuneIsDelimiter, parentNode, kvpair)
+	return
+}
+
 // matchR matches a path by walking child nodes recursively.
 func (s *nodeS[T]) matchR(mctx *matchCtx, word []rune, lastRuneIsDelimiter bool, parentNode *nodeS[T], kvpair KVPair) (matched, partialMatched bool, child, parent *nodeS[T]) { //nolint:revive
 	wl, l := len(word), len(s.path)
