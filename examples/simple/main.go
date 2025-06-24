@@ -40,9 +40,10 @@ func main() {
 
 	// go func() { log.Println(http.ListenAndServe("localhost:8080", mux)) }()
 
+	ctx := context.Background()
 	catcher := is.Signals().Catch()
 	catcher.
-		WithOnSignalCaught(func(sig os.Signal, wg *sync.WaitGroup) {
+		WithOnSignalCaught(func(ctx context.Context, sig os.Signal, wg *sync.WaitGroup) {
 			println()
 			_, _ = sig, wg
 			// logger.Debug("signal caught", "sig", sig)
@@ -53,7 +54,7 @@ func main() {
 			// wg.Done() // http server shutdown ok, so closing catcher's wg counter.
 			testStore(conf)
 		}).
-		WaitFor(func(closer func()) {
+		WaitFor(ctx, func(ctx context.Context, closer func()) {
 			// server.Debug("entering looper's loop...")
 			defer closer()
 			err := svr.ListenAndServe()
