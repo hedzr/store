@@ -1,5 +1,8 @@
 # CHANGELOG
 
+- v1.3.35
+  - upgrade deps
+
 - v1.3.31
   - added `BR()` - backwards recursive `Query` for a `Store` (or `Trie[T]`)
     To support `conf.BR().MustString("key")` to get the title recursively up along with the owner chain.
