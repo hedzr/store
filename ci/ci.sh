@@ -403,7 +403,12 @@ build-update() {
 			# else
 			if [ -d "$d" ]; then
 				# tip "==== found go.mod in '$d'..."
-				do-update-dep "$d"
+				if grep -Eio '^module .+$' $d/go.mod | awk '{print $2}' | grep -Eiq '[$%].*'; then
+					tip "a templated go.mod found"
+					try-update-from-parent "$d"
+				else
+					do-update-dep "$d"
+				fi
 			fi
 			# fi
 		done
@@ -411,6 +416,64 @@ build-update() {
 	echo
 	[ -f go.work ] && build-update-main
 	echo
+}
+
+try-update-from-parent() {
+	local dir="$1"
+	local src="$dir/go.mod"
+	gomodfile=""
+	find-go-mod-up $dir
+	if [ "$gomodfile" != "" ]; then
+		tip "gomod file found: $gomodfile"
+		# #
+		# # sed -i "/nfin=[0-9]/{s//&\n/;P;d;}" sample_text
+		# #
+		# # will remove the rest of line after nfin=[0-9]
+		# # For line(s) with nfin=[0-9]:
+		# #
+		# # - put \newline after the pattern (&)
+		# # - (P) Print line before \newline
+		# # - (d) delete line (print any more)
+		# #
+		# # sed -i "/nfin=[0-9]/{s//&\n/;P;d;}" sample_text
+		# # sed -ne 's/[ ]nfin=[^ ]*/&\n/;P' < your_spice_netlist
+		# #
+		# local Initial="toolchain " Final=""
+		# # sed -e "/^${Initial}.*/{s//&\n/P;d;}" ${src}
+		# # BAD sed -e "/^${Initial}.*/{/&\n/P;}" ${src}
+		# # sed -E "/module .+${Initial}.*/{s//&\n/;}" "${src}"
+
+		# # sed -n '/BEGIN_PATTERN/,/END_PATTERN/p' filename
+		# sed -nE '/module .+/,/toolchain .+/p' $src | tee /tmp/1
+		# sed -E '/require .+/{s//&\n/;P;}' $gomodfile | tee -a /tmp/1
+		# tip "target go.mod is ..."
+		# cat /tmp/1
+		cp $gomodfile $src
+		sed -i.bak -E 's#module .+#module github.com/%REPOSITORY%#' $src
+		[ -f ${src}.bak ] && rm "${src}.bak"
+		head -8 $src
+	fi
+}
+
+find-go-mod-up() {
+	local dir="$1"
+	if [ -d "$dir" ]; then
+		dbg "dir = $dir"
+		local p="$(dirname $dir)" found=0 idx=1
+		while [ "$p" != "$dir" -a "$idx" != 10 -a "$found" != "1" ]; do
+			local f="$p/go.mod"
+			dbg "checking existance for $f ..."
+			if [ -f "$f" ]; then
+				gomodfile="$f"
+				found=1
+				dbg "gomodfile found: $gomodfile"
+			else
+				p="$(dirname $p)"
+				dbg "find in $p (found=$found) ..."
+			fi
+			let idx++
+		done
+	fi
 }
 
 # update all refs in child modules to hedzr/store's releasing version
