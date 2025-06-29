@@ -22,12 +22,12 @@ replace github.com/hedzr/store => ./../..
 
 // replace github.com/hedzr/store/codecs/yaml => ../../codecs/yaml
 
-require github.com/hedzr/store v1.3.35
+require github.com/hedzr/store v1.3.37
 
 require (
-	github.com/hedzr/evendeep v1.3.35 // indirect
-	github.com/hedzr/is v0.8.35 // indirect
-	github.com/hedzr/logg v0.8.35 // indirect
+	github.com/hedzr/evendeep v1.3.37 // indirect
+	github.com/hedzr/is v0.8.37 // indirect
+	github.com/hedzr/logg v0.8.37 // indirect
 	golang.org/x/net v0.41.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/term v0.32.0 // indirect

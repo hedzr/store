@@ -1,9 +1,9 @@
-github.com/hedzr/evendeep v1.3.35 h1:Xaosj5/hr7A4O4fJex4bSBvQaLbPMvgy10BHDYuJ1mA=
-github.com/hedzr/evendeep v1.3.35/go.mod h1:eBMetHSCNJXPqSBESAHfwNq6sf8rJjFff7RNZDT9jvQ=
-github.com/hedzr/is v0.8.35 h1:PVRwO6Zq8jKcJrUw7GdvV7UG/TpK/QaqGuhubEvUtYg=
-github.com/hedzr/is v0.8.35/go.mod h1:Y7ZXiZvYUFc6h+yc4jdc9j96Gc5kJ9FMKGFAK9hYtA4=
-github.com/hedzr/logg v0.8.35 h1:gAddH7nO5YXGrdNjMB6TMU6CH3OqNcY9k4w4g+rIPVA=
-github.com/hedzr/logg v0.8.35/go.mod h1:1QPgKBs2WhYX8YWLjpINOb91szcBhMLdsuuOFRfmlmc=
+github.com/hedzr/evendeep v1.3.37 h1:iSBDBLpW23FCnbKfiTWQ1CStdALJXJ8UaZN7wNjwGvs=
+github.com/hedzr/evendeep v1.3.37/go.mod h1:UMtrW3K3J+UVCehEM7QzAVpMWJSPw6GQ7biOj9bUBI4=
+github.com/hedzr/is v0.8.37 h1:2HCFgOxT5tsIIsjw5YcaMZ+tIeSQeKBNzKBMhrhZW9U=
+github.com/hedzr/is v0.8.37/go.mod h1:Y7ZXiZvYUFc6h+yc4jdc9j96Gc5kJ9FMKGFAK9hYtA4=
+github.com/hedzr/logg v0.8.37 h1:e/b7jdi3DzLObSs+e412Sgi3+2VIutQO2R6/suwr1+I=
+github.com/hedzr/logg v0.8.37/go.mod h1:k8oROkynUqkVYuGn49CArgcFcTU14vc+RpmSWvFyM7k=
 github.com/pelletier/go-toml/v2 v2.2.4 h1:mye9XuhQ6gvn5h28+VilKrrPoQVanw5PMw/TB0t5Ec4=
 github.com/pelletier/go-toml/v2 v2.2.4/go.mod h1:2gIqNv+qfxSVS7cM2xJQKtLSTLUE9V8t9Stt+h56mCY=
 golang.org/x/net v0.41.0 h1:vBTly1HeNPEn3wtREYfy4GZ/NECgw2Cnl+nK6Nz3uvw=
