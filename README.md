@@ -657,32 +657,62 @@ The performance benefits mainly from the refresh implemented about our internal 
 As an addition, here are huger/larger benches:
 
 ```bash
-    bench_test.go:82: kxxxx/Large keys: 40 keys
-    bench_test.go:52: store/Large keys: 48 keys
-    bench_test.go:24: kxxxx/Huge keys: 318 keys
-    bench_test.go:26: store/Huge keys: 422 keys
-
+Test updated:
+goos: darwin
+goarch: arm64
+pkg: github.com/hedzr/go-zapall/triebench
+cpu: Apple M3 Pro
+    ./triebench/bench_test.go:35: store/normal keys: 104 keys
+    ./triebench/bench_test.go:37: kxxxx/normal keys: 102 keys
+    ./triebench/bench_test.go:39: bxxxxxxx/normal keys: 106 keys
+    ./triebench/bench_test.go:55: store/Huge keys: 422 keys
+    ./triebench/bench_test.go:57: kxxxx/Huge keys: 318 keys
+BenchmarkTrieSearch/hedzr/storeT[any]
+BenchmarkTrieSearch/hedzr/storeT[any]-11         	96411034	        12.25 ns/op	       9 B/op	       0 allocs/op
 BenchmarkTrieSearch/hedzr/store
-BenchmarkTrieSearch/hedzr/store-16               	57905116	        20.23 ns/op	       0 B/op	       0 allocs/op
-BenchmarkTrieSearch/hedzr/store/Large
-BenchmarkTrieSearch/hedzr/store/Large-16         	12816524	        82.66 ns/op	     240 B/op	       0 allocs/op
+BenchmarkTrieSearch/hedzr/store-11               	40387551	        29.89 ns/op	       9 B/op	       0 allocs/op
 BenchmarkTrieSearch/hedzr/store/Huge
-BenchmarkTrieSearch/hedzr/store/Huge-16          	12987994	        89.08 ns/op	     224 B/op	       0 allocs/op
+BenchmarkTrieSearch/hedzr/store/Huge-11          	24667755	        50.84 ns/op	     222 B/op	       0 allocs/op
 BenchmarkTrieSearch/kxxxx
-BenchmarkTrieSearch/kxxxx-16                     	64279840	        19.54 ns/op	       7 B/op	       0 allocs/op
-BenchmarkTrieSearch/kxxxx/Large
-BenchmarkTrieSearch/kxxxx/Large-16               	 1476079	       838.0 ns/op	     710 B/op	      18 allocs/op
+BenchmarkTrieSearch/kxxxx-11                     	32698178	        36.40 ns/op	      16 B/op	       1 allocs/op
 BenchmarkTrieSearch/kxxxx/Huge
-BenchmarkTrieSearch/kxxxx/Huge-16                	 1678077	       739.9 ns/op	     441 B/op	      12 allocs/op
+BenchmarkTrieSearch/kxxxx/Huge-11                	11557538	       106.6 ns/op	     459 B/op	      12 allocs/op
+BenchmarkTrieSearch/bxxxe
+BenchmarkTrieSearch/bxxxe-11                     	17893599	        66.24 ns/op	      88 B/op	       2 allocs/op
+BenchmarkTrieSearch/vxxxx
+BenchmarkTrieSearch/vxxxx-11                     	22784323	        53.80 ns/op	      32 B/op	       2 allocs/op
+
+Test again:
+    ./triebench/bench_test.go:35: store/normal keys: 105 keys
+    ./triebench/bench_test.go:37: kxxxx/normal keys: 103 keys
+    ./triebench/bench_test.go:39: bxxxxxxx/normal keys: 106 keys
+    ./triebench/bench_test.go:55: store/Huge keys: 422 keys
+    ./triebench/bench_test.go:57: kxxxx/Huge keys: 318 keys
+BenchmarkTrieSearch/hedzr/storeT[any]
+BenchmarkTrieSearch/hedzr/storeT[any]-11         	86327053	        11.59 ns/op	       8 B/op	       0 allocs/op
+BenchmarkTrieSearch/hedzr/store
+BenchmarkTrieSearch/hedzr/store-11               	38669240	        29.97 ns/op	       8 B/op	       0 allocs/op
+BenchmarkTrieSearch/hedzr/store/Huge
+BenchmarkTrieSearch/hedzr/store/Huge-11          	24919380	        49.81 ns/op	     221 B/op	       0 allocs/op
+BenchmarkTrieSearch/kxxxx
+BenchmarkTrieSearch/kxxxx-11                     	32515147	        36.97 ns/op	      16 B/op	       1 allocs/op
+BenchmarkTrieSearch/kxxxx/Huge
+BenchmarkTrieSearch/kxxxx/Huge-11                	12414290	        96.13 ns/op	     411 B/op	      11 allocs/op
+BenchmarkTrieSearch/bxxxx
+BenchmarkTrieSearch/bxxxx-11                     	17892199	        67.23 ns/op	      89 B/op	       2 allocs/op
+BenchmarkTrieSearch/vxxxx
+BenchmarkTrieSearch/vxxxx-11                     	22975539	        53.40 ns/op	      32 B/op	       2 allocs/op
+
 ```
+
+> This benchmark tests ruled out the effects from consutructing the config set, and do a large numbers of `GET` a key as bench result.
+> UPDATED at 2025-07-03 with both of their recent versions.
 
 You can find out that our `store` has a better score while working on a large configuration set,
 although it might take more latency than on a tiny set.
 
 > The datasource of huge test is a pet-store openapi swagger doc, coming from <https://editor.swagger.io/>.
 > With a same input like a YAML file, the `store` could get more key-value pairs because `store.WithStoreFlattenSlice(true)` applied, which will expand slices and maps in a value as nested key-value pairs.
-
-So that's it.
 
 ## Dependencies
 
