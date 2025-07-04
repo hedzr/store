@@ -1,5 +1,8 @@
 # CHANGELOG
 
+- v1.3.38
+  - upgrade deps
+
 - v1.3.37
   - upgrade deps
   - improved ci.sh
