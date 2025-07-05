@@ -11,18 +11,18 @@ replace github.com/hedzr/store/providers/file => ../../../providers/file
 replace github.com/hedzr/store/codecs/nestext => ../
 
 require (
-	github.com/hedzr/store v1.3.38
-	github.com/hedzr/store/codecs/nestext v1.3.38
-	github.com/hedzr/store/providers/file v1.3.38
+	github.com/hedzr/store v1.3.39
+	github.com/hedzr/store/codecs/nestext v1.3.39
+	github.com/hedzr/store/providers/file v1.3.39
 	github.com/stretchr/testify v1.10.0
 )
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
-	github.com/hedzr/evendeep v1.3.38 // indirect
-	github.com/hedzr/is v0.8.38 // indirect
-	github.com/hedzr/logg v0.8.38 // indirect
+	github.com/hedzr/evendeep v1.3.39 // indirect
+	github.com/hedzr/is v0.8.39 // indirect
+	github.com/hedzr/logg v0.8.39 // indirect
 	github.com/npillmayer/nestext v0.1.3 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	golang.org/x/net v0.41.0 // indirect
