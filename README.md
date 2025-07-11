@@ -1,6 +1,7 @@
 # Store
 
-![Go](https://github.com/hedzr/store/workflows/release-build/badge.svg)
+![nightly-build](https://github.com/hedzr/store/workflows/nightly-build/badge.svg)
+![release-build](https://github.com/hedzr/store/workflows/release-build/badge.svg)
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/hedzr/store)
 [![GitHub Release](https://img.shields.io/github/v/release/hedzr/store)](https://github.com/hedzr/store/releases)<!--
 [![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/hedzr/store.svg?label=release)](https://github.com/hedzr/store/releases) -->
