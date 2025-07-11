@@ -424,7 +424,7 @@ try-update-from-parent() {
 	gomodfile=""
 	find-go-mod-up $dir
 	if [ "$gomodfile" != "" ]; then
-		tip "gomod file found: $gomodfile"
+		tip "source gomod file found: $gomodfile, tgt file is: $src"
 		# #
 		# # sed -i "/nfin=[0-9]/{s//&\n/;P;d;}" sample_text
 		# #
