@@ -75,7 +75,7 @@ VER=""
 
 if [ x"$VER" == x ]; then
 	notfound=1
-	for f in doc.go _examples/doc.go _examples/small/doc.go slog/doc.go; do
+	for f in doc.go _examples/doc.go _examples/small/doc.go examples/doc.go examples/small/doc.go slog/doc.go; do
 		(($notfound)) && [ -f "$f" ] && {
 			# echo "checking $f for VER..."
 			VER="$(echo v$(grep -iE 'Version[ ]*=.*' "$f" | grep -oE '\d+\.\d+\.\d+'))"
@@ -489,9 +489,9 @@ build-update-main() {
 					# echo "d: $d"
 					if grep -qE "$mod" $f; then
 						tip "*** file: $f ***************"
-						if sed -i '' -E -e 's#('$mod'.*)v[0-9]+\.[0-9]+\.[0-9]+#\1'$VER'#g' $f; then
+						if sed -i '' -E -e 's#('$mod'.*)v[0-9.]+[a-f0-9-]+#\1'$VER'#g' $f; then
 							let ix++
-							echo "   $f: $(grep -E $mod'.*v[0-9]+\.[0-9]+\.[0-9]+' $f)"
+							echo "   $f: $(grep -E $mod'.*v[0-9.]+[a-f0-9-]+' $f)"
 							[ -f "$f.bak" ] && rm "$f.bak"
 						else
 							echo "   $f: sed not ok"
