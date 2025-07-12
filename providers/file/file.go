@@ -106,7 +106,7 @@ func (s *pvdr) Write(data []byte) (err error) {
 	if s.writeEnabled {
 		err = os.WriteFile(s.file, data, 0644)
 	} else {
-		err = store.ErrNotImplemented
+		err = store.ErrWritableDisabled
 	}
 	return
 }
