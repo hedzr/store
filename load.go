@@ -28,6 +28,50 @@ func (s *storeS) WithinLoading(fn func()) {
 	}
 }
 
+type SaveAsOpt func(*SaveAsOption)
+
+type SaveAsOption struct {
+	comment  bool
+	codec    Codec
+	provider Provider
+}
+
+func WithSaveAsComment(includeComment bool) SaveAsOpt {
+	return func(s *SaveAsOption) { s.comment = includeComment }
+}
+
+func WithSaveAsCodec(c Codec) SaveAsOpt {
+	return func(s *SaveAsOption) { s.codec = c }
+}
+
+func WithSaveAsProvider(p Provider) SaveAsOpt {
+	return func(s *SaveAsOption) { s.provider = p }
+}
+
+func (s *storeS) SaveAs(ctx context.Context, outfile string, opts ...SaveAsOpt) (err error) {
+	saver := &SaveAsOption{comment: true}
+	for _, opt := range opts {
+		opt(saver)
+	}
+	// // if saver.provider == nil {
+	// // 	saver.provider = file.New(outfile)
+	// // }
+	// if saver.provider != nil {
+	// 	if saver.codec == nil {
+	// 		saver.codec = saver.provider.GetCodec()
+	// 	} else {
+	// 		saver.provider.WithCodec(saver.codec)
+	// 	}
+	// 	// if saver.position == "" {
+	// 	// 	saver.position = saver.provider.GetPosition()
+	// 	// } else {
+	// 	// 	saver.provider.WithPosition(saver.position)
+	// 	// }
+	// }
+	// // saver.provider.Wr
+	return
+}
+
 // Load loads an external data source by the specified Provider,
 // a Codec parser is optional.
 //
@@ -44,11 +88,15 @@ func (s *storeS) WithinLoading(fn func()) {
 //	); err != nil {
 //	   t.Fatalf("failed: %v", err)
 //	}
-func (s *storeS) Load(ctx context.Context, opts ...LoadOpt) (wr Writeable, err error) { //nolint:revive
+func (s *storeS) Load(ctx context.Context, opts ...LoadOpt) (wr Writeable, err error) {
 	if atomic.CompareAndSwapInt32(&s.loading, 0, 1) {
 		defer func() { atomic.CompareAndSwapInt32(&s.loading, 1, 0) }()
 
 		loader := newLoader(s, opts...)
+
+		if loader.copy != nil {
+			*loader.copy = loader
+		}
 
 		var data map[string]ValPkg
 		var bin map[string]any
@@ -75,7 +123,9 @@ func (s *storeS) Load(ctx context.Context, opts ...LoadOpt) (wr Writeable, err e
 
 		if ok {
 			wr = loader
-			loader.startWatch(ctx, loader)
+			if !loader.noWatch {
+				loader.startWatch(ctx, loader)
+			}
 		}
 	}
 	return
@@ -131,7 +181,7 @@ func privateSetter(ss *storeS, position, k string, v any, creating bool, onSet l
 	set.setKV(k, v, creating, onSet)
 }
 
-func (s *storeS) loadMapByValueType(ec errors.Error, position, k string, v any, creating bool, onSet lmOnSet) { //nolint:revive
+func (s *storeS) loadMapByValueType(ec errors.Error, position, k string, v any, creating bool, onSet lmOnSet) {
 	switch vv := v.(type) {
 	case ValPkg:
 		s.loadMapByValueType(ec, position, k, vv.Value, creating, onSet)
@@ -247,7 +297,7 @@ type Change interface {
 	Provider() Provider
 }
 
-func (s *storeS) startWatch(ctx context.Context, loader *loadS) {
+func (s *storeS) startWatch(ctx context.Context, loader *Loader) {
 	if !s.allowWatch || loader.provider == nil {
 		return
 	}
@@ -271,7 +321,7 @@ func (s *storeS) applyExternalChanges(event any, err error) {
 	}
 }
 
-func (s *storeS) applyChanges(ev Change) { //nolint:revive
+func (s *storeS) applyChanges(ev Change) {
 	// if err := s.Load(WithProvider(ev.Provider())); err != nil {
 	// 	logz.Error("[Watcher.applyChanges]", "err", err)
 	// }
@@ -314,8 +364,8 @@ func (s *storeS) applyChanges(ev Change) { //nolint:revive
 
 //
 
-func newLoader(st *storeS, opts ...LoadOpt) *loadS {
-	loader := &loadS{
+func newLoader(st *storeS, opts ...LoadOpt) *Loader {
+	loader := &Loader{
 		storeS:   st,
 		codec:    nil,
 		provider: nil,
@@ -339,30 +389,48 @@ func newLoader(st *storeS, opts ...LoadOpt) *loadS {
 		}
 	}
 
+	if loader.copy != nil {
+		*loader.copy = loader
+	}
+
 	// loader.provider.WithStorePrefix(s.prefix)
 	return loader
 }
 
-type loadS struct {
+type Loader struct {
 	*storeS
 	position string
 	codec    Codec
 	provider Provider
+	noWatch  bool
+	copy     **Loader
 }
 
-type LoadOpt func(*loadS) // options for loadS
+type LoadOpt func(*Loader) // options for loadS
+
+func WithLoaderCopy(copy **Loader) LoadOpt {
+	return func(s *Loader) {
+		s.copy = copy
+	}
+}
+
+func WithoutWatch(dontWatch bool) LoadOpt {
+	return func(s *Loader) {
+		s.noWatch = dontWatch
+	}
+}
 
 // WithProvider is commonly required. It specify what Provider
 // will be [storeS.Load].
 func WithProvider(provider Provider) LoadOpt {
-	return func(s *loadS) {
+	return func(s *Loader) {
 		s.provider = provider
 	}
 }
 
 // WithCodec specify the decoder to decode the loaded data.
 func WithCodec(codec Codec) LoadOpt {
-	return func(s *loadS) {
+	return func(s *Loader) {
 		s.codec = codec
 	}
 }
@@ -370,14 +438,14 @@ func WithCodec(codec Codec) LoadOpt {
 // WithStorePrefix gives a prefix position, which is the store
 // location that the external settings will be merged at.
 func WithStorePrefix(prefix string) LoadOpt {
-	return func(s *loadS) {
+	return func(s *Loader) {
 		s.storeS = s.storeS.WithPrefixReplaced(prefix).(*storeS)
 	}
 }
 
 // WithPosition sets the
 func WithPosition(position string) LoadOpt {
-	return func(s *loadS) {
+	return func(s *Loader) {
 		s.position = position
 	}
 }
@@ -385,7 +453,7 @@ func WithPosition(position string) LoadOpt {
 // WithStoreFlattenSlice can destruct slice/map as tree hierarchy
 // instead of treating it as a node value.
 func WithStoreFlattenSlice(b bool) LoadOpt {
-	return func(s *loadS) {
+	return func(s *Loader) {
 		s.flattenSlice = b
 	}
 }
@@ -430,7 +498,7 @@ func WithoutFlattenKeys[T any](b bool) radix.MOpt[T] {
 // tryLoad inspect the provider's api, try reading settings in the best way.
 //
 // See also [storeS.Load].
-func (s *loadS) tryLoad(ctx context.Context) (data map[string]ValPkg, bin map[string]any, err error) { //nolint:revive
+func (s *Loader) tryLoad(ctx context.Context) (data map[string]ValPkg, bin map[string]any, err error) {
 	if s.provider == nil {
 		return
 	}
@@ -476,8 +544,68 @@ func (s *loadS) tryLoad(ctx context.Context) (data map[string]ValPkg, bin map[st
 	return
 }
 
-func (s *loadS) Save(ctx context.Context) (err error) { return s.trySave(ctx) }
-func (s *loadS) trySave(ctx context.Context) (err error) { //nolint:revive
+func (s *Loader) SaveAs(ctx context.Context, outfile string, opts ...SaveAsOpt) (err error) {
+	saver := &SaveAsOption{comment: true}
+	for _, opt := range opts {
+		opt(saver)
+	}
+	if saver.provider != nil {
+		if saver.codec == nil {
+			saver.codec = saver.provider.GetCodec()
+		} else {
+			saver.provider.WithCodec(saver.codec)
+		}
+		// if saver.position == "" {
+		// 	saver.position = saver.provider.GetPosition()
+		// } else {
+		// 	saver.provider.WithPosition(saver.position)
+		// }
+	}
+
+	_ = ctx
+	if saver.codec != nil && saver.provider != nil {
+		// logz.InfoContext(ctx, "full-store saving", "position", saver.position)
+		var m map[string]any
+		logz.DebugContext(ctx, "full-store saving as", "src", saver.provider)
+		if m, err = s.GetM("",
+			// WithFilter(func(node radix.Node[any]) bool {
+			// 	return node.Modified() // && !strings.HasPrefix(node.Key(), "app.cmd.")
+			// }),
+			// // WithKeepPrefix[any](true),
+			WithoutFlattenKeys[any](true),
+		); err == nil && m != nil && len(m) > 0 {
+			logz.DebugContext(ctx, "full-store exported", "src", saver.provider)
+			var data []byte
+
+			// if cex, ok := saver.codec.(interface {
+			// 	MarshalEx(m map[string]ValPkg) (data []byte, err error)
+			// 	UnmarshalEx(b []byte) (data map[string]ValPkg, err error)
+			// }); ok {
+			// 	var m= make(map[string]ValPkg)
+			// 	data, err = cex.MarshalEx(m)
+			// }
+
+			if data, err = saver.codec.Marshal(m); err == nil {
+				switch fp := saver.provider.(type) {
+				case OnceProvider:
+					err = fp.Write(data)
+				default:
+					err = ErrNotImplemented
+				}
+
+				if errors.Is(err, ErrNotImplemented) {
+					if wr, ok := saver.provider.(io.Writer); ok {
+						_, err = wr.Write(data)
+					}
+				}
+			}
+		}
+	}
+	return
+}
+
+func (s *Loader) Save(ctx context.Context) (err error) { return s.trySave(ctx) }
+func (s *Loader) trySave(ctx context.Context) (err error) {
 	_ = ctx
 	if s.codec != nil && s.provider != nil {
 		// logz.InfoContext(ctx, "Write-Back", "position", s.position)

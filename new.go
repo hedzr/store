@@ -276,6 +276,9 @@ type Store interface {
 	// If it's in loading, the k-v pairs will be put into store with a clean
 	// modified flag.
 	WithinLoading(fn func())
+
+	// Save the [Store] as a file
+	// SaveAs(ctx context.Context, file string, opts ...SaveAsOpt) (err error)
 }
 
 // Dumpable interface identify an object can be represented as a string for debugging.
@@ -285,6 +288,7 @@ type Dumpable interface {
 
 // ErrNotImplemented is used to identify unimplemented API.
 var ErrNotImplemented = stderr.New("not implemented")
+var ErrWritableDisabled = errors.New("writeable flag disabled")
 
 // The Provider gives a minimal set of interface to identify a data source.
 //
