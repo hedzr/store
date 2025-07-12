@@ -6,12 +6,30 @@ import (
 	"github.com/hedzr/store"
 )
 
-func New() store.Codec {
-	return &ldr{flattenSlice: true}
+func New(opts ...Opt) store.Codec {
+	s := &ldr{flattenSlice: true, pretty: true}
+	for _, opt := range opts {
+		opt(s)
+	}
+	return s
 }
 
+func WithPretty(pretty bool) Opt {
+	return func(s *ldr) {
+		s.pretty = pretty
+	}
+}
+
+func WithFlattenSlice(flattenSlice bool) Opt {
+	return func(s *ldr) {
+		s.flattenSlice = flattenSlice
+	}
+}
+
+type Opt func(s *ldr)
 type ldr struct {
 	flattenSlice bool
+	pretty       bool
 }
 
 var _ store.Codec = (*ldr)(nil)
