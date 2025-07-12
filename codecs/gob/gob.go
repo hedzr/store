@@ -13,6 +13,7 @@ import (
 // to implement [gob.GobEncoder] and [gob.GobDecoder]
 // interfaces.
 func New() store.Codec {
+	gob.Register(map[string]any{})
 	return &ldr{}
 }
 
