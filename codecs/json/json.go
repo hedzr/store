@@ -7,11 +7,33 @@ import (
 	"github.com/hedzr/store"
 )
 
-func New() store.Codec {
-	return &ldr{}
+func New(opts ...Opt) store.Codec {
+	s := &ldr{pretty: true}
+	for _, opt := range opts {
+		opt(s)
+	}
+	return s
 }
 
-type ldr struct{}
+func WithPretty(pretty bool) Opt {
+	return func(s *ldr) {
+		s.pretty = pretty
+	}
+}
+
+func WithFlattenSlice(flattenSlice bool) Opt {
+	return func(s *ldr) {
+		s.flattenSlice = flattenSlice
+	}
+}
+
+type Opt func(s *ldr)
+type ldr struct {
+	flattenSlice bool
+	pretty       bool
+}
+
+var _ store.Codec = (*ldr)(nil)
 
 // Unmarshal parses the given JSON bytes.
 func (p *ldr) Unmarshal(b []byte) (data map[string]any, err error) {
@@ -21,6 +43,9 @@ func (p *ldr) Unmarshal(b []byte) (data map[string]any, err error) {
 
 // Marshal marshals the given config map to JSON bytes.
 func (p *ldr) Marshal(m map[string]any) (data []byte, err error) {
+	if p.pretty {
+		json.MarshalIndent(m, "", "  ")
+	}
 	return json.Marshal(m)
 }
 
