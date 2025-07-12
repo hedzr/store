@@ -5,6 +5,7 @@ toolchain go1.23.3
 use (
 	.
 
+	./codecs/all
 	./codecs/gob
 	./codecs/gob/test
 	./codecs/hcl
