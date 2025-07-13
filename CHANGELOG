@@ -1,5 +1,16 @@
 # CHANGELOG
 
+- v1.3.45
+  - improved `providers/file.Write()` to return meaningful error report
+  - improved `codec/gob` constructor
+  - improved `codec/json` constructor
+  - improved `codec/hjson` constructor
+  - impl `WithLoaderCopy` to receive a loader pointer copy so that `loader.SaveAs` can be used
+  - added `codecs/all` for include all codec decoders
+  - upgrade to hcl-go v2 & impl a simple writer with it
+  - upgrade deps
+  - security patches
+
 - v1.3.43
   - upgrade deps
   - security patches
