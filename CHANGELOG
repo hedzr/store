@@ -1,5 +1,8 @@
 # CHANGELOG
 
+- v1.3.46
+  - upgrade deps
+
 - v1.3.45
   - improved `providers/file.Write()` to return meaningful error report
   - improved `codec/gob` constructor
