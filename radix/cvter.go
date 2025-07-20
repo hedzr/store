@@ -339,7 +339,7 @@ func (s *trieS[T]) EndsWith(path string, r rune) bool {
 	return node.EndsWith(r)
 }
 
-func (s *trieS[T]) GetR(path string, defaultVal ...map[string]any) (ret map[string]any, err error) { //nolint:revive
+func (s *trieS[T]) GetR(path string, defaultVal ...map[string]any) (ret map[string]any, err error) {
 	var (
 		found, partialMatched, branch bool
 		nodeX                         *nodeS[T]
@@ -354,7 +354,7 @@ func (s *trieS[T]) GetR(path string, defaultVal ...map[string]any) (ret map[stri
 		// ret[node.pathS] = node.data
 
 		ret = make(map[string]any)
-		s.root.Walk(func(path, fragment string, node Node[T]) { //nolint:revive
+		s.root.Walk(func(path, fragment string, node Node[T]) {
 			if (path == "" || !s.simpleEndsWith(path, s.delimiter)) && !node.IsBranch() {
 				ret[path] = node.Data()
 			}
@@ -366,7 +366,7 @@ func (s *trieS[T]) GetR(path string, defaultVal ...map[string]any) (ret map[stri
 	if found || partialMatched {
 		_, _, ret = branch, partialMatched, make(map[string]any)
 
-		nodeX.Walk(func(path, fragment string, node Node[T]) { //nolint:revive
+		nodeX.Walk(func(path, fragment string, node Node[T]) {
 			if !s.simpleEndsWith(path, s.delimiter) && !node.IsBranch() {
 				// For a trie like:
 				//
@@ -408,7 +408,7 @@ func (s *trieS[T]) MustR(path string, defaultVal ...map[string]any) (ret map[str
 
 //
 
-func (s *trieS[T]) GetM(path string, opts ...MOpt[T]) (ret map[string]any, err error) { //nolint:revive
+func (s *trieS[T]) GetM(path string, opts ...MOpt[T]) (ret map[string]any, err error) {
 	var (
 		found, partialMatched, branch bool
 		nodeX                         *nodeS[T]
@@ -424,7 +424,7 @@ func (s *trieS[T]) GetM(path string, opts ...MOpt[T]) (ret map[string]any, err e
 		if l := len(s.Prefix()); l > 0 {
 			prelen = l + 1 // s.prefix + '.'
 		}
-		s.root.Walk(func(path, fragment string, node Node[T]) { //nolint:revive
+		s.root.Walk(func(path, fragment string, node Node[T]) {
 			if (path == "" || !s.simpleEndsWith(path, s.delimiter)) && !node.IsBranch() {
 				if putter.filterFn != nil {
 					if !putter.filterFn(node) {
@@ -543,7 +543,7 @@ func (s *trieS[T]) submap(src map[string]any, keys []string, v any) {
 // removed yaml.v3, instead with evendeep.
 func reloadIntoStruct(m map[string]any, holder any, opts ...evendeep.Opt) (err error) {
 	// evendeep.Copy(m, holder) // evendeep.WithAutoExpandStructOpt, // evendeep.WithSyncAdvancingOpt,
-	defer evendeep.DefaultCopyController.SaveFlagsAndRestore()() //nolint:revive
+	defer evendeep.DefaultCopyController.SaveFlagsAndRestore()()
 	err = evendeep.DefaultCopyController.CopyTo(m, holder, opts...)
 	return
 }
@@ -573,14 +573,14 @@ func (s *trieS[T]) To(path string, holder any, opts ...MOpt[T]) (err error) {
 	return
 }
 
-func handleSerializeError(err *error) { //nolint:gocritic //can't opt
+func handleSerializeError(err *error) {
 	if v := recover(); v != nil {
 		if e1, ok := v.(error); ok {
 			*err = e1
 		} else {
 			*err = fmt.Errorf("%v", v)
 		}
-		// *err = v.(error) //nolint:errcheck    // errors.New("unexpected unknown error handled").WithData(v)
+		// *err = v.(error)
 		// switch e := v.(type) {
 		// case error:
 		// 	*err = e
@@ -662,7 +662,7 @@ func (s *prefixPutter[T]) putKeys(m map[string]any, keys []string, v any) {
 	if c, ok := m[k]; ok {
 		if cm, ok := c.(map[string]any); ok {
 			s.putKeys(cm, rest, v)
-			// } else { //nolint:staticcheck,revive
+			// } else {
 			// 	// ? panic
 		}
 	} else {
@@ -1541,9 +1541,9 @@ func (s *trieS[T]) MustKibiBytes(key string, defaultVal ...uint64) (ir64 uint64)
 func (s *trieS[T]) FromKibiBytes(sz string) (ir64 uint64) {
 	// var suffixes = []string {"B","KB","MB","GB","TB","PB","EB","ZB","YB"}
 	const suffix = "kmgtpezyKMGTPEZY"
-	sz = strings.TrimSpace(sz)       //nolint:revive
-	sz = strings.TrimRight(sz, "iB") //nolint:revive
-	sz = strings.TrimRight(sz, "ib") //nolint:revive
+	sz = strings.TrimSpace(sz)
+	sz = strings.TrimRight(sz, "iB")
+	sz = strings.TrimRight(sz, "ib")
 	szr := strings.TrimSpace(strings.TrimRightFunc(sz, func(r rune) bool {
 		return strings.ContainsRune(suffix, r)
 	}))
@@ -1564,7 +1564,7 @@ func (s *trieS[T]) FromKibiBytes(sz string) (ir64 uint64) {
 	return
 }
 
-func (s *trieS[T]) fromKibiBytes(r rune) (times uint64) { //nolint:revive
+func (s *trieS[T]) fromKibiBytes(r rune) (times uint64) {
 	switch r {
 	case 'k', 'K':
 		return 1024
@@ -1627,9 +1627,9 @@ func (s *trieS[T]) MustKiloBytes(key string, defaultVal ...uint64) (ir64 uint64)
 func (s *trieS[T]) FromKiloBytes(sz string) (ir64 uint64) {
 	// var suffixes = []string {"B","KB","MB","GB","TB","PB","EB","ZB","YB"}
 	const suffix = "kmgtpezyKMGTPEZY"
-	sz = strings.TrimSpace(sz)      //nolint:revive
-	sz = strings.TrimRight(sz, "B") //nolint:revive
-	sz = strings.TrimRight(sz, "b") //nolint:revive
+	sz = strings.TrimSpace(sz)
+	sz = strings.TrimRight(sz, "B")
+	sz = strings.TrimRight(sz, "b")
 	szr := strings.TrimSpace(strings.TrimRightFunc(sz, func(r rune) bool {
 		return strings.ContainsRune(suffix, r)
 	}))
@@ -1650,7 +1650,7 @@ func (s *trieS[T]) FromKiloBytes(sz string) (ir64 uint64) {
 	return
 }
 
-func (s *trieS[T]) fromKilobytes(r rune) (times uint64) { //nolint:revive
+func (s *trieS[T]) fromKilobytes(r rune) (times uint64) {
 	switch r {
 	case 'k', 'K':
 		return 1000
