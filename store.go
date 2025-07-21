@@ -131,6 +131,10 @@ func (s *storeS) MarshalJSON() ([]byte, error) {
 	return []byte(sb.String()), nil
 }
 
+// dupS makes a new `*storeS` instance with initial `trie` object.
+//
+// The given `trie` object should be a new copy of an existed
+// Trie instance.
 func (s *storeS) dupS(trie radix.Trie[any]) (newStore *storeS) {
 	newStore = &storeS{
 		Trie:         trie,
