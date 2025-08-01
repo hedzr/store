@@ -132,14 +132,22 @@ build-publish-providers() { build-publish-children providers; }
 build-publish-tests() { build-publish-children tests; }
 build-publish-examples() { build-publish-children examples; }
 build-publish-children() {
-	local sm d f
+	local sm d f subdir
 	local which="$1"
 	if [ "$which" = "all" ]; then
 		pub-main
-		pub-child codecs
-		pub-child providers
-		# pub-child tests
-		# pub-child examples
+		# inspecting possible chilren directories for golang submodules
+		for subdir in codecs providers \
+			lite local \
+			service pgsqlogger shellmode; do
+			[ -d $subdir ] && pub-child $subdir
+		done
+		# [ -d codecs ] && pub-child codecs
+		# [ -d codecs ] && pub-child providers
+		# # pub-child tests
+		# # pub-child examples
+		# [ -d lite ] && pub-child lite
+		# [ -d local ] && pub-child local
 	else
 		for sm in $which; do
 			for f in $(find ./$sm -type f -iname 'go.mod' -print); do
@@ -303,27 +311,41 @@ pub-child() {
 		# fi
 
 		if [ "$ver" = "" ]; then
-			echo "version tag not found, add doc.go and Version=\"1.0.0\" and retry."
+			err "version tag not found / dir = $which"
+			echo "       add doc.go and version=\"1.0.0\" and retry."
 		else
 			ver="$(eval echo $ver)"
-			echo "ver=$ver found"
+			# echo "ver=$ver found"
+			tip " entering $which | using ver=$ver ..."
 			for sm in $which; do
 				for f in $(find ./$sm -type f -iname 'go.mod' -print); do
 					d="$(dirname "$f")"
 					if [ -d "$d" ]; then
-						# do-update-dep "$d"
-						# commit-submodule "$d"
-						echo "  - publishing $d "
-						local pre="${d/.\//}"
-						pushd "$d" >/dev/null
-						if is_git_dirty; then
-							echo "repo is dirty, nothing to do before the changes are reviewed."
-						else
-							$ECHO git tag "$pre/$ver"
-							$ECHO
+						if [[ ! "$d" == */test ]]; then
+							# do-update-dep "$d"
+							# commit-submodule "$d"
+							local pre="${d/.\//}"
+							local tag="$pre/$ver"
+							tip "     - publishing $clr_invert$d$clr_reset_invert with tag $clr_underline$pre/$ver$clr_reset_underline."
+							pushd "$d" >/dev/null
+							if is_git_dirty; then
+								wrn "repo is DIRTY, nothing to do before the changes are reviewed."
+							else
+								$ECHO git tag "$pre/$ver"
+								$ECHO
+							fi
+							popd >/dev/null
 						fi
-						popd >/dev/null
 					fi
+
+					# d="$(dirname "$f")"
+					# if [[ ! "$d" == */test ]]; then
+					# 	if [ -d "$d" ]; then
+					# 		do-update-dep "$d"
+					# 		commit-submodule "$d"
+					# 	fi
+					# fi
+
 				done
 			done
 		fi
@@ -587,14 +609,113 @@ is_git_dirty() {
 	fi
 }
 
+# effects
+clr_reset_all="\e[0m"
+clr_bold="\e[1m"
+clr_dim="\e[2m"
+clr_italic="\e[3m"
+clr_underline="\e[4m"
+clr_blink="\e[5m"
+clr_rapic_blink="\e[6m"
+clr_invert="\e[7m"
+clr_hide="\e[8m"
+clr_strike="\e[9m"
+# reset effects
+clr_reset_bold="\e[21m"
+clr_reset_dim="\e[22m"
+clr_reset_italic="\e[23m"
+clr_reset_underline="\e[24m"
+clr_reset_blink="\e[25m"
+clr_reset_spacing="\e[26m"
+clr_reset_invert="\e[27m"
+clr_reset_hide="\e[28m"
+clr_reset_crossout="\e[29m"
+# 16-color fg
+black='30'
+red='31'
+green='32'
+yellow='33'
+blue='34'
+megenta='35'
+cyan='36'
+white='37'
+# 16-color bright fg
+bright_black='90'
+bright_red='91'
+bright_green='92'
+bright_yellow='93'
+bright_blue='94'
+bright_megenta='95'
+bright_cyan='96'
+bright_white='97'
+# 16-color bg
+bg_black='40'
+bg_red='41'
+bg_green='42'
+bg_yellow='43'
+bg_blue='44'
+bg_megenta='45'
+bg_cyan='46'
+bg_white='47'
+# 16-color bright bg
+bg_bright_black='100'
+bg_bright_red='101'
+bg_bright_green='102'
+bg_bright_yellow='103'
+bg_bright_blue='104'
+bg_bright_megenta='105'
+bg_bright_cyan='106'
+bg_bright_white='107'
+#
 headline() { printf "\e[0;1m$@\e[0m:\n"; }
 headline_begin() { printf "\e[0;1m"; } # for more color, see: shttps://stackoverflow.com/questions/5947742/how-to-change-the-output-color-of-echo-in-linux
 headline_end() { printf "\e[0m:\n"; }  # https://misc.flogisoft.com/bash/tip_colors_and_formatting
-debug() { in_debug && printf "\e[0;38;2;133;133;133m$@\e[0m\n" || :; }
+debug() { ((DEBUG)) && printf "\e[0;38;2;133;133;133m$@\e[0m\n" || :; }
 debug_begin() { printf "\e[0;38;2;133;133;133m"; }
 debug_end() { printf "\e[0m\n"; }
+println16() { # eg: println16 31 "hello"
+	local clr="${1:-31}" && (($#)) && shift
+	printf "\e[${clr}m$@\e[0m\n"
+}
+println256() { # eg: println256 255 "hello"
+	local byte="${1:-128}" && (($#)) && shift
+	printf "\e[38;5;${byte}m$@\e[0m\n"
+}
+printlnrgb() { # eg: printlnrgb 133 133 133 "hello"
+	local r="${1:-128}" && (($#)) && shift
+	local g="${1:-128}" && (($#)) && shift
+	local b="${1:-128}" && (($#)) && shift
+	printf "\e[38;2;${r};${g};${b}m$@\e[0m\n"
+}
+printlnrgb_special() {
+	local r="${1:-128}" && (($#)) && shift
+	local g="${1:-128}" && (($#)) && shift
+	local b="${1:-128}" && (($#)) && shift
+	printf "\e[38;0;${r};${g};${b}m$@\e[0m\n"
+}
+printlnrgb_transparent() {
+	local r="${1:-128}" && (($#)) && shift
+	local g="${1:-128}" && (($#)) && shift
+	local b="${1:-128}" && (($#)) && shift
+	printf "\e[38;1;${r};${g};${b}m$@\e[0m\n"
+}
+printlnrgb_cmy() {
+	local cs="${1:-128}" && (($#)) && shift
+	local r="${1:-128}" && (($#)) && shift
+	local g="${1:-128}" && (($#)) && shift
+	local b="${1:-128}" && (($#)) && shift
+	printf "\e[38;3;${r};${g};${b};${cs}m$@\e[0m\n"
+}
+printlnrgb_cmyb() {
+	local cs="${1:-128}" && (($#)) && shift
+	local r="${1:-128}" && (($#)) && shift
+	local g="${1:-128}" && (($#)) && shift
+	local b="${1:-128}" && (($#)) && shift
+	printf "\e[38;4;${r};${g};${b};${cs}m$@\e[0m\n"
+}
 dbg() { ((DEBUG)) && printf ">>> \e[0;38;2;133;133;133m$@\e[0m\n" || :; }
 tip() { printf "\e[0;38;2;133;133;133m>>> $@\e[0m\n"; }
+wrn() { printf "\e[0;38;2;172;172;22m... [WARN] \e[0;38;2;11;11;11m$@\e[0m\n"; }
 err() { printf "\e[0;33;1;133;133;133m>>> $@\e[0m\n" 1>&2; }
 mvif() {
 	local src="$1" dstdir="$2"
