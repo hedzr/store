@@ -1,5 +1,9 @@
 # CHANGELOG
 
+- v1.3.48
+  - update workflow file to improve release notes
+  - upgrade deps
+
 - v1.3.47
   - doc to dupS
   - remove nolint in cvter.go
