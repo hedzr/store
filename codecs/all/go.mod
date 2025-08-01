@@ -7,14 +7,14 @@ toolchain go1.23.3
 replace github.com/hedzr/store => ./../..
 
 require (
-	github.com/hedzr/store v1.3.47
-	github.com/hedzr/store/codecs/gob v1.3.47
-	github.com/hedzr/store/codecs/hcl v1.3.47
-	github.com/hedzr/store/codecs/hjson v1.3.47
-	github.com/hedzr/store/codecs/json v1.3.47
-	github.com/hedzr/store/codecs/nestext v1.3.47
-	github.com/hedzr/store/codecs/toml v1.3.47
-	github.com/hedzr/store/codecs/yaml v1.3.47
+	github.com/hedzr/store v1.3.48
+	github.com/hedzr/store/codecs/gob v1.3.48
+	github.com/hedzr/store/codecs/hcl v1.3.48
+	github.com/hedzr/store/codecs/hjson v1.3.48
+	github.com/hedzr/store/codecs/json v1.3.48
+	github.com/hedzr/store/codecs/nestext v1.3.48
+	github.com/hedzr/store/codecs/toml v1.3.48
+	github.com/hedzr/store/codecs/yaml v1.3.48
 )
 
 require (
@@ -22,9 +22,9 @@ require (
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.24.0 // indirect
-	github.com/hedzr/evendeep v1.3.47 // indirect
+	github.com/hedzr/evendeep v1.3.48 // indirect
 	github.com/hedzr/is v0.8.47 // indirect
-	github.com/hedzr/logg v0.8.47 // indirect
+	github.com/hedzr/logg v0.8.48 // indirect
 	github.com/hjson/hjson-go/v4 v4.5.0 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	github.com/npillmayer/nestext v0.1.3 // indirect
