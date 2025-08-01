@@ -44,19 +44,24 @@ jobs:
           # name: ${{ env.TAG_NAME }}
           # # overwrite: true
           # overwrite_files: true
-          # prerelease: true
-          # draft: true
           # # file_glob: true
           append_body: true
+          draft: false
+          prerelease: false
           preserve_order: true
           # body_path: relnotes.md
           body: |
-            This release was created by: ${{ github.event.sender.login }}
-            Release of Store, a high-performance k-v store and hierarchical
-            configuration set manager,
-            built from commit ${{ env.SHORT_SHA }}, is now available.
+            Store is a high-performance key-value store and hierarchical configuration set manager, which loads and merge app settings from any external sources, and provides a unify interface to access them. Try `appSettings.MustBool("sys.logging.enabled", false)` to ensure whether we should enable logging plugin in coding.
+
+            ${{ github.event.head_commit.message }}
           files: |
             ./*.zip
+          #
+          # This release was created by: ${{ github.event.sender.login }}
+          # Release of Store, a high-performance k-v store and hierarchical
+          # configuration set manager,
+          # built from commit ${{ env.SHORT_SHA }}, is now available.
+          #
           # # body: |
           # #   ${{ steps.read_release.outputs.RELEASE_BODY }}
           # body: |
