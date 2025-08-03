@@ -11,9 +11,9 @@ replace github.com/hedzr/store/providers/file => ../../../providers/file
 replace github.com/hedzr/store/codecs/hcl => ../
 
 require (
-	github.com/hedzr/store v1.3.48
-	github.com/hedzr/store/codecs/hcl v1.3.48
-	github.com/hedzr/store/providers/file v1.3.48
+	github.com/hedzr/store v1.3.50
+	github.com/hedzr/store/codecs/hcl v1.3.50
+	github.com/hedzr/store/providers/file v1.3.50
 	github.com/stretchr/testify v1.10.0
 )
 
@@ -24,9 +24,9 @@ require (
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.24.0 // indirect
-	github.com/hedzr/evendeep v1.3.48 // indirect
-	github.com/hedzr/is v0.8.47 // indirect
-	github.com/hedzr/logg v0.8.48 // indirect
+	github.com/hedzr/evendeep v1.3.50 // indirect
+	github.com/hedzr/is v0.8.50 // indirect
+	github.com/hedzr/logg v0.8.50 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/zclconf/go-cty v1.16.3 // indirect
