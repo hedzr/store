@@ -1,5 +1,8 @@
 # CHANGELOG
 
+- v1.3.50
+  - upgrade deps
+
 - v1.3.48
   - update workflow file to improve release notes
   - upgrade deps
