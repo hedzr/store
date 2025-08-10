@@ -3,6 +3,7 @@
 - v1.3.51
   - upgrade deps
   - security patches
+  - [ci.sh] improved version finder
 
 - v1.3.50
   - upgrade deps
