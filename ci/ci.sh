@@ -75,7 +75,10 @@ VER=""
 
 if [ x"$VER" == x ]; then
 	notfound=1
-	for f in doc.go _examples/doc.go _examples/small/doc.go examples/doc.go examples/small/doc.go slog/doc.go; do
+	for f in cli/consts/constants.go cli/consts/consts.go cli/consts/doc.go \
+		doc.go _examples/doc.go _examples/small/doc.go \
+		examples/doc.go examples/small/doc.go \
+		slog/doc.go; do
 		(($notfound)) && [ -f "$f" ] && {
 			# echo "checking $f for VER..."
 			VER="$(echo v$(grep -iE 'Version[ ]*=.*' "$f" | grep -oE '\d+\.\d+\.\d+'))"
