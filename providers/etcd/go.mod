@@ -23,7 +23,7 @@ replace github.com/hedzr/store => ../..
 // replace github.com/hedzr/store/codecs/yaml => ../../codecs/yaml
 
 require (
-	github.com/hedzr/store v1.3.51
+	github.com/hedzr/store v1.3.53
 	go.etcd.io/etcd/client/v3 v3.6.4
 )
 

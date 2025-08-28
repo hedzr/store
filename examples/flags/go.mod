@@ -39,14 +39,14 @@ replace github.com/hedzr/store/providers/fs => ../../providers/fs
 replace github.com/hedzr/store/providers/maps => ../../providers/maps
 
 require (
-	github.com/hedzr/logg v0.8.51
-	github.com/hedzr/store v1.3.51
-	github.com/hedzr/store/providers/flags v1.3.51
+	github.com/hedzr/logg v0.8.53
+	github.com/hedzr/store v1.3.53
+	github.com/hedzr/store/providers/flags v1.3.53
 )
 
 require (
-	github.com/hedzr/evendeep v1.3.51 // indirect
-	github.com/hedzr/is v0.8.51 // indirect
+	github.com/hedzr/evendeep v1.3.53 // indirect
+	github.com/hedzr/is v0.8.53 // indirect
 	golang.org/x/net v0.43.0 // indirect
 	golang.org/x/sys v0.35.0 // indirect
 	golang.org/x/term v0.34.0 // indirect
