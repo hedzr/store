@@ -24,13 +24,13 @@ replace github.com/hedzr/store => ../..
 
 require (
 	github.com/fsnotify/fsnotify v1.9.0
-	github.com/hedzr/store v1.3.53
+	github.com/hedzr/store v1.3.55
 )
 
 require (
-	github.com/hedzr/evendeep v1.3.53 // indirect
-	github.com/hedzr/is v0.8.53 // indirect
-	github.com/hedzr/logg v0.8.53 // indirect
+	github.com/hedzr/evendeep v1.3.55 // indirect
+	github.com/hedzr/is v0.8.55 // indirect
+	github.com/hedzr/logg v0.8.55 // indirect
 	golang.org/x/net v0.43.0 // indirect
 	golang.org/x/sys v0.35.0 // indirect
 	golang.org/x/term v0.34.0 // indirect
