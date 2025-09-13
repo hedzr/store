@@ -75,7 +75,8 @@ VER=""
 
 if [ x"$VER" == x ]; then
 	notfound=1
-	for f in cli/consts/constants.go cli/consts/consts.go cli/consts/doc.go \
+	for f in cli/cmdr/consts/def.go cli/azt/consts/def.go cli/asker/doc.go cli/wzstore/doc.go \
+		cli/consts/constants.go cli/consts/consts.go cli/consts/def.go cli/consts/doc.go \
 		doc.go _examples/doc.go _examples/small/doc.go \
 		examples/doc.go examples/small/doc.go \
 		slog/doc.go; do
