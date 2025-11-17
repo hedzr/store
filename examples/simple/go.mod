@@ -38,14 +38,14 @@ replace github.com/hedzr/store/providers/maps => ../../providers/maps
 
 require (
 	github.com/arl/statsviz v0.7.2
-	github.com/hedzr/is v0.8.63
-	github.com/hedzr/store v1.3.63
+	github.com/hedzr/is v0.8.65
+	github.com/hedzr/store v1.3.65
 )
 
 require (
 	github.com/gorilla/websocket v1.5.3 // indirect
-	github.com/hedzr/evendeep v1.3.63 // indirect
-	github.com/hedzr/logg v0.8.63 // indirect
+	github.com/hedzr/evendeep v1.3.65 // indirect
+	github.com/hedzr/logg v0.8.65 // indirect
 	golang.org/x/net v0.47.0 // indirect
 	golang.org/x/sys v0.38.0 // indirect
 	golang.org/x/term v0.37.0 // indirect

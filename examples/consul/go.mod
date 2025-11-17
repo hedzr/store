@@ -37,8 +37,8 @@ replace github.com/hedzr/store/providers/maps => ../../providers/maps
 require (
 	github.com/hashicorp/consul/api v1.32.1
 	github.com/hedzr/logg v0.8.60
-	github.com/hedzr/store v1.3.63
-	github.com/hedzr/store/providers/consul v1.3.63
+	github.com/hedzr/store v1.3.65
+	github.com/hedzr/store/providers/consul v1.3.65
 )
 
 require (
