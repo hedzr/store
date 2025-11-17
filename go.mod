@@ -19,9 +19,9 @@ toolchain go1.24.5
 // replace github.com/hedzr/go-utils/v2 => ./
 
 require (
-	github.com/hedzr/evendeep v1.3.63
-	github.com/hedzr/is v0.8.63
-	github.com/hedzr/logg v0.8.63
+	github.com/hedzr/evendeep v1.3.65
+	github.com/hedzr/is v0.8.65
+	github.com/hedzr/logg v0.8.65
 	gopkg.in/hedzr/errors.v3 v3.3.5
 )
 
