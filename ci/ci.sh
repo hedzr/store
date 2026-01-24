@@ -68,6 +68,7 @@ OSN=store
 VER=""
 
 [ -f .version.cmake ] && {
+	# echo cmd can remove quote from the result of grep cmd
 	VER=$(echo $(grep -oE ' \d+\.\d+\.\d+' .version.cmake))
 	# grep -oE ' [0-9]+.[0-9]+.[0-9]+' .version.cmake
 	# echo "VERSION = $VER"
@@ -80,7 +81,7 @@ if [ x"$VER" == x ]; then
 		doc.go _examples/doc.go _examples/small/doc.go \
 		examples/doc.go examples/small/doc.go \
 		slog/doc.go; do
-		(($notfound)) && [ -f "$f" ] && {
+		((notfound)) && [ -f "$f" ] && {
 			# echo "checking $f for VER..."
 			VER="$(echo v$(grep -iE 'Version[ ]*=.*' "$f" | grep -oE '\d+\.\d+\.\d+'))"
 			[ "$VER" != "v" ] && { echo "VERSION = $VER found!" && notfound=0; } # || { echo " ..loop next"; }
@@ -114,8 +115,8 @@ build-push() {
 build-drop-tags-providers() {
 	local sm d f
 	for sm in providers codecs; do
-		for f in $(find ./$sm -type f -iname 'go.mod' -print); do
-			d="$(dirname $f)"
+		for f in $(find "./$sm" -type f -iname 'go.mod' -print); do
+			d="$(dirname "$f")"
 			if [[ ! "$d" == */test ]]; then
 				if [ -d "$d" ]; then
 					local pre="${d/.\//}"
@@ -174,8 +175,8 @@ build-setver-examples() { build-setver-children examples; }
 build-setver-children() {
 	local sm d f dirty=0
 	local which="$1" && shift
-	for sm in "$which"; do
-		for f in $(find ./$sm -type f -iname 'go.mod' -print); do
+	for sm in $which; do
+		for f in $(find "./$sm" -type f -iname 'go.mod' -print); do
 			d="$(dirname $f)"
 			# if [[ ! "$d" == */test ]]; then
 			if [ -d "$d" ]; then
@@ -186,11 +187,11 @@ build-setver-children() {
 		done
 		if ((dirty)); then
 			echo "  erase go.mod.bak and git commit $sm"
-			find ./$sm -type f -iname 'go.mod.bak' -delete
+			find "./$sm" -type f -iname 'go.mod.bak' -delete
 			git commit -m "update $sm and publish them"
 		fi
-		for f in $(find ./$sm -type f -iname 'go.mod' -print); do
-			d="$(dirname $f)"
+		for f in $(find "./$sm" -type f -iname 'go.mod' -print); do
+			d="$(dirname "$f")"
 			# if [[ ! "$d" == */test ]]; then
 			if [ -d "$d" ]; then
 				setver-submodule "${d/\.\//}" "$VER" "$d" "$@"
@@ -241,7 +242,7 @@ commit-dir() {
 		git add .
 		git commit -m "updated $d"
 	fi
-	popd >/dev/null
+	popd >/dev/null || return
 }
 
 commit-submodule() {
@@ -263,13 +264,13 @@ update-submodule() {
 		((ret)) && echo "      go mod tidy..." &&
 			go get -v -t -u ./... && go mod tidy && git add go.mod go.sum &&
 			ret=1
-		popd >/dev/null
+		popd >/dev/null || return
 		# git tag "$tag"
 	else
 		echo "    git tag $tag"
 		# git tag "$tag"
 	fi
-	return $ret
+	return "$ret"
 }
 
 setver-submodule() {
