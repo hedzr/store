@@ -1,8 +1,6 @@
 module github.com/hedzr/store
 
-go 1.24.0
-
-toolchain go1.24.5
+go 1.25.0
 
 // replace gopkg.in/hedzr/errors.v3 => ../../24/libs.errors
 
@@ -19,9 +17,9 @@ toolchain go1.24.5
 // replace github.com/hedzr/go-utils/v2 => ./
 
 require (
-	github.com/hedzr/evendeep v1.3.68
-	github.com/hedzr/is v0.8.68
-	github.com/hedzr/logg v0.8.68
+	github.com/hedzr/evendeep v1.4.0
+	github.com/hedzr/is v0.9.0
+	github.com/hedzr/logg v0.9.0
 	gopkg.in/hedzr/errors.v3 v3.3.5
 )
 
