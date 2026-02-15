@@ -1,8 +1,8 @@
 module github.com/hedzr/store/providers/consul
 
-go 1.24.0
+go 1.25.0
 
-toolchain go1.24.5
+toolchain go1.25.0
 
 // replace gopkg.in/hedzr/errors.v3 => ../../../../24/libs.errors
 
@@ -27,7 +27,7 @@ replace github.com/hedzr/store => ../..
 require (
 	github.com/hashicorp/consul/api v1.32.1
 	github.com/hedzr/logg v0.8.60
-	github.com/hedzr/store v1.3.68
+	github.com/hedzr/store v1.4.0
 )
 
 require (
