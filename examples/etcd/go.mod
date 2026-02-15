@@ -1,8 +1,6 @@
 module github.com/hedzr/store/examples/testetcd
 
-go 1.24.0
-
-toolchain go1.24.5
+go 1.25.0
 
 // replace gopkg.in/hedzr/errors.v3 => ../../../../24/libs.errors
 
@@ -35,9 +33,9 @@ replace github.com/hedzr/store/providers/fs => ../../providers/fs
 replace github.com/hedzr/store/providers/maps => ../../providers/maps
 
 require (
-	github.com/hedzr/logg v0.8.68
-	github.com/hedzr/store v1.3.68
-	github.com/hedzr/store/providers/etcd v1.3.68
+	github.com/hedzr/logg v0.9.0
+	github.com/hedzr/store v1.4.0
+	github.com/hedzr/store/providers/etcd v1.4.0
 )
 
 require (
@@ -46,8 +44,8 @@ require (
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.27.8 // indirect
-	github.com/hedzr/evendeep v1.3.68 // indirect
-	github.com/hedzr/is v0.8.68 // indirect
+	github.com/hedzr/evendeep v1.4.0 // indirect
+	github.com/hedzr/is v0.9.0 // indirect
 	go.etcd.io/etcd/api/v3 v3.6.8 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.6.8 // indirect
 	go.etcd.io/etcd/client/v3 v3.6.8 // indirect
