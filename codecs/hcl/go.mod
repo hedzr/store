@@ -1,8 +1,6 @@
 module github.com/hedzr/store/codecs/hcl
 
-go 1.24.0
-
-toolchain go1.24.5
+go 1.25.0
 
 // replace gopkg.in/hedzr/errors.v3 => ../../../../24/libs.errors
 
@@ -22,7 +20,7 @@ replace github.com/hedzr/store => ../..
 
 require (
 	github.com/hashicorp/hcl/v2 v2.24.0
-	github.com/hedzr/store v1.3.68
+	github.com/hedzr/store v1.4.0
 	github.com/zclconf/go-cty v1.17.0
 )
 
@@ -30,9 +28,9 @@ require (
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
-	github.com/hedzr/evendeep v1.3.68 // indirect
-	github.com/hedzr/is v0.8.68 // indirect
-	github.com/hedzr/logg v0.8.68 // indirect
+	github.com/hedzr/evendeep v1.4.0 // indirect
+	github.com/hedzr/is v0.9.0 // indirect
+	github.com/hedzr/logg v0.9.0 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	golang.org/x/mod v0.33.0 // indirect
 	golang.org/x/net v0.50.0 // indirect

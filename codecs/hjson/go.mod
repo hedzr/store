@@ -1,8 +1,6 @@
 module github.com/hedzr/store/codecs/hjson
 
-go 1.24.0
-
-toolchain go1.24.5
+go 1.25.0
 
 // replace gopkg.in/hedzr/errors.v3 => ../../../../24/libs.errors
 
@@ -21,14 +19,14 @@ replace github.com/hedzr/store => ../..
 // replace github.com/hedzr/store/providers/file => ../../providers/file
 
 require (
-	github.com/hedzr/store v1.3.68
+	github.com/hedzr/store v1.4.0
 	github.com/hjson/hjson-go/v4 v4.6.0
 )
 
 require (
-	github.com/hedzr/evendeep v1.3.68 // indirect
-	github.com/hedzr/is v0.8.68 // indirect
-	github.com/hedzr/logg v0.8.68 // indirect
+	github.com/hedzr/evendeep v1.4.0 // indirect
+	github.com/hedzr/is v0.9.0 // indirect
+	github.com/hedzr/logg v0.9.0 // indirect
 	golang.org/x/net v0.50.0 // indirect
 	golang.org/x/sys v0.41.0 // indirect
 	golang.org/x/term v0.40.0 // indirect
