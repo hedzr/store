@@ -1,5 +1,5 @@
-github.com/fsnotify/fsnotify v1.9.0 h1:2Ml+OJNzbYCTzsxtv8vKSFD9PbJjmhYF14k/jKC7S9k=
-github.com/fsnotify/fsnotify v1.9.0/go.mod h1:8jBTzvmWwFyi3Pb8djgCCO5IBqzKJ/Jwo8TRcHyHii0=
+github.com/fsnotify/fsnotify v1.10.1 h1:b0/UzAf9yR5rhf3RPm9gf3ehBPpf0oZKIjtpKrx59Ho=
+github.com/fsnotify/fsnotify v1.10.1/go.mod h1:TLheqan6HD6GBK6PrDWyDPBaEV8LspOxvPSjC+bVfgo=
 github.com/hedzr/evendeep v1.4.0 h1:ip0Yo6KNdTHucfJTfKC5MpTHmSnh7ZipMi0v3wgR7zY=
 github.com/hedzr/evendeep v1.4.0/go.mod h1:vFI0w1wJlrSQC1ne8hEN/7vrg84vGeERry7qIY7aGjU=
 github.com/hedzr/is v0.9.1 h1:plkHkcR9Xx91paO8CvR7GrOSrJxsxfC8xM4EVRIJMkc=
