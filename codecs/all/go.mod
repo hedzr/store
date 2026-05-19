@@ -28,7 +28,7 @@ require (
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	github.com/npillmayer/nestext v0.1.3 // indirect
-	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
+	github.com/pelletier/go-toml/v2 v2.3.1 // indirect
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	github.com/zclconf/go-cty v1.18.1 // indirect
 	golang.org/x/mod v0.34.0 // indirect
