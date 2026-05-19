@@ -1,6 +1,6 @@
 module github.com/hedzr/store/examples/testflags
 
-go 1.25.0
+go 1.26
 
 // toolchain go1.25.0
 
