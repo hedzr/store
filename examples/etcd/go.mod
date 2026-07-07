@@ -1,6 +1,6 @@
 module github.com/hedzr/store/examples/testetcd
 
-go 1.26
+go 1.25.0
 
 // replace gopkg.in/hedzr/errors.v3 => ../../../../24/libs.errors
 
@@ -33,9 +33,9 @@ replace github.com/hedzr/store/providers/fs => ../../providers/fs
 replace github.com/hedzr/store/providers/maps => ../../providers/maps
 
 require (
-	github.com/hedzr/logg v0.9.0
-	github.com/hedzr/store v1.4.0
-	github.com/hedzr/store/providers/etcd v1.4.0
+	github.com/hedzr/logg v0.9.3
+	github.com/hedzr/store v1.4.3
+	github.com/hedzr/store/providers/etcd v1.4.3
 )
 
 require (
@@ -43,21 +43,21 @@ require (
 	github.com/coreos/go-systemd/v22 v22.7.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.27.8 // indirect
-	github.com/hedzr/evendeep v1.4.0 // indirect
-	github.com/hedzr/is v0.9.1 // indirect
-	go.etcd.io/etcd/api/v3 v3.6.11 // indirect
-	go.etcd.io/etcd/client/pkg/v3 v3.6.11 // indirect
-	go.etcd.io/etcd/client/v3 v3.6.11 // indirect
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0 // indirect
+	github.com/hedzr/evendeep v1.4.3 // indirect
+	github.com/hedzr/is v0.9.3 // indirect
+	go.etcd.io/etcd/api/v3 v3.6.13 // indirect
+	go.etcd.io/etcd/client/pkg/v3 v3.6.13 // indirect
+	go.etcd.io/etcd/client/v3 v3.6.13 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	go.uber.org/zap v1.27.1 // indirect
-	golang.org/x/net v0.52.0 // indirect
-	golang.org/x/sys v0.42.0 // indirect
-	golang.org/x/term v0.41.0 // indirect
-	golang.org/x/text v0.36.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20260209200024-4cfbd4190f57 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260209200024-4cfbd4190f57 // indirect
-	google.golang.org/grpc v1.79.3 // indirect
+	go.uber.org/zap v1.28.0 // indirect
+	golang.org/x/net v0.56.0 // indirect
+	golang.org/x/sys v0.46.0 // indirect
+	golang.org/x/term v0.44.0 // indirect
+	golang.org/x/text v0.39.0 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20260706201446-f0a921348800 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260706201446-f0a921348800 // indirect
+	google.golang.org/grpc v1.82.0 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 	gopkg.in/hedzr/errors.v3 v3.3.5 // indirect
 )
