@@ -1,5 +1,10 @@
 # CHANGELOG
 
+- v1.4.3
+  - upgrade deps
+  - security patches
+  - move to go toolchain 1.26 - by consul & etcd
+
 - v1.4.0
   - upgrade toolchain to go1.25+
 
