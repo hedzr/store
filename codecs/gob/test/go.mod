@@ -1,6 +1,6 @@
 module github.com/hedzr/store/codecs/gob/test
 
-go 1.25.0
+go 1.26
 
 replace github.com/hedzr/store => ../../..
 
@@ -23,7 +23,7 @@ require (
 	github.com/hedzr/logg v0.9.3 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
-	github.com/rogpeppe/go-internal v1.14.1 // indirect
+	github.com/rogpeppe/go-internal v1.15.0 // indirect
 	golang.org/x/net v0.56.0 // indirect
 	golang.org/x/sys v0.46.0 // indirect
 	golang.org/x/term v0.44.0 // indirect

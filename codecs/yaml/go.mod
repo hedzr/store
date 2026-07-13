@@ -1,6 +1,6 @@
 module github.com/hedzr/store/codecs/yaml
 
-go 1.25.0
+go 1.26
 
 // replace gopkg.in/hedzr/errors.v3 => ../../../../24/libs.errors
 
@@ -28,7 +28,7 @@ require (
 	github.com/hedzr/is v0.9.3 // indirect
 	github.com/hedzr/logg v0.9.3 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
-	github.com/rogpeppe/go-internal v1.14.1 // indirect
+	github.com/rogpeppe/go-internal v1.15.0 // indirect
 	golang.org/x/net v0.56.0 // indirect
 	golang.org/x/sys v0.46.0 // indirect
 	golang.org/x/term v0.44.0 // indirect
