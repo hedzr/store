@@ -1,6 +1,6 @@
 module github.com/hedzr/store/providers/flags
 
-go 1.25.0
+go 1.26
 
 replace github.com/hedzr/store => ../..
 
