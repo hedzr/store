@@ -1,6 +1,6 @@
 module github.com/hedzr/store/providers/env
 
-go 1.25.0
+go 1.26
 
 // replace gopkg.in/hedzr/errors.v3 => ../../../../24/libs.errors
 
