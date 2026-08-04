@@ -36,7 +36,7 @@ replace github.com/hedzr/store/providers/maps => ../../providers/maps
 
 require (
 	github.com/arl/statsviz v0.8.1
-	github.com/hedzr/is v0.9.3
+	github.com/hedzr/is v0.9.5
 	github.com/hedzr/store v1.4.3
 )
 
@@ -44,9 +44,9 @@ require (
 	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/hedzr/evendeep v1.4.3 // indirect
 	github.com/hedzr/logg v0.9.3 // indirect
-	golang.org/x/net v0.56.0 // indirect
-	golang.org/x/sys v0.46.0 // indirect
-	golang.org/x/term v0.44.0 // indirect
+	golang.org/x/net v0.57.0 // indirect
+	golang.org/x/sys v0.47.0 // indirect
+	golang.org/x/term v0.45.0 // indirect
 	golang.org/x/tools v0.47.0 // indirect
 	gopkg.in/hedzr/errors.v3 v3.3.5 // indirect
 )
