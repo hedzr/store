@@ -19,7 +19,7 @@ go 1.26
 require (
 	github.com/hedzr/evendeep v1.4.3
 	github.com/hedzr/is v0.9.5
-	github.com/hedzr/logg v0.9.3
+	github.com/hedzr/logg v0.9.5
 	gopkg.in/hedzr/errors.v3 v3.3.5
 )
 
