@@ -23,7 +23,7 @@ require (
 	github.com/hashicorp/hcl/v2 v2.24.0 // indirect
 	github.com/hedzr/evendeep v1.4.3 // indirect
 	github.com/hedzr/is v0.9.5 // indirect
-	github.com/hedzr/logg v0.9.3 // indirect
+	github.com/hedzr/logg v0.9.5 // indirect
 	github.com/hjson/hjson-go/v4 v4.6.0 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect

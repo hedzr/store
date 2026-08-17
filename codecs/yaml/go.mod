@@ -26,7 +26,7 @@ require (
 require (
 	github.com/hedzr/evendeep v1.4.3 // indirect
 	github.com/hedzr/is v0.9.5 // indirect
-	github.com/hedzr/logg v0.9.3 // indirect
+	github.com/hedzr/logg v0.9.5 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/rogpeppe/go-internal v1.15.0 // indirect
 	golang.org/x/net v0.57.0 // indirect
