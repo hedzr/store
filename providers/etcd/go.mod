@@ -33,6 +33,7 @@ require (
 	github.com/hedzr/evendeep v1.4.3 // indirect
 	github.com/hedzr/is v0.9.5 // indirect
 	github.com/hedzr/logg v0.9.5 // indirect
+	github.com/stretchr/testify v1.12.1 // indirect
 	go.etcd.io/etcd/api/v3 v3.7.1 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.7.1 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
