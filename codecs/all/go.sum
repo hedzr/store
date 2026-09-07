@@ -33,8 +33,8 @@ github.com/hedzr/store/codecs/toml v1.4.3 h1:WB4AOffSC6JUJ3f1X7FdczgKIMMVvJAJ1rn
 github.com/hedzr/store/codecs/toml v1.4.3/go.mod h1:Rrlz0Ukq5oEcQ6JGhuKr6lFPdf2z7jSBEwArcXaGV4o=
 github.com/hedzr/store/codecs/yaml v1.4.3 h1:1BAk/6Vpdei5gq9YQbn5ycU3c60JmPViTeUOXv0uE4s=
 github.com/hedzr/store/codecs/yaml v1.4.3/go.mod h1:4GOmiZFDINk3TH/ogP5N8JqnNFONGHh8GqKIoSQkSMg=
-github.com/hjson/hjson-go/v4 v4.7.0 h1:pEn5mfC/6DqhVnXH+NzC2hj1kvOlbjKt+f9Ia1xBMhk=
-github.com/hjson/hjson-go/v4 v4.7.0/go.mod h1:4zx6c7Y0vWcm8IRyVoQJUHAPJLXLvbG6X8nk1RLigSo=
+github.com/hjson/hjson-go/v4 v4.7.1 h1:nC/dZ7GCvcFa9KXR3YJzufloeWRLovFAI4XmiAl7jy8=
+github.com/hjson/hjson-go/v4 v4.7.1/go.mod h1:4zx6c7Y0vWcm8IRyVoQJUHAPJLXLvbG6X8nk1RLigSo=
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
 github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
 github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
