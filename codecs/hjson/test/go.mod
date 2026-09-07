@@ -13,7 +13,7 @@ require (
 	github.com/hedzr/store v1.4.3
 	github.com/hedzr/store/codecs/hjson v1.4.3
 	github.com/hedzr/store/providers/file v1.4.3
-	github.com/hjson/hjson-go/v4 v4.7.0
+	github.com/hjson/hjson-go/v4 v4.7.1
 	github.com/stretchr/testify v1.12.1
 )
 

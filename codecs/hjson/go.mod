@@ -20,7 +20,7 @@ replace github.com/hedzr/store => ../..
 
 require (
 	github.com/hedzr/store v1.4.3
-	github.com/hjson/hjson-go/v4 v4.7.0
+	github.com/hjson/hjson-go/v4 v4.7.1
 )
 
 require (

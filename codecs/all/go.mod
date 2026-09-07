@@ -24,7 +24,7 @@ require (
 	github.com/hedzr/evendeep v1.4.3 // indirect
 	github.com/hedzr/is v0.9.5 // indirect
 	github.com/hedzr/logg v0.9.5 // indirect
-	github.com/hjson/hjson-go/v4 v4.7.0 // indirect
+	github.com/hjson/hjson-go/v4 v4.7.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	github.com/npillmayer/nestext v0.1.3 // indirect
