@@ -24,7 +24,7 @@ require (
 	github.com/hashicorp/hcl/v2 v2.24.0 // indirect
 	github.com/hedzr/evendeep v1.4.3 // indirect
 	github.com/hedzr/is v0.9.6 // indirect
-	github.com/hedzr/logg v0.9.5 // indirect
+	github.com/hedzr/logg v0.9.6 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	github.com/zclconf/go-cty v1.19.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.5 // indirect

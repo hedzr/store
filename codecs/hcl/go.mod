@@ -32,7 +32,7 @@ require (
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/hedzr/evendeep v1.4.3 // indirect
 	github.com/hedzr/is v0.9.6 // indirect
-	github.com/hedzr/logg v0.9.5 // indirect
+	github.com/hedzr/logg v0.9.6 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	golang.org/x/mod v0.38.0 // indirect
 	golang.org/x/net v0.58.0 // indirect
