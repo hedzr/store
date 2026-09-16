@@ -1,6 +1,6 @@
 module github.com/hedzr/store
 
-go 1.26
+go 1.26.0
 
 // replace gopkg.in/hedzr/errors.v3 => ../../24/libs.errors
 
@@ -17,14 +17,14 @@ go 1.26
 // replace github.com/hedzr/go-utils/v2 => ./
 
 require (
-	github.com/hedzr/evendeep v1.4.3
-	github.com/hedzr/is v0.9.6
-	github.com/hedzr/logg v0.9.5
+	github.com/hedzr/evendeep v1.4.9
+	github.com/hedzr/is v0.9.9
+	github.com/hedzr/logg v0.9.9
 	gopkg.in/hedzr/errors.v3 v3.3.5
 )
 
 require (
-	golang.org/x/net v0.58.0 // indirect
-	golang.org/x/sys v0.47.0 // indirect
-	golang.org/x/term v0.45.0 // indirect
+	golang.org/x/net v0.59.0 // indirect
+	golang.org/x/sys v0.48.0 // indirect
+	golang.org/x/term v0.46.0 // indirect
 )
