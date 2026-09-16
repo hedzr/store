@@ -1,5 +1,10 @@
 # CHANGELOG
 
+- v1.4.9
+  - upgrade deps
+  - security patches
+  - move to go toolchain 1.26 (with all deps: is,logg,evendeep)
+
 - v1.4.3
   - upgrade deps
   - security patches
