@@ -1,6 +1,6 @@
 module github.com/hedzr/store/examples/testconsul
 
-go 1.26
+go 1.26.0
 
 // replace gopkg.in/hedzr/errors.v3 => ../../../../24/libs.errors
 
@@ -34,7 +34,7 @@ replace github.com/hedzr/store/providers/maps => ../../providers/maps
 
 require (
 	github.com/hashicorp/consul/api v1.34.4
-	github.com/hedzr/logg v0.9.5
+	github.com/hedzr/logg v0.9.9
 	github.com/hedzr/store v1.4.9
 	github.com/hedzr/store/providers/consul v1.4.9
 )
@@ -52,18 +52,18 @@ require (
 	github.com/hashicorp/go-rootcerts v1.0.2 // indirect
 	github.com/hashicorp/golang-lru v1.0.2 // indirect
 	github.com/hashicorp/serf v0.10.4 // indirect
-	github.com/hedzr/evendeep v1.4.3 // indirect
-	github.com/hedzr/is v0.9.6 // indirect
+	github.com/hedzr/evendeep v1.4.9 // indirect
+	github.com/hedzr/is v0.9.9 // indirect
 	github.com/mattn/go-colorable v0.1.15 // indirect
 	github.com/mattn/go-isatty v0.0.22 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/stretchr/objx v0.5.3 // indirect
 	go.yaml.in/yaml/v3 v3.0.5 // indirect
 	golang.org/x/exp v0.0.0-20260611194520-c48552f49976 // indirect
-	golang.org/x/mod v0.38.0 // indirect
-	golang.org/x/net v0.58.0 // indirect
-	golang.org/x/sync v0.22.0 // indirect
-	golang.org/x/sys v0.47.0 // indirect
-	golang.org/x/term v0.45.0 // indirect
+	golang.org/x/mod v0.41.0 // indirect
+	golang.org/x/net v0.59.0 // indirect
+	golang.org/x/sync v0.23.0 // indirect
+	golang.org/x/sys v0.48.0 // indirect
+	golang.org/x/term v0.46.0 // indirect
 	gopkg.in/hedzr/errors.v3 v3.3.5 // indirect
 )
