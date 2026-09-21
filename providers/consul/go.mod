@@ -1,6 +1,6 @@
 module github.com/hedzr/store/providers/consul
 
-go 1.26.0
+go 1.26.7
 
 // replace gopkg.in/hedzr/errors.v3 => ../../../../24/libs.errors
 
@@ -23,7 +23,7 @@ replace github.com/hedzr/store => ../..
 // replace github.com/hedzr/store/codecs/yaml => ../../codecs/yaml
 
 require (
-	github.com/hashicorp/consul/api v1.34.4
+	github.com/hashicorp/consul/api v1.34.5
 	github.com/hedzr/logg v0.9.9
 	github.com/hedzr/store v1.4.9
 )
