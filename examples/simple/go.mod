@@ -1,6 +1,6 @@
 module github.com/hedzr/store/examples/simple
 
-go 1.26.7
+go 1.26.0
 
 // replace gopkg.in/hedzr/errors.v3 => ../../../../24/libs.errors
 

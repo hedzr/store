@@ -1,6 +1,6 @@
 module github.com/hedzr/store/codecs/json/test
 
-go 1.26.7
+go 1.26.0
 
 replace github.com/hedzr/store => ../../..
 
