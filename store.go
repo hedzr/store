@@ -32,9 +32,9 @@ func WithDelimiter(delimiter rune) Opt {
 }
 
 // WithPrefix sets the associated prefix for the tree path.
-func WithPrefix(prefix string) Opt {
+func WithPrefix(prefix ...string) Opt {
 	return func(s *storeS) {
-		s.SetPrefix(prefix)
+		s.SetPrefix(prefix...)
 	}
 }
 
