@@ -1,0 +1,14 @@
+github.com/hedzr/evendeep v1.4.9 h1:6T/k7mrJ7nAwX9MCWvtE32A3ZPez1GG2l83lwu1E1Js=
+github.com/hedzr/evendeep v1.4.9/go.mod h1:WjcEe4yOUBKSw1qY9d5exF1weIVIApTdnZgHs4Gi5j8=
+github.com/hedzr/is v0.9.9 h1:a3EMJ1k+fuOoTWghNf7S9MDia1dLvPfZnNMHMcjDgXY=
+github.com/hedzr/is v0.9.9/go.mod h1:7TilCGGmWacB+P0o7lFeRROilrGhCWk877kPNk08c4U=
+github.com/hedzr/logg v0.9.9 h1:y0PPriUkk849XJgh9mnXHJ0SH0a3iFOCMhwXjS80R1g=
+github.com/hedzr/logg v0.9.9/go.mod h1:21s5veN200v7OREfTlaWzsh/C7nGvSKJmMCj0vQy/Vo=
+golang.org/x/net v0.59.0 h1:5zfYln+w5XCxwrnMMJPufRgNoXEaGxl0wo5GqPXyues=
+golang.org/x/net v0.59.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
+golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
+golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
+golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
+gopkg.in/hedzr/errors.v3 v3.3.5 h1:bF4ijq4PAjwjCB8s7nWf2cjqo/yp6afNuQMC2SnX7t8=
+gopkg.in/hedzr/errors.v3 v3.3.5/go.mod h1:UwtyepqtGTIAmdZGSc7wxXT5Gfd/BjcfRMhPpxwkJM4=
