@@ -1,5 +1,18 @@
-# Use `make V=1` to print commands.
+# Use `make V=1` to print commands. eg.: `make V=1 cov`
 $(V).SILENT:
+
+# main Makefile
+#
+# Usages:
+#
+#    make help		list all commands/targets in this makefile
+#    make info		list the important variables and environment
+#    make build		default build
+#    make bench		benchmark tests
+#    make cov|test	coverage tests
+#    make fmt		format
+#    make clean		cleanup
+#
 
 
 # MAIN_BUILD_PKG  ?= . 
@@ -35,6 +48,7 @@ clean:
 
 ## test: run go test
 test: cov
+
 ## cov: run go coverage
 cov: | $(LOGS_DIR)
 	@$(HEADLINE) "Running go coverage..."
@@ -116,6 +130,25 @@ release-all: darwin-arm64.zip linux-386.zip linux-amd64.zip \
 
 -include ./ci/mk/go-targets.mk
 -include ./ci/mk/help.mk
+
+#---------------------
+
+## audit: tidy dependencies and format, vet and test all code
+.PHONY: audit
+audit:
+	@echo 'Tidying and verifying module dependencies...'
+	go mod tidy
+	go mod verify
+	@echo 'Formatting code...'
+	go fmt ./...
+	@echo 'Vetting code...'
+	go vet ./...
+	@echo 'Running tests...'
+	# go test -race -vet=off ./...
+	go test ./... -v -timeout 30m -race -cover -coverprofile=./logs/coverage-cl.txt -covermode=atomic -test.short -vet=off 2>&1 | tee ./logs/cover-cl.log && echo $?
+
+
+#---------------------
 
 help-extras:
 	@echo
