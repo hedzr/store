@@ -739,11 +739,11 @@ graph BT
   hzdiff-->hzstore(hedzr/store)
 ```
 
-[^1]: `hedzr/store` is a high-performance configure management library
-[^2]: `hedzr/evendeep` offers a customizable deepcopy tool to you. There are also deepequal, deepdiff tools in it.
-[^3]: `hedzr/logg` provides a slog like and colorful logging library
-[^4]: `hedzr/errors.v3` provides some extensions and compatible layer over go1.11 ~ nowadays.
-[^5]: `hedzr/is` is a basic environ detectors library
+[^1]: [`hedzr/store`](https://github.com/hedzr/store) is a high-performance configure management library
+[^2]: [`hedzr/evendeep`](https://github.com/hedzr/evendeep) offers a customizable deepcopy tool to you. There are also deepequal, deepdiff tools in it.
+[^3]: [`hedzr/logg`](https://github.com/hedzr/logg) provides a slog like and colorful logging library
+[^4]: [`hedzr/errors.v3`](https://github.com/hedzr/errors) provides some extensions and compatible layer over go1.11 ~ nowadays.
+[^5]: [`hedzr/is`](https://github.com/hedzr/is) is a basic environ detectors library
 
 ## LICENSE
 
