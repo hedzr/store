@@ -1,6 +1,6 @@
 module github.com/hedzr/store/examples/testetcd
 
-go 1.26.0
+go 1.26.9
 
 // replace gopkg.in/hedzr/errors.v3 => ../../../../24/libs.errors
 
@@ -50,7 +50,7 @@ require (
 	go.etcd.io/etcd/client/v3 v3.7.1 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.28.0 // indirect
-	golang.org/x/net v0.59.0 // indirect
+	golang.org/x/net v0.60.0 // indirect
 	golang.org/x/sys v0.48.0 // indirect
 	golang.org/x/term v0.46.0 // indirect
 	golang.org/x/text v0.42.0 // indirect

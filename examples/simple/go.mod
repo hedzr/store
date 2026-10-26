@@ -1,6 +1,6 @@
 module github.com/hedzr/store/examples/simple
 
-go 1.26.0
+go 1.26.9
 
 // replace gopkg.in/hedzr/errors.v3 => ../../../../24/libs.errors
 
@@ -44,7 +44,7 @@ require (
 	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/hedzr/evendeep v1.4.9 // indirect
 	github.com/hedzr/logg v0.9.9 // indirect
-	golang.org/x/net v0.59.0 // indirect
+	golang.org/x/net v0.60.0 // indirect
 	golang.org/x/sys v0.48.0 // indirect
 	golang.org/x/term v0.46.0 // indirect
 	golang.org/x/tools v0.50.0 // indirect
