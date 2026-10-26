@@ -1,6 +1,6 @@
 module github.com/hedzr/store/providers/consul
 
-go 1.26.0
+go 1.26.9
 
 // replace gopkg.in/hedzr/errors.v3 => ../../../../24/libs.errors
 
@@ -23,7 +23,7 @@ replace github.com/hedzr/store => ../..
 // replace github.com/hedzr/store/codecs/yaml => ../../codecs/yaml
 
 require (
-	github.com/hashicorp/consul/api v1.34.5
+	github.com/hashicorp/consul/api v1.35.0
 	github.com/hedzr/logg v0.9.9
 	github.com/hedzr/store v1.4.9
 )
@@ -48,7 +48,7 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/stretchr/testify v1.12.1 // indirect
 	golang.org/x/exp v0.0.0-20260611194520-c48552f49976 // indirect
-	golang.org/x/net v0.59.0 // indirect
+	golang.org/x/net v0.60.0 // indirect
 	golang.org/x/sys v0.48.0 // indirect
 	golang.org/x/term v0.46.0 // indirect
 	golang.org/x/tools v0.50.0 // indirect

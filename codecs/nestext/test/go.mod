@@ -1,6 +1,6 @@
 module github.com/hedzr/store/codecs/nestext/test
 
-go 1.26.0
+go 1.26.9
 
 replace github.com/hedzr/store => ../../..
 
@@ -22,7 +22,7 @@ require (
 	github.com/hedzr/logg v0.9.9 // indirect
 	github.com/npillmayer/nestext v0.1.3 // indirect
 	go.yaml.in/yaml/v3 v3.0.5 // indirect
-	golang.org/x/net v0.59.0 // indirect
+	golang.org/x/net v0.60.0 // indirect
 	golang.org/x/sys v0.48.0 // indirect
 	golang.org/x/term v0.46.0 // indirect
 	gopkg.in/hedzr/errors.v3 v3.3.5 // indirect
