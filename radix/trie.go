@@ -2,8 +2,6 @@ package radix
 
 import (
 	"bytes"
-	"context"
-	"fmt"
 	"strconv"
 	"strings"
 	"sync"
@@ -38,145 +36,6 @@ type trieS[T any] struct {
 	ttlpresent    atomic.Uint32
 	ttls          *TTL[T]
 	recursiveMode RecusiveMode
-}
-
-// RecursiveMode specifies how Must/GetXXX looks up a key
-// for matching its parent nodes (Up) or children (Down)
-// if not matched current node.
-//
-// By default, they don't (RecursiveNone).
-//
-// See also: [Trie.N], [Trie.R] and [Trie.BR]
-type RecusiveMode int
-
-const (
-	RecusiveNone RecusiveMode = iota
-	RecusiveUp                // match path-key recusively up for Must/GetXXX
-	RecusiveDown              // match path-key recusively down for Must/GetXXX
-)
-
-func (e RecusiveMode) String() string {
-	switch e {
-	case RecusiveNone:
-		return "None"
-	case RecusiveUp:
-		return "Up"
-	case RecusiveDown:
-		return "Down"
-	default:
-		return fmt.Sprintf("RM(#%d)", int(e))
-	}
-}
-
-type TTL[T any] struct {
-	treevec []*trieS[T]
-	mu      sync.RWMutex
-	cancel  context.CancelFunc // exit signal
-	done    <-chan struct{}
-	adder   chan ttljobS[T]
-
-	// in the future, we might try timing-wheel way.
-
-	weeks   *wheelS // by weeks, years, ...
-	years   *wheelS // by years, months, days, weeks
-	days    *wheelS // by days, hours, minutes, seconds
-	seconds *wheelS // by seconds, ms, us, ns
-}
-
-type wheelS struct {
-	wheel    map[int]*wheelS
-	mu       sync.RWMutex
-	onAction wheelAction
-}
-
-type wheelAction func(ctx context.Context, w *wheelS)
-
-type ttljobS[T any] struct {
-	node     *nodeS[T]
-	duration time.Duration
-	action   OnTTLRinging[T]
-}
-
-type OnTTLRinging[T any] func(s *TTL[T], nd Node[T])
-
-func newttls[T any](t *trieS[T]) *TTL[T] {
-	ctx, cancel := context.WithCancel(context.Background())
-	s := &TTL[T]{
-		treevec: []*trieS[T]{t},
-		cancel:  cancel,
-		done:    ctx.Done(),
-		adder:   make(chan ttljobS[T]),
-	}
-	go s.run()
-	return s
-}
-
-func (s *TTL[T]) dupS() *TTL[T] {
-	ctx, cancel := context.WithCancel(context.Background())
-	n := &TTL[T]{
-		treevec: []*trieS[T]{s.treevec[0]},
-		cancel:  cancel,
-		done:    ctx.Done(),
-		adder:   make(chan ttljobS[T]),
-	}
-	go n.run()
-	return n
-}
-
-func (s *TTL[T]) Close() {
-	s.cancel()
-}
-
-func (s *TTL[T]) Tree() Trie[T] { return s.treevec[0] }
-
-func (s *TTL[T]) Add(nd *nodeS[T], duration time.Duration, action OnTTLRinging[T]) {
-	if nd.rw == nil {
-		nd.rw = &sync.RWMutex{}
-	}
-	s.adder <- ttljobS[T]{node: nd, duration: duration, action: action}
-}
-
-func (s *TTL[T]) run() {
-	adder := func(job ttljobS[T]) {
-		if job.duration < 200*time.Nanosecond {
-			if job.duration == 0 {
-				// reset a job (might be planned in the future)
-			}
-			return
-		}
-
-		// add a new job
-		timer := time.NewTimer(job.duration)
-		go func(timer *time.Timer, job ttljobS[T]) {
-			defer timer.Stop()
-			// defer func() { job.node.rw = nil }()
-			for {
-				select {
-				case <-timer.C:
-					if job.action != nil {
-						job.action(s, job.node)
-					}
-					if job.node.isBranch() {
-						s.treevec[0].Remove(job.node.pathS)
-					} else {
-						job.node.SetEmpty()
-					}
-					return
-				case <-s.done:
-					return
-				}
-			}
-		}(timer, job)
-	}
-
-	for {
-		select {
-		case <-s.done:
-			return
-		case job := <-s.adder:
-			adder(job)
-		}
-	}
 }
 
 func (s *trieS[T]) Close() {
@@ -602,6 +461,7 @@ func (s *trieS[T]) Get(path string) (data T, found bool) {
 	return
 }
 
+// GetEx finds and returns an entry for a giving `path` by a callback clousure.
 func (s *trieS[T]) GetEx(path string, cb func(node Node[T], data T, branch bool, kvpair KVPair)) {
 	node, data, kvpair, branch, err := s.getNode(path)
 	if cb != nil && err == nil {
@@ -773,7 +633,7 @@ type matchCtx struct {
 	delimiter rune
 }
 
-type KVPair map[string]string
+type KVPair map[string]string // abstract type for entry data content
 
 // Delimiter returns the current delimiter in using.
 //
