@@ -28,6 +28,11 @@ jobs:
       - name: Checkout codebase
         uses: actions/checkout@v7
 
+      - name: fix go.work
+        # description: consul requeting go 1.26.7 but our go.mod stay in 1.26.0
+        run: |
+          go work use
+
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v9
         with:

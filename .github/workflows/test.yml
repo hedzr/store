@@ -36,6 +36,7 @@ jobs:
 
       - name: Check Go modules
         run: |
+          go work use
           # go mod tidy -compat=1.17
           go mod tidy
           git diff --exit-code go.mod go.sum

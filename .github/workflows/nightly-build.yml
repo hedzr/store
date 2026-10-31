@@ -37,4 +37,5 @@ jobs:
 
       - name: Build
         run: |
+          go work use
           make V=1 release -j$(nproc)

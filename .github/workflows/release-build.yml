@@ -26,6 +26,8 @@ jobs:
           echo Tag $tag_name
           git checkout $tag_name
           echo "TAG_NAME=${tag_name}" >> $GITHUB_ENV
+          # description: consul requeting go 1.26.7 but our go.mod stay in 1.26.0
+          go work use
 
       - name: Build
         run: |
