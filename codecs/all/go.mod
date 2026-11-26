@@ -4,15 +4,29 @@ go 1.26.0
 
 replace github.com/hedzr/store => ./../..
 
+replace github.com/hedzr/store/codecs/gob => ./../../codecs/gob
+
+replace github.com/hedzr/store/codecs/hcl => ./../../codecs/hcl
+
+replace github.com/hedzr/store/codecs/hjson => ./../../codecs/hjson
+
+replace github.com/hedzr/store/codecs/json => ./../../codecs/json
+
+replace github.com/hedzr/store/codecs/nestext => ./../../codecs/nestext
+
+replace github.com/hedzr/store/codecs/toml => ./../../codecs/toml
+
+replace github.com/hedzr/store/codecs/yaml => ./../../codecs/yaml
+
 require (
-	github.com/hedzr/store v1.4.9
-	github.com/hedzr/store/codecs/gob v1.4.9
-	github.com/hedzr/store/codecs/hcl v1.4.9
-	github.com/hedzr/store/codecs/hjson v1.4.9
-	github.com/hedzr/store/codecs/json v1.4.9
-	github.com/hedzr/store/codecs/nestext v1.4.9
-	github.com/hedzr/store/codecs/toml v1.4.9
-	github.com/hedzr/store/codecs/yaml v1.4.9
+	github.com/hedzr/store v1.4.11
+	github.com/hedzr/store/codecs/gob v1.4.11
+	github.com/hedzr/store/codecs/hcl v1.4.11
+	github.com/hedzr/store/codecs/hjson v1.4.11
+	github.com/hedzr/store/codecs/json v1.4.11
+	github.com/hedzr/store/codecs/nestext v1.4.11
+	github.com/hedzr/store/codecs/toml v1.4.11
+	github.com/hedzr/store/codecs/yaml v1.4.11
 )
 
 require (
