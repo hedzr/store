@@ -180,8 +180,14 @@ build-setver-children() {
 			d="$(dirname $f)"
 			# if [[ ! "$d" == */test ]]; then
 			if [ -d "$d" ]; then
-				echo "  looking for ${d/\.\//}"
-				update-submodule "${d/\.\//}" "$VER" "$d" || dirty=1
+				if [[ "$d" = _* ]]; then
+					:
+				elif [[ "$d" = */extras/* ]]; then
+					:
+				else
+					echo "  looking for ${d/\.\//}"
+					update-submodule "${d/\.\//}" "$VER" "$d" || dirty=1
+				fi
 			fi
 			# fi
 		done
@@ -194,7 +200,13 @@ build-setver-children() {
 			d="$(dirname "$f")"
 			# if [[ ! "$d" == */test ]]; then
 			if [ -d "$d" ]; then
-				setver-submodule "${d/\.\//}" "$VER" "$d" "$@"
+				if [[ "$d" = _* ]]; then
+					:
+				elif [[ "$d" = */extras/* ]]; then
+					:
+				else
+					setver-submodule "${d/\.\//}" "$VER" "$d" "$@"
+				fi
 			fi
 			# fi
 		done
@@ -261,9 +273,11 @@ update-submodule() {
 		echo "    entering $d and sed $(ls -b go.mod) for tagged version $2 ..."
 		sed -i.bak -E "s,(/store/)(codecs|providers)(/.*)v[0-9]+\.[0-9]+\.[0-9]+,\1\2\3$2," go.mod
 		ret=$(diff go.mod go.mod.bak | wc -l)
-		((ret)) && echo "      go mod tidy..." &&
-			go get -v -t -u ./... && go mod tidy && git add go.mod go.sum &&
-			ret=1
+		if (($ret)); then
+			echo "      go mod tidy..." &&
+				go get -v -t -u ./... && go mod tidy && git add go.mod go.sum &&
+				ret=1
+		fi
 		popd >/dev/null || return
 		# git tag "$tag"
 	else
@@ -404,17 +418,27 @@ drop-tag() {
 
 # update all go modules in .. [ cmdr.v2/ ]
 build-update-all() {
+	tip "update all submodules ..."
 	for d in ../*; do
 		if [ -d "./$d" ]; then
 			if [ -f "./$d/go.mod" ]; then
-				pushd "./$d" >/dev/null
-				# if [ -x ../libs.store/ci/ci.sh ]; then
-				# 	../libs.store/ci/ci.sh update
-				# elif [ -x ./ci/ci.sh ]; then
-				# 	./ci/ci.sh update
-				# fi
-				build-update
-				popd >/dev/null
+				tip "dir: $d"
+				if [[ "$d" = _* ]]; then
+					:
+				elif [[ "$d" = */extras/* ]]; then
+					:
+				else
+
+					pushd "./$d" >/dev/null
+					# if [ -x ../libs.store/ci/ci.sh ]; then
+					# 	../libs.store/ci/ci.sh update
+					# elif [ -x ./ci/ci.sh ]; then
+					# 	./ci/ci.sh update
+					# fi
+					build-update
+					popd >/dev/null
+
+				fi
 			fi
 		fi
 	done
@@ -429,19 +453,27 @@ build-update() {
 			# 	echo && tip "==== ignore .github and others hidden directories: '$d'"
 			# else
 			if [ -d "$d" ]; then
-				# tip "==== found go.mod in '$d'..."
-				if grep -Eio '^module .+$' $d/go.mod | awk '{print $2}' | grep -Eiq '[$%].*'; then
-					tip "a templated go.mod found"
-					try-update-from-parent "$d"
+
+				if [[ "$d" = _* ]]; then
+					: #tip "==== ignore '$d'..."
+				elif [[ "$d" = */extras/* ]]; then
+					: #tip "==== ignore '$d'..."
 				else
-					do-update-dep "$d"
+					# tip "==== finding go.mod in '$d'..."
+					if grep -Eio '^module .+$' $d/go.mod | awk '{print $2}' | grep -Eiq '[$%].*'; then
+						tip "a templated go.mod found"
+						try-update-from-parent "$d"
+					else
+						do-update-dep "$d"
+					fi
 				fi
+
 			fi
 			# fi
 		done
 	done
 	echo
-	[ -f go.work ] && build-update-main
+	[ -f go.work ] && echo && echo && tip "update-main ..." && build-update-main
 	echo
 }
 
@@ -512,20 +544,26 @@ build-update-main() {
 		for f in $(find ./$sm -type f -iname 'go.mod' -print); do
 			d="$(dirname $f)"
 			if [ -d "$d" ]; then
-				if [ "$f" != "././go.mod" ]; then
-					# echo "d: $d"
-					if grep -qE "$mod" $f; then
-						tip "*** file: $f ***************"
-						if sed -i '' -E -e 's#('$mod'.*)v[0-9.]+[a-f0-9-]+#\1'$VER'#g' $f; then
-							let ix++
-							echo "   $f: $(grep -E $mod'.*v[0-9.]+[a-f0-9-]+' $f)"
-							[ -f "$f.bak" ] && rm "$f.bak"
-						else
-							echo "   $f: sed not ok"
+				if [ "$d" = _* ]; then
+					:
+				elif [ "$d" = "*extras*" ]; then
+					:
+				else
+					if [ "$f" != "././go.mod" ]; then
+						# echo "d: $d"
+						if grep -qE "$mod" $f; then
+							tip "*** file: $f ***************"
+							if sed -i '' -E -e 's#('$mod'.*)v[0-9.]+[a-f0-9-]+#\1'$VER'#g' $f; then
+								let ix++
+								echo "   $f: $(grep -E $mod'.*v[0-9.]+[a-f0-9-]+' $f)"
+								[ -f "$f.bak" ] && rm "$f.bak"
+							else
+								echo "   $f: sed not ok"
+							fi
+							# if [[ $ix -gt 2 ]]; then
+							# 	return
+							# fi
 						fi
-						# if [[ $ix -gt 2 ]]; then
-						# 	return
-						# fi
 					fi
 				fi
 			fi
