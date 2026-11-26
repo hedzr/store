@@ -46,7 +46,7 @@ jobs:
           # name: ${{ env.TAG_NAME }}
           # # overwrite: true
           # overwrite_files: true
-          # # file_glob: true
+          file_glob: true
           append_body: true
           draft: false
           prerelease: false
@@ -56,8 +56,8 @@ jobs:
             Store is a high-performance key-value store and hierarchical configuration set manager, which loads and merge app settings from any external sources, and provides a unify interface to access them. Try `appSettings.MustBool("sys.logging.enabled", false)` to ensure whether we should enable logging plugin in coding.
 
             ${{ github.event.head_commit.message }}
-          files: |
-            ./*.zip
+          # files: |
+          #   ./*.zip
           #
           # This release was created by: ${{ github.event.sender.login }}
           # Release of Store, a high-performance k-v store and hierarchical
