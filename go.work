@@ -4,6 +4,7 @@ use (
 	.
 
 	./codecs/all
+
 	./codecs/gob
 	./codecs/gob/test
 	./codecs/hcl
@@ -19,16 +20,15 @@ use (
 	./codecs/yaml
 	./codecs/yaml/test
 
-	./examples/consul
-
-	./examples/etcd
+	// ./examples/consul
+	// ./examples/etcd
+	// ./providers/consul
+	// ./providers/etcd
 
 	./examples/flags
 	./examples/simple
-	./providers/consul
 
 	./providers/env
-	./providers/etcd
 	./providers/file
 	./providers/flags
 	./providers/fs
