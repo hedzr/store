@@ -1,5 +1,10 @@
 # CHANGELOG
 
+- v1.4.11
+  - upgrade deps
+  - security patches
+  - removed go sub-modules `providers/{consul,etcd}`, which had been moved into directory `./extras` as backup and froozen now.
+
 - v1.4.9
   - upgrade deps
   - security patches
