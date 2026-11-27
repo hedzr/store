@@ -146,6 +146,11 @@ To see the recently changes at [CHANGELOG](https://github.com/hedzr/store/blob/m
 > Since v1.2.8, `SetEx(path, val, callback)` added.  
 > Since v1.3.0, moved the minimal toolchain to go1.23.7.  
 > Since v1.3.55, moved the minimal toolchain to go1.24.5.  
+> Since v1.4.0, moved the minimal toolchain to go1.25.  
+> Since v1.4.3, moved the minimal toolchain to go1.26.0 (forced by consul & etcd).  
+> Since v1.4.9, our deps (is/logg/evendeep) are moved up.  
+> Since v1.4.11, the `providers/{etcd,consul}` are removed from our releases since them upgrade its toolchain everyday.  
+
 
 Using store as the core of a http router is possible. Since v1.2 we added builtin http route param support (like `:user`).
 
